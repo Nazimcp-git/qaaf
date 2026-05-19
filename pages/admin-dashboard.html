@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard – QAF</title>
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/animations.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <style>
+    .admin-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+    .admin-stat {
+      padding: 32px 24px;
+      background: rgba(247, 243, 238, 0.8);
+      border: 1px solid rgba(184, 150, 62, 0.15);
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      transition: all 0.3s;
+    }
+    .admin-stat:hover {
+      border-color: rgba(184, 150, 62, 0.4);
+      transform: translateY(-2px);
+    }
+    .admin-stat-icon {
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+      color: var(--clr-gold);
+      border: 1px solid rgba(184, 150, 62, 0.2);
+    }
+    .admin-stat-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.5rem;
+      color: var(--clr-ink);
+      font-weight: 300;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .admin-stat-label {
+      font-family: 'Tenor Sans', sans-serif;
+      font-size: 0.55rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--clr-ink-muted);
+    }
+    .admin-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+    @media(max-width:1024px) { .admin-grid { grid-template-columns: 1fr; } }
+    
+    .settings-group { margin-bottom: 24px; }
+    .settings-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px;
+      border-bottom: 1px solid rgba(184, 150, 62, 0.1);
+    }
+    .settings-item:last-child { border-bottom: none; }
+    
+    .toggle-switch {
+      position: relative;
+      width: 48px;
+      height: 24px;
+      cursor: pointer;
+    }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute;
+      inset: 0;
+      background: rgba(184, 150, 62, 0.2);
+      border-radius: 24px;
+      transition: 0.3s;
+    }
+    .toggle-slider::before {
+      content: '';
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--clr-cream);
+      left: 3px;
+      top: 3px;
+      transition: 0.3s;
+      box-shadow: 0 2px 4px rgba(26,24,20,0.2);
+    }
+    .toggle-switch input:checked + .toggle-slider { background: var(--clr-gold); }
+    .toggle-switch input:checked + .toggle-slider::before { transform: translateX(24px); }
+    
+    .admin-section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem;
+      color: var(--clr-ink);
+      font-weight: 300;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(184, 150, 62, 0.2);
+    }
+    .tab-views > div { display: none; }
+    .tab-views > div.active { display: block; animation: heroFadeUp 0.6s ease forwards; }
+    @keyframes heroFadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .action-bar {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+    
+    .pos-card {
+      border: 1px solid rgba(184, 150, 62, 0.2);
+      padding: 24px;
+      background: rgba(247, 243, 238, 0.8);
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+  </style>
+</head>
+<body>
+  <button class="sidebar-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open');document.querySelector('.sidebar-overlay').classList.toggle('active')">
+    <div style="width:16px;height:1px;background:var(--clr-gold-light);margin-bottom:4px"></div>
+    <div style="width:24px;height:1px;background:var(--clr-gold-light);margin-bottom:4px"></div>
+    <div style="width:16px;height:1px;background:var(--clr-gold-light)"></div>
+  </button>
+  <div class="sidebar-overlay" onclick="document.querySelector('.sidebar').classList.remove('open');this.classList.remove('active')"></div>
+
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <span class="sidebar-brand">QAF Admin</span>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Dashboard</div>
+        <a href="#" class="sidebar-link active" onclick="showTab('overview',this)"><span class="icon">✧</span>Overview</a>
+        <a href="#" class="sidebar-link" onclick="showTab('teams',this)"><span class="icon">✧</span>Teams</a>
+        <a href="#" class="sidebar-link" onclick="showTab('students',this)"><span class="icon">✧</span>Students</a>
+        <a href="#" class="sidebar-link" onclick="showTab('programs',this)"><span class="icon">✧</span>Programs</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Content</div>
+        <a href="#" class="sidebar-link" onclick="showTab('topics',this)"><span class="icon">✧</span>Topics</a>
+        <a href="#" class="sidebar-link" onclick="showTab('results',this)"><span class="icon">✧</span>Results</a>
+        <a href="#" class="sidebar-link" onclick="showTab('announcements',this)"><span class="icon">✧</span>Announcements</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">System</div>
+        <a href="#" class="sidebar-link" onclick="showTab('settings',this)"><span class="icon">✧</span>Settings</a>
+        <a href="#" class="sidebar-link" onclick="showTab('logs',this)"><span class="icon">✧</span>Audit Logs</a>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="btn btn-outline btn-sm btn-block" style="color:var(--clr-gold);border-color:rgba(184,150,62,0.3)" onclick="if(typeof auth!=='undefined')auth.signOut().then(()=>location.href='admin-login.html');else location.href='admin-login.html'">Sign Out</button>
+    </div>
+  </aside>
+
+  <div class="dashboard-content">
+    <div class="dashboard-topbar">
+      <div class="dashboard-topbar-title" id="pageTitle">Admin Overview</div>
+      <div style="display:flex;gap:16px;align-items:center">
+        <button class="btn-icon btn-ghost btn-sm" onclick="if(typeof auth!=='undefined')auth.signOut().then(()=>location.href='admin-login.html');else location.href='admin-login.html'" style="border:none">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        </button>
+      </div>
+    </div>
+    <div class="dashboard-body">
+      <div class="tab-views">
+        <!-- OVERVIEW -->
+        <div id="tab-overview" class="active">
+          <div class="admin-stats">
+            <div class="admin-stat"><div class="admin-stat-icon" style="color:var(--clr-success)">✧</div><div><div class="admin-stat-value" id="aStatTeams">0</div><div class="admin-stat-label">Total Teams</div></div></div>
+            <div class="admin-stat"><div class="admin-stat-icon">✧</div><div><div class="admin-stat-value" id="aStatStudents">0</div><div class="admin-stat-label">Total Students</div></div></div>
+            <div class="admin-stat"><div class="admin-stat-icon" style="color:var(--clr-info)">✧</div><div><div class="admin-stat-value" id="aStatPrograms">0</div><div class="admin-stat-label">Programs</div></div></div>
+            <div class="admin-stat"><div class="admin-stat-icon" style="color:var(--clr-error)">✧</div><div><div class="admin-stat-value" id="aStatTopics">0</div><div class="admin-stat-label">Topic Submissions</div></div></div>
+          </div>
+          <div class="admin-grid">
+            <div class="card">
+              <h4 style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:400;margin-bottom:24px;border-bottom:1px solid rgba(184,150,62,0.15);padding-bottom:16px">Recent Registrations</h4>
+              <div id="recentTeams"><p style="color:var(--clr-ink-muted);font-size:0.8rem;text-align:center;padding:20px 0;letter-spacing:0.05em">Loading...</p></div>
+            </div>
+            <div class="card">
+              <h4 style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:400;margin-bottom:24px;border-bottom:1px solid rgba(184,150,62,0.15);padding-bottom:16px">Quick Actions</h4>
+              <div style="display:flex;flex-direction:column;gap:12px">
+                <button class="btn btn-primary btn-block" onclick="showTab('programs',null)">Add Program</button>
+                <button class="btn btn-outline btn-block" onclick="showTab('announcements',null)">Post Announcement</button>
+                <button class="btn btn-ghost btn-block" onclick="showTab('results',null)">Manage Results</button>
+                <button class="btn btn-ghost btn-block" onclick="exportAllData()">Export All Data</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TEAMS -->
+        <div id="tab-teams">
+          <div class="admin-section-title">Manage Teams</div>
+          <div class="action-bar">
+            <input class="form-input" type="search" placeholder="Search teams..." style="max-width:300px" oninput="filterTable('teamsBody',this.value)">
+            <button class="btn btn-outline" onclick="exportTeams()">Export PDF</button>
+            <button class="btn btn-ghost" onclick="exportTeamsCSV()">CSV</button>
+          </div>
+          <div class="table-wrapper"><table class="table"><thead><tr><th>Team ID</th><th>Institution</th><th>District</th><th>Leader</th><th>Phone</th><th>Status</th><th>Actions</th></tr></thead><tbody id="teamsBody"></tbody></table></div>
+          <div class="pagination" id="teamsPagination"></div>
+        </div>
+
+        <!-- STUDENTS -->
+        <div id="tab-students">
+          <div class="admin-section-title">All Students</div>
+          <div class="action-bar">
+            <input class="form-input" type="search" placeholder="Search students..." style="max-width:300px" oninput="filterTable('allStudentsBody',this.value)">
+            <select class="form-select" style="width:auto;min-width:200px" onchange="filterStudentsByTeam(this.value)"><option value="">All Teams</option></select>
+            <button class="btn btn-outline" onclick="exportStudents()">Export Data</button>
+          </div>
+          <div class="table-wrapper"><table class="table"><thead><tr><th>Name</th><th>Team</th><th>Program</th><th>Age</th><th>Gender</th><th>Actions</th></tr></thead><tbody id="allStudentsBody"></tbody></table></div>
+        </div>
+
+        <!-- PROGRAMS -->
+        <div id="tab-programs">
+          <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:24px;border-bottom:1px solid rgba(184,150,62,0.2);padding-bottom:16px">
+            <div class="admin-section-title" style="margin:0;border:none;padding:0">Manage Programs</div>
+            <button class="btn btn-primary" onclick="QAF.modal.open('programModal')">Add Program</button>
+          </div>
+          <div class="table-wrapper"><table class="table"><thead><tr><th>Title</th><th>Category</th><th>Limit</th><th>Topic Req.</th><th>Actions</th></tr></thead><tbody id="programsBody"></tbody></table></div>
+        </div>
+
+        <!-- TOPICS -->
+        <div id="tab-topics">
+          <div class="admin-section-title">Topic Submissions</div>
+          <div class="action-bar">
+            <select class="form-select" style="width:auto;min-width:200px" id="topicStatusFilter" onchange="loadAdminTopics()">
+              <option value="">All Statuses</option>
+              <option value="pending">Pending</option>
+              <option value="approved">Approved</option>
+              <option value="rejected">Rejected</option>
+            </select>
+          </div>
+          <div class="table-wrapper"><table class="table"><thead><tr><th>Topic</th><th>Program</th><th>Team</th><th>Student</th><th>Status</th><th>Actions</th></tr></thead><tbody id="topicsBody"></tbody></table></div>
+        </div>
+
+        <!-- RESULTS -->
+        <div id="tab-results">
+          <div class="admin-section-title">Result Management</div>
+          <div class="action-bar">
+            <select class="form-select" id="resultProgram" style="width:auto;min-width:240px" onchange="loadResultEntries(this.value)"><option value="">Select Program</option></select>
+            <button class="btn btn-primary" onclick="saveResults()">Save Results</button>
+            <button class="btn btn-outline" onclick="publishProgramResult()">Publish Results</button>
+            <button class="btn btn-ghost" onclick="recalcLeaderboard()">Recalculate Leaderboard</button>
+          </div>
+          <div id="resultInfo" style="display:none;margin-bottom:24px">
+            <div class="card" style="background:rgba(91,140,90,0.05);border-color:rgba(91,140,90,0.2);padding:16px 24px">
+              <p style="font-family:'Tenor Sans',sans-serif;font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;margin:0;color:var(--clr-success)" id="resultInfoText">Select a program to assign positions</p>
+            </div>
+          </div>
+          <div id="resultPositions" style="display:none;margin-bottom:40px">
+            <h4 style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:400;margin-bottom:24px">Assign Positions</h4>
+            <div style="display:grid;gap:20px" id="positionSlots">
+              
+              <div class="pos-card" style="border-left:2px solid #D4AF6A">
+                <div style="font-size:1.5rem;min-width:40px;text-align:center">Ⅰ</div>
+                <div style="flex:1;min-width:200px">
+                  <label class="form-label">First Place</label>
+                  <select class="form-select" id="pos1Student"><option value="">Select student</option></select>
+                </div>
+                <div style="width:100px">
+                  <label class="form-label">Points</label>
+                  <input class="form-input" type="number" id="pos1Points" value="5" min="0">
+                </div>
+              </div>
+              
+              <div class="pos-card" style="border-left:2px solid #A0A09A">
+                <div style="font-size:1.5rem;min-width:40px;text-align:center">Ⅱ</div>
+                <div style="flex:1;min-width:200px">
+                  <label class="form-label">Second Place</label>
+                  <select class="form-select" id="pos2Student"><option value="">Select student</option></select>
+                </div>
+                <div style="width:100px">
+                  <label class="form-label">Points</label>
+                  <input class="form-input" type="number" id="pos2Points" value="3" min="0">
+                </div>
+              </div>
+              
+              <div class="pos-card" style="border-left:2px solid #A07040">
+                <div style="font-size:1.5rem;min-width:40px;text-align:center">Ⅲ</div>
+                <div style="flex:1;min-width:200px">
+                  <label class="form-label">Third Place</label>
+                  <select class="form-select" id="pos3Student"><option value="">Select student</option></select>
+                </div>
+                <div style="width:100px">
+                  <label class="form-label">Points</label>
+                  <input class="form-input" type="number" id="pos3Points" value="1" min="0">
+                </div>
+              </div>
+
+            </div>
+          </div>
+          <div id="resultParticipants">
+            <h4 style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:400;margin-bottom:24px">Participants</h4>
+            <div class="table-wrapper"><table class="table"><thead><tr><th>#</th><th>Student</th><th>Institution</th><th>Position</th><th>Points</th></tr></thead><tbody id="resultEntriesBody"><tr><td colspan="5" class="text-center" style="padding:48px;color:var(--clr-ink-muted)">Select a program to manage results</td></tr></tbody></table></div>
+          </div>
+          <div style="margin-top:40px">
+            <h4 style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:400;margin-bottom:24px">Published Results</h4>
+            <div id="publishedProgramsList"><p style="color:var(--clr-ink-muted);font-size:0.8rem;letter-spacing:0.05em">No results published yet</p></div>
+          </div>
+        </div>
+
+        <!-- ANNOUNCEMENTS -->
+        <div id="tab-announcements">
+          <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:24px;border-bottom:1px solid rgba(184,150,62,0.2);padding-bottom:16px">
+            <div class="admin-section-title" style="margin:0;border:none;padding:0">Announcements</div>
+            <button class="btn btn-primary" onclick="QAF.modal.open('announceModal')">New Announcement</button>
+          </div>
+          <div id="announceList"></div>
+        </div>
+
+        <!-- SETTINGS -->
+        <div id="tab-settings">
+          <div class="admin-section-title">System Settings</div>
+          <div class="card">
+            <div class="settings-item">
+              <div>
+                <strong style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:400;color:var(--clr-ink)">Registration Open</strong>
+                <p style="font-size:0.75rem;color:var(--clr-ink-muted);margin:0;margin-top:4px">Allow new team registrations</p>
+              </div>
+              <label class="toggle-switch"><input type="checkbox" id="setRegOpen" onchange="updateSetting('registrationOpen',this.checked)"><span class="toggle-slider"></span></label>
+            </div>
+            <div class="settings-item">
+              <div>
+                <strong style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:400;color:var(--clr-ink)">Topic Submission Open</strong>
+                <p style="font-size:0.75rem;color:var(--clr-ink-muted);margin:0;margin-top:4px">Allow topic submissions</p>
+              </div>
+              <label class="toggle-switch"><input type="checkbox" id="setTopicOpen" onchange="updateSetting('topicSubmissionOpen',this.checked)"><span class="toggle-slider"></span></label>
+            </div>
+            <div class="settings-item">
+              <div>
+                <strong style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:400;color:var(--clr-ink)">Results Published</strong>
+                <p style="font-size:0.75rem;color:var(--clr-ink-muted);margin:0;margin-top:4px">Show results publicly</p>
+              </div>
+              <label class="toggle-switch"><input type="checkbox" id="setResultsPub" onchange="updateSetting('resultsPublished',this.checked)"><span class="toggle-slider"></span></label>
+            </div>
+          </div>
+          
+          <div class="card mt-6">
+            <h4 style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:400;margin-bottom:24px">Event Information</h4>
+            <div class="form-group"><label class="form-label">Event Name</label><input class="form-input" id="setEventName" value="Quranic Art Fest 2026"></div>
+            <div class="form-group"><label class="form-label">Event Date</label><input class="form-input" type="date" id="setEventDate"></div>
+            <button class="btn btn-primary mt-4" onclick="saveEventSettings()">Save Settings</button>
+          </div>
+        </div>
+
+        <!-- AUDIT LOGS -->
+        <div id="tab-logs">
+          <div class="admin-section-title">Audit Logs</div>
+          <div class="table-wrapper"><table class="table"><thead><tr><th>Time</th><th>Action</th><th>Details</th><th>User</th></tr></thead><tbody id="logsBody"></tbody></table></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Program Modal -->
+  <div class="modal-overlay" id="programModal">
+    <div class="modal">
+      <button class="modal-close" onclick="QAF.modal.close('programModal')">✕</button>
+      <h3 class="modal-title">Add Program</h3>
+      <div class="modal-body">
+        <form id="programForm">
+          <div class="form-group"><label class="form-label">Title <span class="required">*</span></label><input class="form-input" id="progTitle" required></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+            <div class="form-group"><label class="form-label">Category</label><input class="form-input" id="progCategory" placeholder="e.g. Calligraphy"></div>
+            <div class="form-group"><label class="form-label">Participant Limit</label><input class="form-input" type="number" id="progLimit" min="1"></div>
+          </div>
+          <div class="form-group"><label class="form-label">Age Limit</label><input class="form-input" type="number" id="progAge" min="1"></div>
+          <div class="form-group"><label class="form-label">Description</label><textarea class="form-textarea" id="progDesc" rows="3"></textarea></div>
+          <div class="form-check"><input type="checkbox" id="progTopicReq"><label>Topic Registration Required</label></div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="QAF.modal.close('programModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="addProgram()">Save Program</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Announcement Modal -->
+  <div class="modal-overlay" id="announceModal">
+    <div class="modal">
+      <button class="modal-close" onclick="QAF.modal.close('announceModal')">✕</button>
+      <h3 class="modal-title">New Announcement</h3>
+      <div class="modal-body">
+        <div class="form-group"><label class="form-label">Title</label><input class="form-input" id="announceTitle"></div>
+        <div class="form-group"><label class="form-label">Message <span class="required">*</span></label><textarea class="form-textarea" id="announceText" rows="4" required></textarea></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="QAF.modal.close('announceModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="postAnnouncement()">Publish</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Bottom Nav -->
+  <nav class="mobile-bottom-nav">
+    <div class="mobile-bottom-nav-inner">
+      <a class="mobile-nav-item active" onclick="showTab('overview',this)"><span class="mobile-nav-icon">✧</span>Home</a>
+      <a class="mobile-nav-item" onclick="showTab('teams',this)"><span class="mobile-nav-icon">✧</span>Teams</a>
+      <a class="mobile-nav-item" onclick="showTab('topics',this)"><span class="mobile-nav-icon">✧</span>Topics</a>
+      <a class="mobile-nav-item" onclick="showTab('results',this)"><span class="mobile-nav-icon">✧</span>Results</a>
+      <a class="mobile-nav-item" onclick="showTab('settings',this)"><span class="mobile-nav-icon">✧</span>Settings</a>
+    </div>
+  </nav>
+
+  <div class="toast-container" id="toast-container"></div>
+  
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="../config/firebase.js"></script>
+  <script src="../js/utils/helpers.js"></script>
+  <script src="../js/services/database.js"></script>
+  <script src="../js/services/auth.js"></script>
+  <script src="../js/services/pdf.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

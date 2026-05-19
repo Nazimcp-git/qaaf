@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Team Dashboard – QAF</title>
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/animations.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <style>
+    .dash-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+    .dash-stat {
+      padding: 32px 24px;
+      border: 1px solid rgba(184, 150, 62, 0.15);
+      background: rgba(247, 243, 238, 0.8);
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    .dash-stat:hover {
+      border-color: rgba(184, 150, 62, 0.4);
+      transform: translateY(-2px);
+    }
+    .dash-stat-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 3rem;
+      color: var(--clr-ink);
+      font-weight: 300;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .dash-stat-label {
+      font-family: 'Tenor Sans', sans-serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--clr-gold);
+    }
+    .program-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 24px;
+    }
+    .program-card {
+      padding: 24px;
+      border: 1px solid rgba(184, 150, 62, 0.15);
+      background: rgba(247, 243, 238, 0.8);
+      transition: all 0.4s ease;
+    }
+    .program-card:hover {
+      border-color: rgba(184, 150, 62, 0.4);
+      box-shadow: 0 8px 32px rgba(184, 150, 62, 0.08);
+    }
+    .program-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(184, 150, 62, 0.1);
+    }
+    .program-card h4 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.25rem;
+      font-weight: 400;
+      color: var(--clr-ink);
+      margin-bottom: 4px;
+    }
+    .program-meta {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .program-meta span {
+      font-family: 'Tenor Sans', sans-serif;
+      font-size: 0.55rem;
+      padding: 4px 10px;
+      border: 1px solid rgba(184, 150, 62, 0.2);
+      color: var(--clr-ink-muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .participant-list {
+      margin-top: 16px;
+      border-top: 1px solid rgba(184, 150, 62, 0.1);
+      padding-top: 16px;
+    }
+    .notif-list {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .notif-item {
+      display: flex;
+      gap: 16px;
+      padding: 20px;
+      border-bottom: 1px solid rgba(184, 150, 62, 0.1);
+      font-size: 0.85rem;
+      color: var(--clr-ink-soft);
+      line-height: 1.6;
+    }
+    .notif-item.unread {
+      background: rgba(184, 150, 62, 0.03);
+    }
+    .notif-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--clr-gold);
+      transform: rotate(45deg);
+      flex-shrink: 0;
+      margin-top: 8px;
+    }
+    .notif-item.read .notif-dot {
+      background: rgba(184, 150, 62, 0.3);
+    }
+    .profile-form {
+      max-width: 600px;
+    }
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem;
+      font-weight: 300;
+      color: var(--clr-ink);
+      margin-bottom: 32px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(184, 150, 62, 0.2);
+      letter-spacing: -0.01em;
+    }
+    .tab-views > div { display: none; }
+    .tab-views > div.active { display: block; animation: heroFadeUp 0.6s ease forwards; }
+    
+    @keyframes heroFadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+  <button class="sidebar-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open');document.querySelector('.sidebar-overlay').classList.toggle('active')">
+    <div style="width:16px;height:1px;background:var(--clr-gold-light);margin-bottom:4px"></div>
+    <div style="width:24px;height:1px;background:var(--clr-gold-light);margin-bottom:4px"></div>
+    <div style="width:16px;height:1px;background:var(--clr-gold-light)"></div>
+  </button>
+  <div class="sidebar-overlay" onclick="document.querySelector('.sidebar').classList.remove('open');this.classList.remove('active')"></div>
+  
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <span class="sidebar-brand">QAF Dashboard</span>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Main</div>
+        <a href="#" class="sidebar-link active" onclick="showTab('overview')"><span class="icon">✧</span>Overview</a>
+        <a href="#" class="sidebar-link" onclick="showTab('programs')"><span class="icon">✧</span>Programs</a>
+        <a href="#" class="sidebar-link" onclick="showTab('students')"><span class="icon">✧</span>Students</a>
+        <a href="#" class="sidebar-link" onclick="showTab('topics')"><span class="icon">✧</span>Topics</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Account</div>
+        <a href="#" class="sidebar-link" onclick="showTab('profile')"><span class="icon">✧</span>Profile</a>
+        <a href="#" class="sidebar-link" onclick="showTab('notifications')"><span class="icon">✧</span>Notifications <span class="badge badge-gold" id="notifCount" style="margin-left:auto;padding:2px 6px;font-size:0.5rem">0</span></a>
+        <a href="#" class="sidebar-link" onclick="showTab('points')"><span class="icon">✧</span>Points</a>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-avatar" style="display:flex;align-items:center;justify-content:center;background:var(--clr-ink);color:var(--clr-gold);font-family:'Cormorant Garamond';font-size:1.2rem;font-style:italic" id="sidebarAvatar">T</div>
+        <div>
+          <div class="sidebar-user-name" id="sidebarName">Loading...</div>
+          <div class="sidebar-user-role" id="sidebarTeamId">—</div>
+        </div>
+      </div>
+      <button class="btn btn-outline btn-sm btn-block mt-4" style="color:var(--clr-gold);border-color:rgba(184,150,62,0.3)" onclick="handleLogout()">Sign Out</button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="dashboard-content">
+    <div class="dashboard-topbar">
+      <div class="dashboard-topbar-title" id="pageTitle">Overview</div>
+      <div style="display:flex;align-items:center;gap:16px">
+        <button class="btn-icon btn-ghost btn-sm" onclick="handleLogout()" style="border:none">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        </button>
+      </div>
+    </div>
+    
+    <div class="dashboard-body">
+      <div class="tab-views">
+        <!-- Overview -->
+        <div id="tab-overview" class="active">
+          <div class="dash-stats" id="dashStats">
+            <div class="dash-stat"><div class="dash-stat-value" id="statStudents">0</div><div class="dash-stat-label">Students Registered</div></div>
+            <div class="dash-stat"><div class="dash-stat-value" id="statPrograms">0</div><div class="dash-stat-label">Programs Entered</div></div>
+            <div class="dash-stat"><div class="dash-stat-value" id="statPoints">0</div><div class="dash-stat-label">Total Points</div></div>
+            <div class="dash-stat"><div class="dash-stat-value" id="statTopics">0</div><div class="dash-stat-label">Topics Submitted</div></div>
+          </div>
+          
+          <div class="grid grid-2">
+            <div class="card">
+              <h4 style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:400;margin-bottom:24px;color:var(--clr-ink);border-bottom:1px solid rgba(184,150,62,0.15);padding-bottom:16px">Quick Actions</h4>
+              <div style="display:flex;flex-direction:column;gap:12px">
+                <button class="btn btn-primary btn-block" onclick="showTab('students')">Register New Student</button>
+                <button class="btn btn-outline btn-block" onclick="showTab('topics')">Submit Topic</button>
+                <button class="btn btn-ghost btn-block" onclick="showTab('points')">View Leaderboard</button>
+              </div>
+            </div>
+            
+            <div class="card">
+              <h4 style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:400;margin-bottom:24px;color:var(--clr-ink);border-bottom:1px solid rgba(184,150,62,0.15);padding-bottom:16px">Recent Notifications</h4>
+              <div id="recentNotifs">
+                <p style="color:var(--clr-ink-muted);font-size:0.8rem;text-align:center;padding:20px 0;letter-spacing:0.05em">No new notifications</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Programs -->
+        <div id="tab-programs">
+          <h3 class="section-title">Available Programs</h3>
+          <div class="program-grid" id="programsGrid">
+            <div class="skeleton skeleton-card"></div>
+            <div class="skeleton skeleton-card"></div>
+            <div class="skeleton skeleton-card"></div>
+          </div>
+        </div>
+
+        <!-- Students -->
+        <div id="tab-students">
+          <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:32px;border-bottom:1px solid rgba(184,150,62,0.2);padding-bottom:16px">
+            <h3 class="section-title" style="margin-bottom:0;border:none;padding:0">Registered Students</h3>
+            <button class="btn btn-primary btn-sm" onclick="QAF.modal.open('addStudentModal')">Add Student</button>
+          </div>
+          <div class="table-wrapper">
+            <table class="table" id="studentsTable">
+              <thead><tr><th>Name</th><th>Program</th><th>Age</th><th>Gender</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody id="studentsBody"><tr><td colspan="6" class="text-center" style="padding:48px 24px;color:var(--clr-ink-muted)">No students registered yet. <a href="#" onclick="QAF.modal.open('addStudentModal')" style="color:var(--clr-gold);text-decoration:underline">Register one now.</a></td></tr></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Topics -->
+        <div id="tab-topics">
+          <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:32px;border-bottom:1px solid rgba(184,150,62,0.2);padding-bottom:16px;flex-wrap:wrap;gap:16px">
+            <h3 class="section-title" style="margin-bottom:0;border:none;padding:0">Topic Submissions</h3>
+            <a href="topic-registration.html" class="btn btn-outline btn-sm">Open Full Page</a>
+          </div>
+          <div id="topicsList">
+            <div style="text-align:center;padding:48px"><div class="spinner" style="margin:0 auto"></div></div>
+          </div>
+        </div>
+
+        <!-- Topic Submit Modal -->
+        <div class="modal-overlay" id="topicModal">
+          <div class="modal">
+            <button class="modal-close" onclick="QAF.modal.close('topicModal')">✕</button>
+            <h3 class="modal-title" id="topicModalTitle">Submit Topic</h3>
+            <div class="modal-body">
+              <form id="topicForm">
+                <input type="hidden" id="topicProgramId">
+                <input type="hidden" id="topicEditId">
+                <div class="form-group"><label class="form-label">Topic Title <span class="required">*</span></label><input class="form-input" id="topicTitle" required placeholder="Enter your topic title"></div>
+                <div class="form-group"><label class="form-label">Description</label><textarea class="form-textarea" id="topicDesc" rows="3" placeholder="Describe your topic..."></textarea></div>
+                <div class="form-group"><label class="form-label">Student <span class="required">*</span></label><select class="form-select" id="topicStudent" required><option value="">Select student</option></select></div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-ghost" onclick="QAF.modal.close('topicModal')">Cancel</button>
+              <button class="btn btn-primary" id="submitTopicBtn" onclick="submitTopic()">Submit Topic</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile -->
+        <div id="tab-profile">
+          <h3 class="section-title">Institution Profile</h3>
+          <div class="card profile-form">
+            <form id="profileForm" onsubmit="return false">
+              <div class="form-group"><label class="form-label">Institution Name</label><input class="form-input" id="profCollege" readonly style="color:var(--clr-ink-muted);border-bottom-color:transparent"></div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+                <div class="form-group"><label class="form-label">Place</label><input class="form-input" id="profPlace"></div>
+                <div class="form-group"><label class="form-label">District</label><input class="form-input" id="profDistrict"></div>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+                <div class="form-group"><label class="form-label">Phone</label><input class="form-input" id="profPhone"></div>
+                <div class="form-group"><label class="form-label">WhatsApp</label><input class="form-input" id="profWhatsapp"></div>
+              </div>
+              <div class="form-group"><label class="form-label">Team Leader</label><input class="form-input" id="profLeader"></div>
+              <button class="btn btn-primary mt-4" onclick="saveProfile()">Save Changes</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Notifications -->
+        <div id="tab-notifications">
+          <h3 class="section-title">Notifications</h3>
+          <div class="notif-list card" id="notifList">
+            <p style="padding:40px;text-align:center;color:var(--clr-ink-muted);font-size:0.8rem;letter-spacing:0.05em">No notifications found.</p>
+          </div>
+        </div>
+
+        <!-- Points -->
+        <div id="tab-points">
+          <h3 class="section-title">Points & Rankings</h3>
+          <div class="dash-stats">
+            <div class="dash-stat"><div class="dash-stat-value" id="totalPoints">0</div><div class="dash-stat-label">Total Points</div></div>
+            <div class="dash-stat"><div class="dash-stat-value" id="teamRank">—</div><div class="dash-stat-label">Overall Rank</div></div>
+          </div>
+          <div class="card">
+            <h4 style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:400;margin-bottom:24px;color:var(--clr-ink);border-bottom:1px solid rgba(184,150,62,0.15);padding-bottom:16px">Program-wise Points</h4>
+            <div id="programPoints">
+              <p style="text-align:center;color:var(--clr-ink-muted);font-size:0.8rem;padding:32px 0;letter-spacing:0.05em">Results have not been published yet.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Student Modal -->
+  <div class="modal-overlay" id="addStudentModal">
+    <div class="modal">
+      <button class="modal-close" onclick="QAF.modal.close('addStudentModal')">✕</button>
+      <h3 class="modal-title">Register Student</h3>
+      <div class="modal-body">
+        <form id="studentForm">
+          <div class="form-group"><label class="form-label">Student Name <span class="required">*</span></label><input class="form-input" id="stuName" required></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+            <div class="form-group"><label class="form-label">Age <span class="required">*</span></label><input class="form-input" type="number" id="stuAge" min="5" max="30" required></div>
+            <div class="form-group"><label class="form-label">Gender <span class="required">*</span></label><select class="form-select" id="stuGender" required><option value="">Select</option><option>Male</option><option>Female</option></select></div>
+          </div>
+          <div class="form-group"><label class="form-label">Program <span class="required">*</span></label><select class="form-select" id="stuProgram" required><option value="">Select Program</option></select></div>
+          <div class="form-group"><label class="form-label">School/College</label><input class="form-input" id="stuSchool"></div>
+          <div class="form-group"><label class="form-label">Guardian Phone</label><input class="form-input" id="stuGuardian" type="tel"></div>
+          <div class="form-group">
+            <label class="form-label">Photo</label>
+            <div class="form-file">
+              <input type="file" id="stuPhoto" accept="image/*">
+              <div class="form-file-icon">📷</div>
+              <div class="form-file-text">Upload student photo (optional)</div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="QAF.modal.close('addStudentModal')">Cancel</button>
+        <button class="btn btn-primary" id="addStudentBtn" onclick="addStudent()">Register Student</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Bottom Nav -->
+  <nav class="mobile-bottom-nav">
+    <div class="mobile-bottom-nav-inner">
+      <a class="mobile-nav-item active" onclick="showTab('overview')"><span class="mobile-nav-icon">✧</span>Home</a>
+      <a class="mobile-nav-item" onclick="showTab('programs')"><span class="mobile-nav-icon">✧</span>Programs</a>
+      <a class="mobile-nav-item" onclick="showTab('students')"><span class="mobile-nav-icon">✧</span>Students</a>
+      <a class="mobile-nav-item" onclick="showTab('notifications')"><span class="mobile-nav-icon">✧</span>Alerts</a>
+      <a class="mobile-nav-item" onclick="showTab('profile')"><span class="mobile-nav-icon">✧</span>Profile</a>
+    </div>
+  </nav>
+
+  <div class="toast-container" id="toast-container"></div>
+  
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="../config/firebase.js"></script>
+  <script src="../config/imagekit.js"></script>
+  <script src="../js/utils/helpers.js"></script>
+  <script src="../js/services/database.js"></script>
+  <script src="../js/services/auth.js"></script>
+  <script>
+    let currentTeam = null;
+    let teamId = null;
+
+    function showTab(name) {
+      document.querySelectorAll('.tab-views > div').forEach(d => d.classList.remove('active'));
+      document.getElementById('tab-' + name)?.classList.add('active');
+      document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+      event?.target?.closest('.sidebar-link')?.classList.add('active');
+      document.querySelectorAll('.mobile-nav-item').forEach(m => m.classList.remove('active'));
+      event?.target?.closest('.mobile-nav-item')?.classList.add('active');
+      const titles = {overview:'Overview',programs:'Programs',students:'Students',topics:'Topics',profile:'Profile',notifications:'Notifications',points:'Points'};
+      document.getElementById('pageTitle').textContent = titles[name] || name;
+      if (name === 'topics' && teamId) loadTopics();
+      document.querySelector('.sidebar')?.classList.remove('open');
+      document.querySelector('.sidebar-overlay')?.classList.remove('active');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (typeof auth === 'undefined' || typeof db === 'undefined') {
+        document.querySelector('.dashboard-body').innerHTML = '<div class="empty-state"><div class="empty-state-icon">⚠️</div><div class="empty-state-title">Connection Error</div><div class="empty-state-text">Could not connect to Firebase. Please refresh.</div></div>';
+        return;
+      }
+      auth.onAuthStateChanged(async (user) => {
+        if (!user) { window.location.href = 'team-login.html'; return; }
+        try {
+          const snap = await db.ref('users/' + user.uid).once('value');
+          const userData = snap.val();
+          if (!userData || userData.role !== 'team') { window.location.href = 'team-login.html'; return; }
+          teamId = userData.teamId;
+          currentTeam = await DbService.teams.get(teamId);
+          if (!currentTeam) { window.location.href = 'team-login.html'; return; }
+          initDashboard();
+        } catch (e) {
+          console.error('Dashboard init error:', e);
+          QAF.toast.error('Error', 'Failed to load dashboard data');
+        }
+      });
+    });
+
+    async function initDashboard() {
+      const initials = (currentTeam.collegeName || 'T').substring(0,1).toUpperCase();
+      document.getElementById('sidebarAvatar').textContent = initials;
+      document.getElementById('sidebarName').textContent = currentTeam.collegeName || 'Team';
+      document.getElementById('sidebarTeamId').textContent = 'ID: ' + teamId;
+      
+      document.getElementById('profCollege').value = currentTeam.collegeName || '';
+      document.getElementById('profPlace').value = currentTeam.place || '';
+      document.getElementById('profDistrict').value = currentTeam.district || '';
+      document.getElementById('profPhone').value = currentTeam.phone || '';
+      document.getElementById('profWhatsapp').value = currentTeam.whatsapp || '';
+      document.getElementById('profLeader').value = currentTeam.leaderName || '';
+      
+      document.getElementById('statPoints').textContent = currentTeam.points || 0;
+      document.getElementById('totalPoints').textContent = currentTeam.points || 0;
+      
+      loadPrograms();
+      loadStudents();
+      loadTopics();
+      loadNotifications();
+    }
+
+    async function loadPrograms() {
+      const programs = await DbService.programs.getAll();
+      const grid = document.getElementById('programsGrid');
+      const select = document.getElementById('stuProgram');
+      const arr = Object.values(programs);
+      
+      if (!arr.length) { 
+        grid.innerHTML = '<div class="empty-state" style="grid-column: 1/-1"><div class="empty-state-icon">✧</div><div class="empty-state-title">No Programs Yet</div></div>'; 
+        return; 
+      }
+      
+      document.getElementById('statPrograms').textContent = arr.length;
+      select.innerHTML = '<option value="">Select Program</option>' + arr.map(p => `<option value="${p.id}">${p.title}</option>`).join('');
+      
+      grid.innerHTML = arr.map(p => `
+        <div class="program-card">
+          <div class="program-card-header">
+            <h4>${QAF.sanitize(p.title)}</h4>
+            <span class="badge badge-${p.topicRequired?'warning':'success'}">${p.topicRequired?'Topic Req.':'Open'}</span>
+          </div>
+          <div class="program-meta">
+            <span>${p.category||'General'}</span>
+            <span>Max: ${p.participantLimit||'∞'}</span>
+            ${p.ageLimit?`<span>Age: ≤${p.ageLimit}</span>`:''}
+          </div>
+          <p style="font-size:0.8rem;color:var(--clr-ink-muted);line-height:1.6;margin:0">${QAF.sanitize(p.description||'')}</p>
+        </div>
+      `).join('');
+    }
+
+    async function loadStudents() {
+      const students = await DbService.students.getByTeam(teamId);
+      const arr = Object.values(students);
+      document.getElementById('statStudents').textContent = arr.length;
+      const tbody = document.getElementById('studentsBody');
+      
+      if (!arr.length) { 
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center" style="padding:48px 24px;color:var(--clr-ink-muted)">No students registered. <a href="#" onclick="QAF.modal.open(\'addStudentModal\')" style="color:var(--clr-gold);text-decoration:underline">Register one.</a></td></tr>'; 
+        return; 
+      }
+      
+      tbody.innerHTML = arr.map(s => `
+        <tr>
+          <td style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--clr-ink)">${QAF.sanitize(s.name)}</td>
+          <td>${s.programName||s.programId||'—'}</td>
+          <td>${s.age||'—'}</td>
+          <td>${s.gender||'—'}</td>
+          <td><span class="badge badge-success">Active</span></td>
+          <td><button class="btn btn-ghost btn-sm" onclick="deleteStudent('${s.id}')" style="padding:4px">Remove</button></td>
+        </tr>
+      `).join('');
+    }
+
+    async function addStudent() {
+      const name = document.getElementById('stuName').value.trim();
+      const age = document.getElementById('stuAge').value;
+      const gender = document.getElementById('stuGender').value;
+      const programId = document.getElementById('stuProgram').value;
+      
+      if (!name || !age || !gender || !programId) { 
+        QAF.toast.error('Error', 'Fill required fields'); 
+        return; 
+      }
+      
+      const btn = document.getElementById('addStudentBtn');
+      btn.disabled = true; btn.textContent = 'Saving...';
+      
+      try {
+        const program = await DbService.programs.get(programId);
+        await DbService.students.create(teamId, {
+          name: QAF.sanitize(name), age: parseInt(age), gender,
+          programId, programName: program?.title || '',
+          school: document.getElementById('stuSchool').value.trim(),
+          guardianPhone: document.getElementById('stuGuardian').value.trim()
+        });
+        QAF.toast.success('Success', 'Student registered!');
+        QAF.modal.close('addStudentModal');
+        document.getElementById('studentForm').reset();
+        loadStudents();
+        loadTopics();
+      } catch (e) { 
+        QAF.toast.error('Error', e.message); 
+      } finally { 
+        btn.disabled = false; btn.textContent = 'Register Student'; 
+      }
+    }
+
+    async function deleteStudent(id) {
+      if (!confirm('Remove this student?')) return;
+      await DbService.students.remove(id);
+      QAF.toast.success('Removed', 'Student removed');
+      loadStudents();
+    }
+
+    let allPrograms = {};
+    let teamStudentsList = [];
+
+    async function loadTopics() {
+      if (!Object.keys(allPrograms).length) {
+        allPrograms = await DbService.programs.getAll();
+      }
+      const stuSnap = await DbService.students.getByTeam(teamId);
+      teamStudentsList = Object.values(stuSnap);
+
+      const topics = await DbService.topics.getByTeam(teamId);
+      const arr = Object.values(topics);
+      document.getElementById('statTopics').textContent = arr.length;
+
+      const topicProgs = Object.values(allPrograms).filter(p => p.topicRequired);
+      const subMap = {};
+      arr.forEach(s => { subMap[s.programId] = s; });
+
+      const container = document.getElementById('topicsList');
+
+      if (!topicProgs.length) {
+        container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">✧</div><div class="empty-state-title">No Topic Programs</div><div class="empty-state-text">No programs require topic submission right now</div></div>';
+        return;
+      }
+
+      container.innerHTML = topicProgs.map(p => {
+        const sub = subMap[p.id];
+        const eligible = teamStudentsList.filter(s => s.programId === p.id);
+
+        let statusHTML = '';
+        if (sub) {
+          const icon = sub.status === 'approved' ? '✅' : sub.status === 'rejected' ? '❌' : '⏳';
+          const label = sub.status === 'approved' ? 'Approved' : sub.status === 'rejected' ? 'Rejected' : 'Pending Review';
+          const badgeClass = sub.status === 'approved' ? 'success' : sub.status === 'rejected' ? 'error' : 'warning';
+          const student = teamStudentsList.find(s => s.id === sub.studentId);
+          
+          statusHTML = `
+            <div style="margin-top:20px;padding-top:20px;border-top:1px solid rgba(184,150,62,0.1)">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+                <span class="badge badge-${badgeClass}">${icon} ${label}</span>
+                ${sub.status !== 'approved' ? `<button class="btn btn-ghost btn-sm" onclick="openEditTopic('${p.id}','${sub.id}')">Edit</button>` : ''}
+              </div>
+              <div style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--clr-ink);margin-bottom:4px">${QAF.sanitize(sub.title)}</div>
+              ${student ? `<div style="font-size:0.75rem;color:var(--clr-ink-muted)">Student: ${QAF.sanitize(student.name)}</div>` : ''}
+              ${sub.adminComment ? `<div style="font-size:0.7rem;color:var(--clr-info);margin-top:12px;padding:12px;background:rgba(90,127,160,0.05);border:1px solid rgba(90,127,160,0.15)">💬 ${QAF.sanitize(sub.adminComment)}</div>` : ''}
+            </div>`;
+        } else if (eligible.length) {
+          statusHTML = `<button class="btn btn-primary btn-sm mt-4" style="width:100%" onclick="openTopicModal('${p.id}','${QAF.sanitize(p.title).replace(/'/g,"\\'")}')">Submit Topic</button>`;
+        } else {
+          statusHTML = `<div style="margin-top:16px;font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--clr-gold)">⚠️ Register a student first</div>`;
+        }
+
+        return `<div class="card" style="margin-bottom:24px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+            <h4 style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--clr-ink);margin:0">${QAF.sanitize(p.title)} <span class="badge badge-gold" style="margin-left:8px;font-size:8px">${p.category || 'General'}</span></h4>
+            <span style="font-family:'Tenor Sans',sans-serif;font-size:0.55rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--clr-ink-muted)">${eligible.length} student${eligible.length !== 1 ? 's' : ''}</span>
+          </div>
+          <p style="font-size:0.8rem;color:var(--clr-ink-muted);margin:0">${QAF.sanitize(p.description || 'Topic registration required')}</p>
+          ${statusHTML}
+        </div>`;
+      }).join('');
+    }
+
+    function openTopicModal(programId, title) {
+      const eligible = teamStudentsList.filter(s => s.programId === programId);
+      document.getElementById('topicProgramId').value = programId;
+      document.getElementById('topicEditId').value = '';
+      document.getElementById('topicModalTitle').textContent = 'Submit Topic – ' + title;
+      document.getElementById('topicForm').reset();
+      document.getElementById('topicStudent').innerHTML = '<option value="">Select student</option>' +
+        eligible.map(s => `<option value="${s.id}">${QAF.sanitize(s.name)}</option>`).join('');
+      QAF.modal.open('topicModal');
+    }
+
+    async function openEditTopic(programId, subId) {
+      const topics = await DbService.topics.getByTeam(teamId);
+      const topic = Object.values(topics).find(t => t.id === subId);
+      if (!topic) return;
+      const eligible = teamStudentsList.filter(s => s.programId === programId);
+      const program = allPrograms[programId] || {};
+      document.getElementById('topicProgramId').value = programId;
+      document.getElementById('topicEditId').value = subId;
+      document.getElementById('topicModalTitle').textContent = 'Edit Topic – ' + (program.title || '');
+      document.getElementById('topicTitle').value = topic.title || '';
+      document.getElementById('topicDesc').value = topic.description || '';
+      document.getElementById('topicStudent').innerHTML = '<option value="">Select student</option>' +
+        eligible.map(s => `<option value="${s.id}" ${s.id === topic.studentId ? 'selected' : ''}>${QAF.sanitize(s.name)}</option>`).join('');
+      QAF.modal.open('topicModal');
+    }
+
+    async function submitTopic() {
+      const title = document.getElementById('topicTitle').value.trim();
+      const studentId = document.getElementById('topicStudent').value;
+      const programId = document.getElementById('topicProgramId').value;
+      
+      if (!title) { QAF.toast.error('Error', 'Topic title is required'); return; }
+      if (!studentId) { QAF.toast.error('Error', 'Please select a student'); return; }
+
+      const btn = document.getElementById('submitTopicBtn');
+      btn.disabled = true; btn.textContent = 'Submitting...';
+      
+      try {
+        const editId = document.getElementById('topicEditId').value;
+        const student = teamStudentsList.find(s => s.id === studentId);
+        const program = allPrograms[programId];
+        const data = {
+          title: QAF.sanitize(title),
+          description: QAF.sanitize(document.getElementById('topicDesc').value.trim()),
+          studentId, studentName: student?.name || '',
+          programId, programName: program?.title || '',
+          teamId, status: 'pending', updatedAt: Date.now()
+        };
+        
+        if (editId) { await DbService.topics.update(editId, data); QAF.toast.success('Updated', 'Topic resubmitted for review'); }
+        else { await DbService.topics.create(data); QAF.toast.success('Submitted', 'Topic submitted for review'); }
+        
+        QAF.modal.close('topicModal');
+        loadTopics();
+      } catch (e) { 
+        QAF.toast.error('Error', e.message); 
+      } finally { 
+        btn.disabled = false; btn.textContent = 'Submit Topic'; 
+      }
+    }
+
+    async function loadNotifications() {
+      const notifs = await DbService.notifications.getByTeam(teamId);
+      const unread = notifs.filter(n => !n.read).length;
+      document.getElementById('notifCount').textContent = unread;
+      
+      if (notifs.length) {
+        const notifHtml = notifs.slice(0, 5).map(n =>
+          `<div class="notif-item ${n.read?'read':'unread'}"><div class="notif-dot"></div><div><div style="margin-bottom:4px">${QAF.sanitize(n.text||n.message||'')}</div><small style="font-family:'Tenor Sans';font-size:0.55rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--clr-gold)">${QAF.formatDate(n.createdAt)}</small></div></div>`
+        ).join('');
+        
+        document.getElementById('recentNotifs').innerHTML = notifHtml;
+        document.getElementById('notifList').innerHTML = notifs.map(n =>
+          `<div class="notif-item ${n.read?'read':'unread'}"><div class="notif-dot"></div><div><div style="margin-bottom:4px">${QAF.sanitize(n.text||n.message||'')}</div><small style="font-family:'Tenor Sans';font-size:0.55rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--clr-gold)">${QAF.formatDate(n.createdAt)}</small></div></div>`
+        ).join('');
+      }
+    }
+
+    async function saveProfile() {
+      try {
+        await DbService.teams.update(teamId, {
+          place: document.getElementById('profPlace').value.trim(),
+          district: document.getElementById('profDistrict').value.trim(),
+          phone: document.getElementById('profPhone').value.trim(),
+          whatsapp: document.getElementById('profWhatsapp').value.trim(),
+          leaderName: document.getElementById('profLeader').value.trim()
+        });
+        QAF.toast.success('Saved', 'Profile updated successfully');
+      } catch (e) { 
+        QAF.toast.error('Error', e.message); 
+      }
+    }
+
+    function handleLogout() {
+      if (typeof auth !== 'undefined') {
+        auth.signOut().then(() => window.location.href = 'team-login.html');
+      } else {
+        window.location.href = 'team-login.html';
+      }
+    }
+  </script>
+</body>
+</html>

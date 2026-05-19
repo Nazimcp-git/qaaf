@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login – QAF</title>
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/animations.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <style>
+    .admin-login-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--clr-ink);
+      position: relative;
+      overflow: hidden;
+      padding: 20px;
+    }
+    .admin-login-page::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
+      pointer-events: none;
+    }
+    .admin-login-card {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 440px;
+    }
+    .admin-login-card .card {
+      padding: clamp(32px, 5vw, 48px);
+      background: rgba(26, 24, 20, 0.6);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(184, 150, 62, 0.2);
+    }
+    .admin-login-card h1 {
+      color: var(--clr-gold-light);
+      font-size: clamp(28px, 4vw, 36px);
+      text-align: center;
+      margin-bottom: 8px;
+    }
+    .admin-login-card .subtitle {
+      font-family: 'Tenor Sans', sans-serif;
+      text-align: center;
+      color: rgba(247, 243, 238, 0.5);
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      margin-bottom: 40px;
+    }
+    .admin-login-card .form-label {
+      color: var(--clr-gold);
+    }
+    .admin-login-card .form-input {
+      color: var(--clr-cream);
+      border-bottom-color: rgba(184, 150, 62, 0.4);
+    }
+    .admin-login-card .form-input:focus {
+      border-bottom-color: var(--clr-gold-light);
+    }
+    .admin-login-card .form-input::placeholder {
+      color: rgba(247, 243, 238, 0.3);
+    }
+    .admin-shield {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 16px;
+      color: var(--clr-gold);
+    }
+    
+    /* Override button for dark theme */
+    .admin-login-card .btn-gold {
+      background: transparent;
+      border: 1px solid var(--clr-gold);
+      color: var(--clr-gold);
+    }
+    .admin-login-card .btn-gold:hover {
+      background: var(--clr-gold);
+      color: var(--clr-ink);
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-login-page">
+    <div class="admin-login-card page-enter">
+      <div class="card">
+        <div class="admin-shield">✧</div>
+        <h1>Admin Portal</h1>
+        <p class="subtitle">Management Console</p>
+        
+        <form id="adminLoginForm" onsubmit="return false">
+          <div class="form-group">
+            <label class="form-label">Admin Email</label>
+            <input class="form-input" type="email" id="adminEmail" placeholder="admin@qaf.org" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input class="form-input" type="password" id="adminPassword" placeholder="••••••••" required>
+          </div>
+          <button type="submit" class="btn btn-gold btn-block btn-lg mt-6" id="adminLoginBtn" onclick="handleAdminLogin()">
+            Authenticate
+          </button>
+        </form>
+        
+        <div style="text-align:center;margin-top:32px;padding-top:24px;border-top:1px solid rgba(184,150,62,0.15)">
+          <p style="font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase">
+            <a href="team-login.html" style="color:rgba(247,243,238,0.5);transition:color 0.3s">← Team Login</a>
+            <span style="color:rgba(184,150,62,0.3);margin:0 12px">|</span>
+            <a href="../index.html" style="color:rgba(247,243,238,0.5);transition:color 0.3s">Home</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="toast-container" id="toast-container"></div>
+  
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="../config/firebase.js"></script>
+  <script src="../js/utils/helpers.js"></script>
+  <script src="../js/services/database.js"></script>
+  <script src="../js/services/auth.js"></script>
+  <script>
+    auth.onAuthStateChanged(async(u)=>{
+      if(u){
+        const s=await db.ref('users/'+u.uid).once('value');
+        if(s.val()&&s.val().role==='admin')window.location.href='admin-dashboard.html';
+      }
+    });
+    
+    async function handleAdminLogin(){
+      const email=document.getElementById('adminEmail').value.trim();
+      const pwd=document.getElementById('adminPassword').value;
+      
+      if(!email||!pwd){QAF.toast.error('Error','Fill all fields');return;}
+      
+      const btn=document.getElementById('adminLoginBtn');
+      btn.disabled=true;
+      btn.innerHTML='<span class="spinner spinner-sm"></span> Verifying...';
+      
+      try{
+        await AuthService.loginAdmin(email,pwd);
+        QAF.toast.success('Welcome Admin','Redirecting...');
+        setTimeout(()=>window.location.href='admin-dashboard.html',1000);
+      }catch(e){
+        QAF.toast.error('Access Denied',e.message||'Invalid credentials');
+      }finally{
+        btn.disabled=false;
+        btn.innerHTML='Authenticate';
+      }
+    }
+  </script>
+</body>
+</html>

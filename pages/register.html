@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register – QAF Quranic Art Fest</title>
+  <meta name="description" content="Register your institution for the Quranic Art Fest 2026.">
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/animations.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <style>
+    .register-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(40px, 8vw, 80px) 20px;
+      position: relative;
+    }
+    .register-container {
+      width: 100%;
+      max-width: 600px;
+      position: relative;
+      z-index: 2;
+    }
+    .register-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .register-header h1 {
+      margin-bottom: 8px;
+    }
+    .register-header p {
+      margin-bottom: 0;
+    }
+    .register-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--clr-ink-muted);
+      font-family: 'Tenor Sans', sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      margin-bottom: 32px;
+      transition: color 0.3s ease;
+    }
+    .register-back:hover {
+      color: var(--clr-gold);
+    }
+    .register-divider {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 40px 0 24px;
+      font-family: 'Tenor Sans', sans-serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--clr-gold);
+    }
+    .register-divider::before, .register-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, transparent, rgba(184,150,62,0.3), transparent);
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    @media(max-width: 520px) {
+      .form-row { grid-template-columns: 1fr; gap: 0; }
+    }
+    .password-strength {
+      height: 2px;
+      background: rgba(184,150,62,0.1);
+      margin-top: 8px;
+      overflow: hidden;
+    }
+    .password-strength-bar {
+      height: 100%;
+      transition: all 0.3s ease;
+      width: 0;
+    }
+    .strength-weak { background: var(--clr-error); width: 33%; }
+    .strength-medium { background: var(--clr-gold); width: 66%; }
+    .strength-strong { background: var(--clr-success); width: 100%; }
+    .logo-preview {
+      width: 80px;
+      height: 80px;
+      border: 1px solid rgba(184,150,62,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      margin-top: 12px;
+      font-size: 1.5rem;
+      color: var(--clr-gold);
+      background: rgba(247,243,238,0.5);
+    }
+    .logo-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  </style>
+</head>
+<body>
+  <div class="register-page">
+    <div class="register-container page-enter">
+      <a href="../index.html" class="register-back">← Back to Home</a>
+      <div class="register-header">
+        <h1>Institution Registration</h1>
+        <div class="ornament"><span class="ornament-icon"></span></div>
+        <p>Register your college or institution to participate in QAF 2026</p>
+      </div>
+      <div class="card">
+        <form id="registerForm" onsubmit="return false">
+          <div class="form-group">
+            <label class="form-label">Institution Name <span class="required">*</span></label>
+            <input class="form-input" type="text" id="collegeName" data-validate="required" placeholder="Enter full institution name" required>
+            <div class="form-error">Institution name is required</div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Place <span class="required">*</span></label>
+              <input class="form-input" type="text" id="place" data-validate="required" placeholder="City/Town" required>
+              <div class="form-error">Place is required</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">District <span class="required">*</span></label>
+              <input class="form-input" type="text" id="district" data-validate="required" placeholder="District" required>
+              <div class="form-error">District is required</div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Phone Number <span class="required">*</span></label>
+              <input class="form-input" type="tel" id="phone" data-validate="required|phone" placeholder="+91 XXXXX XXXXX" required>
+              <div class="form-error">Valid phone number required</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">WhatsApp Number</label>
+              <input class="form-input" type="tel" id="whatsapp" placeholder="+91 XXXXX XXXXX">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email Address <span class="required">*</span></label>
+            <input class="form-input" type="email" id="email" data-validate="required|email" placeholder="institution@email.com" required>
+            <div class="form-error">Valid email is required</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Team Leader Name <span class="required">*</span></label>
+            <input class="form-input" type="text" id="leaderName" data-validate="required" placeholder="Team leader's full name" required>
+            <div class="form-error">Team leader name is required</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Institution Logo</label>
+            <div class="form-file">
+              <input type="file" id="teamLogo" accept="image/*" onchange="previewLogo(this)">
+              <div class="form-file-icon">🖼️</div>
+              <div class="form-file-text">Click or drag to upload your institution logo</div>
+            </div>
+            <div class="logo-preview" id="logoPreview">📷</div>
+          </div>
+
+          <div class="register-divider">Account Credentials</div>
+
+          <div class="form-group">
+            <label class="form-label">Password (never forget the password) <span class="required">*</span></label>
+            <input class="form-input" type="password" id="password" data-validate="required|min:6" placeholder="Minimum 6 characters" required oninput="checkStrength(this.value)">
+            <div class="password-strength"><div class="password-strength-bar" id="strengthBar"></div></div>
+            <div class="form-error">Password must be at least 6 characters. (never forgot the password)</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Confirm Password <span class="required">*</span></label>
+            <input class="form-input" type="password" id="confirmPassword" data-validate="required" placeholder="Re-enter password" required>
+            <div class="form-error">Passwords must match</div>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block btn-lg mt-6" id="submitBtn" onclick="handleRegister()">
+            Register Institution
+          </button>
+          
+          <p style="text-align:center;margin-top:32px;font-size:0.75rem;letter-spacing:0.05em">
+            Already registered? <a href="team-login.html" style="color:var(--clr-gold);border-bottom:1px solid var(--clr-gold);padding-bottom:1px">Login here</a>
+          </p>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success Modal -->
+  <div class="modal-overlay" id="successModal">
+    <div class="modal" style="text-align:center">
+      <div style="font-size:3rem;margin-bottom:20px;color:var(--clr-gold)">✧</div>
+      <h3 class="modal-title">Registration Successful</h3>
+      <div class="modal-body">
+        <p style="margin-bottom:24px">Your institution has been registered successfully for the Quranic Art Fest.</p>
+        <div style="text-align:left;padding:24px;background:rgba(184,150,62,0.05);border:1px solid rgba(184,150,62,0.15)">
+          <p style="margin-bottom:12px;font-family:'Tenor Sans',sans-serif;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--clr-ink-muted)"><strong>Team ID:</strong> <span id="generatedTeamId" style="color:var(--clr-ink);font-family:'Cormorant Garamond',serif;font-size:1.2rem;letter-spacing:0.02em;text-transform:none"></span></p>
+          <p style="margin-bottom:0;font-family:'Tenor Sans',sans-serif;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--clr-ink-muted)"><strong>Email:</strong> <span id="registeredEmail" style="color:var(--clr-ink);letter-spacing:0.05em;text-transform:none"></span></p>
+        </div>
+        <p style="font-size:0.7rem;margin-top:20px;color:var(--clr-gold);letter-spacing:0.05em">Please save your Team ID for future reference. (never forget the email and password)</p>
+      </div>
+      <div class="modal-footer" style="justify-content:center;border:none">
+        <a href="team-login.html" class="btn btn-primary">Go to Login</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toast-container"></div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="../config/firebase.js"></script>
+  <script src="../config/imagekit.js"></script>
+  <script src="../js/utils/helpers.js"></script>
+  <script src="../js/services/database.js"></script>
+  <script src="../js/services/auth.js"></script>
+  <script>
+    function previewLogo(input) {
+      const preview = document.getElementById('logoPreview');
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = (e) => { preview.innerHTML = `<img src="${e.target.result}" alt="Logo">`; };
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    function checkStrength(pwd) {
+      const bar = document.getElementById('strengthBar');
+      bar.className = 'password-strength-bar';
+      if (pwd.length >= 8 && /[A-Z]/.test(pwd) && /\d/.test(pwd)) bar.classList.add('strength-strong');
+      else if (pwd.length >= 6) bar.classList.add('strength-medium');
+      else if (pwd.length > 0) bar.classList.add('strength-weak');
+    }
+
+    async function handleRegister() {
+      const form = document.getElementById('registerForm');
+      if (!QAF.validate.form(form)) {
+        QAF.toast.error('Validation Error', 'Please fill all required fields correctly');
+        return;
+      }
+
+      const pwd = document.getElementById('password').value;
+      const confirm = document.getElementById('confirmPassword').value;
+      if (pwd !== confirm) {
+        QAF.toast.error('Error', 'Passwords do not match');
+        return;
+      }
+
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner spinner-sm"></span> Submitting...';
+
+      try {
+        const email = document.getElementById('email').value.trim();
+        const teamData = {
+          collegeName: QAF.sanitize(document.getElementById('collegeName').value.trim()),
+          place: QAF.sanitize(document.getElementById('place').value.trim()),
+          district: QAF.sanitize(document.getElementById('district').value.trim()),
+          phone: document.getElementById('phone').value.trim(),
+          whatsapp: document.getElementById('whatsapp').value.trim(),
+          leaderName: QAF.sanitize(document.getElementById('leaderName').value.trim()),
+          logo: ''
+        };
+
+        // Upload logo if present
+        const logoFile = document.getElementById('teamLogo').files[0];
+        if (logoFile) {
+          try {
+            const result = await ImageKitService.uploadToImageKit(logoFile, '/qaf/logos');
+            teamData.logo = result.url;
+          } catch (e) { console.warn('Logo upload skipped:', e); }
+        }
+
+        const result = await AuthService.registerTeam(email, pwd, teamData);
+
+        document.getElementById('generatedTeamId').textContent = result.teamId;
+        document.getElementById('registeredEmail').textContent = email;
+        QAF.modal.open('successModal');
+      } catch (error) {
+        console.error('Registration error:', error.code, error.message);
+        let msg = 'Registration failed. Please try again.';
+        if (error.code === 'auth/email-already-in-use') msg = 'This email is already registered.';
+        if (error.code === 'auth/weak-password') msg = 'Password is too weak (min 6 characters).';
+        if (error.code === 'auth/operation-not-allowed') msg = 'Email/Password sign-in is NOT enabled. Go to Firebase Console → Authentication → Sign-in method → Enable Email/Password.';
+        if (error.code === 'auth/invalid-email') msg = 'Invalid email address format.';
+        if (error.code === 'auth/admin-restricted-operation') msg = 'Email/Password sign-in is NOT enabled in Firebase Console.';
+        QAF.toast.error('Registration Failed', msg);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = 'Register Institution';
+      }
+    }
+  </script>
+</body>
+</html>

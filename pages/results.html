@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Results – QAF Quranic Art Fest</title>
+  <meta name="description" content="Live results, scoreboard, and championship standings for the Quranic Art Fest">
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/animations.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <style>
+    .results-hero{background:linear-gradient(135deg,var(--clr-forest-deep),var(--clr-forest));padding:calc(var(--nav-height) + var(--sp-12)) 0 var(--sp-12);text-align:center;position:relative;overflow:hidden}
+    .results-hero::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23c9a84c' stroke-width='0.4' opacity='0.08'%3E%3Cpath d='M40 0L80 40L40 80L0 40Z'/%3E%3C/g%3E%3C/svg%3E")}
+    .results-hero h1{color:var(--clr-gold-light);position:relative;z-index:1;font-size:var(--fs-3xl)}
+    .results-hero p{color:rgba(245,240,225,0.6);position:relative;z-index:1}
+
+    /* Section Nav */
+    .section-nav{display:flex;gap:var(--sp-2);justify-content:center;flex-wrap:wrap;margin-bottom:var(--sp-8);position:relative;z-index:1}
+    .section-nav-btn{padding:var(--sp-2) var(--sp-5);border-radius:var(--radius-2xl);font-size:var(--fs-sm);font-weight:var(--fw-semibold);cursor:pointer;border:1px solid var(--clr-parchment);background:var(--clr-ivory);color:var(--clr-brown);transition:all var(--duration-fast)}
+    .section-nav-btn:hover{border-color:var(--clr-gold)}
+    .section-nav-btn.active{background:var(--clr-forest);color:var(--clr-gold-light);border-color:var(--clr-forest)}
+
+    /* Championship Podium */
+    .podium{display:flex;align-items:flex-end;justify-content:center;gap:var(--sp-4);margin-bottom:var(--sp-8);min-height:300px}
+    .podium-place{text-align:center;border-radius:var(--radius-lg) var(--radius-lg) 0 0;padding:var(--sp-5) var(--sp-6);position:relative;min-width:160px;transition:all var(--duration-base)}
+    .podium-place.first{background:linear-gradient(180deg,rgba(255,215,0,0.15),rgba(255,215,0,0.05));border:1px solid rgba(255,215,0,0.3);border-bottom:4px solid #FFD700;min-height:220px;order:2}
+    .podium-place.second{background:linear-gradient(180deg,rgba(192,192,192,0.1),rgba(192,192,192,0.03));border:1px solid rgba(192,192,192,0.2);border-bottom:4px solid #C0C0C0;min-height:180px;order:1}
+    .podium-place.third{background:linear-gradient(180deg,rgba(205,127,50,0.1),rgba(205,127,50,0.03));border:1px solid rgba(205,127,50,0.2);border-bottom:4px solid #CD7F32;min-height:150px;order:3}
+    .podium-medal{font-size:2.5rem;margin-bottom:var(--sp-2)}
+    .podium-rank{font-size:var(--fs-xs);color:var(--clr-brown-light);text-transform:uppercase;letter-spacing:1px}
+    .podium-name{font-family:var(--ff-heading);font-size:var(--fs-lg);color:var(--clr-forest);margin:var(--sp-2) 0}
+    .podium-points{font-size:var(--fs-2xl);font-weight:var(--fw-bold);color:var(--clr-gold)}
+    .podium-pts-label{font-size:var(--fs-xs);color:var(--clr-brown-light)}
+    @media(max-width:640px){.podium{flex-direction:column;align-items:stretch}.podium-place{min-height:auto!important;order:unset!important;display:flex;align-items:center;gap:var(--sp-4);border-radius:var(--radius-lg);border-bottom:none;border-left:4px solid}.podium-place.first{border-left-color:#FFD700}.podium-place.second{border-left-color:#C0C0C0}.podium-place.third{border-left-color:#CD7F32}.podium-medal{font-size:1.8rem;margin:0}.podium-name{font-size:var(--fs-md);margin:0}.podium-points{font-size:var(--fs-lg)}}
+
+    /* Scoreboard Table */
+    .scoreboard{margin-bottom:var(--sp-8)}
+    .scoreboard-row{display:grid;grid-template-columns:50px 1fr 100px;align-items:center;padding:var(--sp-3) var(--sp-5);border-radius:var(--radius-md);margin-bottom:var(--sp-2);background:var(--clr-ivory);border:1px solid var(--clr-parchment);transition:all var(--duration-fast)}
+    .scoreboard-row:hover{border-color:var(--clr-gold);box-shadow:var(--shadow-sm)}
+    .scoreboard-row.top3{background:linear-gradient(90deg,rgba(201,168,76,0.05),transparent)}
+    .sb-rank{font-family:var(--ff-heading);font-weight:var(--fw-bold);color:var(--clr-gold);font-size:var(--fs-lg)}
+    .sb-name{font-weight:var(--fw-semibold);color:var(--clr-forest)}
+    .sb-district{font-size:var(--fs-xs);color:var(--clr-brown-light)}
+    .sb-points{text-align:right;font-family:var(--ff-heading);font-weight:var(--fw-bold);color:var(--clr-forest);font-size:var(--fs-lg)}
+
+    /* Program Results */
+    .program-results-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:var(--sp-4);margin-bottom:var(--sp-8)}
+    .prog-result-card{border-radius:var(--radius-lg);background:var(--clr-ivory);border:1px solid var(--clr-parchment);overflow:hidden;transition:all var(--duration-base);cursor:pointer}
+    .prog-result-card:hover{box-shadow:var(--shadow-md);border-color:var(--clr-gold)}
+    .prog-result-header{background:var(--clr-forest);color:var(--clr-gold-light);padding:var(--sp-4) var(--sp-5);display:flex;justify-content:space-between;align-items:center}
+    .prog-result-header h4{color:var(--clr-gold-light);margin:0;font-size:var(--fs-md)}
+    .prog-result-body{padding:var(--sp-4) var(--sp-5)}
+    .winner-row{display:flex;align-items:center;gap:var(--sp-3);padding:var(--sp-2) 0}
+    .winner-row+.winner-row{border-top:1px solid var(--clr-parchment)}
+    .winner-medal{font-size:1.3rem;flex-shrink:0}
+    .winner-info{flex:1}
+    .winner-name{font-weight:var(--fw-semibold);font-size:var(--fs-sm)}
+    .winner-team{font-size:var(--fs-xs);color:var(--clr-brown-light)}
+    .winner-pts{font-weight:var(--fw-bold);color:var(--clr-forest);font-size:var(--fs-sm)}
+
+    /* Individual Points */
+    .student-points-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:var(--sp-4)}
+    .student-point-card{padding:var(--sp-4);border-radius:var(--radius-lg);background:var(--clr-ivory);border:1px solid var(--clr-parchment);display:flex;align-items:center;gap:var(--sp-4)}
+    .student-point-medal{font-size:1.5rem;flex-shrink:0}
+    .student-point-info{flex:1}
+    .student-point-name{font-weight:var(--fw-semibold)}
+    .student-point-meta{font-size:var(--fs-xs);color:var(--clr-brown-light)}
+    .student-point-value{font-family:var(--ff-heading);font-size:var(--fs-xl);font-weight:var(--fw-bold);color:var(--clr-forest)}
+
+    .results-section{display:none}.results-section.active{display:block}
+    .section-heading{font-family:var(--ff-heading);font-size:var(--fs-xl);color:var(--clr-forest);margin-bottom:var(--sp-6);display:flex;align-items:center;gap:var(--sp-3)}
+    .section-heading .icon{font-size:1.5rem}
+  </style>
+</head>
+<body>
+  <nav class="navbar" id="navbar">
+    <div class="navbar-inner">
+      <a href="../index.html" class="navbar-brand"><span class="navbar-title">Q<span>A</span>F</span></a>
+      <div class="navbar-nav" id="navMenu">
+        <a href="../index.html" class="nav-link">Home</a>
+        <a href="#" class="nav-link active">Results</a>
+        <a href="register.html" class="nav-link">Register</a>
+      </div>
+      <div class="navbar-actions">
+        <button class="menu-toggle" id="menuToggle" aria-label="Menu"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="results-hero">
+    <h1 class="reveal">🏆 Results & Scoreboard</h1>
+    <p class="reveal">Quranic Art Fest 2026 — Live Championship Standings</p>
+    <div style="margin-top:var(--sp-6)" class="section-nav">
+      <button class="section-nav-btn active" onclick="showSection('championship',this)">🏆 Championship</button>
+      <button class="section-nav-btn" onclick="showSection('programs',this)">📋 Program Results</button>
+      <button class="section-nav-btn" onclick="showSection('students',this)">👤 Individual Points</button>
+      <button class="section-nav-btn" onclick="showSection('scoreboard',this)">📊 Full Scoreboard</button>
+    </div>
+  </div>
+
+  <main class="main-content" style="padding-top:0">
+    <div class="container" style="padding-top:var(--sp-8);padding-bottom:var(--sp-12)">
+
+      <!-- SECTION 1: Championship Standings -->
+      <div id="sec-championship" class="results-section active">
+        <h2 class="section-heading"><span class="icon">🏆</span>Championship Standings</h2>
+        <div id="loadingChampionship" style="text-align:center;padding:var(--sp-8)"><div class="spinner" style="margin:0 auto"></div></div>
+        <div class="podium" id="podium" style="display:none"></div>
+        <div id="championshipTable"></div>
+      </div>
+
+      <!-- SECTION 2: Program Results -->
+      <div id="sec-programs" class="results-section">
+        <h2 class="section-heading"><span class="icon">📋</span>Program-wise Results</h2>
+        <div class="program-results-grid" id="programResultsGrid">
+          <div class="empty-state" style="grid-column:1/-1"><div class="empty-state-icon">📊</div><div class="empty-state-title">Results Coming Soon</div><div class="empty-state-text">Results will appear here once published by the admin</div></div>
+        </div>
+      </div>
+
+      <!-- SECTION 3: Individual Student Points -->
+      <div id="sec-students" class="results-section">
+        <h2 class="section-heading"><span class="icon">👤</span>Individual Student Points</h2>
+        <div style="margin-bottom:var(--sp-4)"><input class="form-input" type="search" id="searchStudents" placeholder="🔍 Search student name or institution..." oninput="filterStudentPoints(this.value)" style="max-width:400px"></div>
+        <div class="student-points-grid" id="studentPointsGrid">
+          <p style="color:var(--clr-brown-light);font-size:var(--fs-sm)">No individual results yet</p>
+        </div>
+      </div>
+
+      <!-- SECTION 4: Full Scoreboard -->
+      <div id="sec-scoreboard" class="results-section">
+        <h2 class="section-heading"><span class="icon">📊</span>Institution Scoreboard</h2>
+        <div class="scoreboard" id="fullScoreboard">
+          <p style="color:var(--clr-brown-light);font-size:var(--fs-sm);text-align:center">Loading scoreboard...</p>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom"><span>© 2026 Quranic Art Fest</span><span>Crafted with devotion ✦</span></div>
+    </div>
+  </footer>
+
+  <div class="toast-container" id="toast-container"></div>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="../config/firebase.js"></script>
+  <script src="../js/utils/helpers.js"></script>
+  <script src="../js/services/database.js"></script>
+  <script>
+    let allTeams={}, allResults={}, allPrograms={}, allStudents={};
+
+    function showSection(name, btn) {
+      document.querySelectorAll('.results-section').forEach(s => s.classList.remove('active'));
+      document.getElementById('sec-' + name)?.classList.add('active');
+      document.querySelectorAll('.section-nav-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (typeof db === 'undefined') return;
+      try {
+        allTeams = await DbService.teams.getAll();
+        allPrograms = await DbService.programs.getAll();
+        allResults = await DbService.results.getAll();
+        allStudents = await DbService.students.getAll();
+
+        renderChampionship();
+        renderProgramResults();
+        renderStudentPoints();
+        renderFullScoreboard();
+      } catch (e) {
+        console.error('Results load error:', e);
+      }
+    });
+
+    // ── Helper: get sorted team standings ──
+    function getTeamStandings() {
+      const teamPoints = {};
+      Object.values(allResults).forEach(r => {
+        if (!teamPoints[r.teamId]) teamPoints[r.teamId] = 0;
+        teamPoints[r.teamId] += (r.points || 0);
+      });
+      return Object.entries(teamPoints)
+        .map(([tid, pts]) => {
+          const team = allTeams[tid] || {};
+          return { teamId: tid, collegeName: team.collegeName || tid, district: team.district || '', points: pts };
+        })
+        .sort((a, b) => b.points - a.points);
+    }
+
+    // ── SECTION 1: Championship ──
+    function renderChampionship() {
+      const standings = getTeamStandings();
+      document.getElementById('loadingChampionship').style.display = 'none';
+
+      if (!standings.length) {
+        document.getElementById('championshipTable').innerHTML = '<div class="empty-state"><div class="empty-state-icon">🏆</div><div class="empty-state-title">No Results Yet</div><div class="empty-state-text">Championship standings will appear once results are published</div></div>';
+        return;
+      }
+
+      // Podium (top 3)
+      const podium = document.getElementById('podium');
+      podium.style.display = '';
+      const medals = ['🥇','🥈','🥉'];
+      const ranks = ['first','second','third'];
+      const labels = ['1st Place','2nd Place','3rd Place'];
+      podium.innerHTML = standings.slice(0, 3).map((t, i) => `
+        <div class="podium-place ${ranks[i]}">
+          <div class="podium-medal">${medals[i]}</div>
+          <div class="podium-rank">${labels[i]}</div>
+          <div class="podium-name">${QAF.sanitize(t.collegeName)}</div>
+          <div class="podium-points">${t.points}</div>
+          <div class="podium-pts-label">points</div>
+        </div>
+      `).join('');
+
+      // Full table (4+)
+      if (standings.length > 3) {
+        document.getElementById('championshipTable').innerHTML = '<h3 style="margin-bottom:var(--sp-4)">Complete Rankings</h3>' +
+          standings.slice(3).map((t, i) => `
+            <div class="scoreboard-row">
+              <span class="sb-rank">${i + 4}</span>
+              <div><div class="sb-name">${QAF.sanitize(t.collegeName)}</div><div class="sb-district">${t.district}</div></div>
+              <span class="sb-points">${t.points}</span>
+            </div>
+          `).join('');
+      }
+    }
+
+    // ── SECTION 2: Program Results ──
+    function renderProgramResults() {
+      const publishedProgs = Object.values(allPrograms).filter(p => p.resultsPublished);
+      const grid = document.getElementById('programResultsGrid');
+
+      if (!publishedProgs.length) {
+        grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="empty-state-icon">📊</div><div class="empty-state-title">Results Coming Soon</div><div class="empty-state-text">Program results will appear here once published</div></div>';
+        return;
+      }
+
+      grid.innerHTML = publishedProgs.map(p => {
+        const results = Object.values(allResults)
+          .filter(r => r.programId === p.id)
+          .sort((a, b) => (a.position || 99) - (b.position || 99));
+        const medals = ['🥇','🥈','🥉'];
+
+        return `<div class="prog-result-card">
+          <div class="prog-result-header">
+            <h4>${QAF.sanitize(p.title)}</h4>
+            <span class="badge badge-gold">${p.category || 'General'}</span>
+          </div>
+          <div class="prog-result-body">
+            ${results.length ? results.map(r => `
+              <div class="winner-row">
+                <span class="winner-medal">${medals[(r.position||1)-1] || '🏅'}</span>
+                <div class="winner-info">
+                  <div class="winner-name">${QAF.sanitize(r.studentName || '—')}</div>
+                  <div class="winner-team">${QAF.sanitize(r.teamName || '')}</div>
+                </div>
+                <div class="winner-pts">${r.points || 0} pts</div>
+              </div>
+            `).join('') : '<p style="color:var(--clr-brown-light);font-size:var(--fs-sm)">Results pending</p>'}
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    // ── SECTION 3: Individual Student Points ──
+    function renderStudentPoints() {
+      const studentPts = {};
+      Object.values(allResults).forEach(r => {
+        if (!studentPts[r.studentId]) {
+          studentPts[r.studentId] = {
+            name: r.studentName || '',
+            teamId: r.teamId || '',
+            teamName: r.teamName || '',
+            totalPoints: 0,
+            wins: []
+          };
+        }
+        studentPts[r.studentId].totalPoints += (r.points || 0);
+        studentPts[r.studentId].wins.push({
+          program: r.programName || '',
+          position: r.position || 0,
+          points: r.points || 0
+        });
+      });
+
+      const sorted = Object.values(studentPts).sort((a, b) => b.totalPoints - a.totalPoints);
+      const grid = document.getElementById('studentPointsGrid');
+
+      if (!sorted.length) {
+        grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="empty-state-icon">👤</div><div class="empty-state-title">No Individual Results</div><div class="empty-state-text">Student points will appear once results are published</div></div>';
+        return;
+      }
+
+      const medals = ['🥇','🥈','🥉'];
+      grid.innerHTML = sorted.map(s => `
+        <div class="student-point-card" data-search="${(s.name + ' ' + s.teamName).toLowerCase()}">
+          <div class="student-point-medal">${s.wins.length > 0 ? medals[Math.min(...s.wins.map(w=>w.position))-1] || '🏅' : '🏅'}</div>
+          <div class="student-point-info">
+            <div class="student-point-name">${QAF.sanitize(s.name)}</div>
+            <div class="student-point-meta">${QAF.sanitize(s.teamName)}</div>
+            <div class="student-point-meta" style="margin-top:2px">${s.wins.map(w => `${medals[(w.position||1)-1]||'🏅'} ${QAF.sanitize(w.program)}`).join(' · ')}</div>
+          </div>
+          <div class="student-point-value">${s.totalPoints}</div>
+        </div>
+      `).join('');
+    }
+
+    function filterStudentPoints(q) {
+      const query = q.toLowerCase();
+      document.querySelectorAll('.student-point-card').forEach(card => {
+        card.style.display = card.dataset.search.includes(query) ? '' : 'none';
+      });
+    }
+
+    // ── SECTION 4: Full Scoreboard ──
+    function renderFullScoreboard() {
+      const standings = getTeamStandings();
+      const container = document.getElementById('fullScoreboard');
+
+      if (!standings.length) {
+        container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📊</div><div class="empty-state-title">No Scores Yet</div><div class="empty-state-text">The scoreboard will update as results are published</div></div>';
+        return;
+      }
+
+      // Count programs won per team
+      const teamProgramCount = {};
+      Object.values(allResults).forEach(r => {
+        if (!teamProgramCount[r.teamId]) teamProgramCount[r.teamId] = new Set();
+        teamProgramCount[r.teamId].add(r.programId);
+      });
+
+      container.innerHTML = standings.map((t, i) => {
+        const progCount = teamProgramCount[t.teamId]?.size || 0;
+        return `
+          <div class="scoreboard-row ${i < 3 ? 'top3' : ''}">
+            <span class="sb-rank">${i < 3 ? ['🥇','🥈','🥉'][i] : i + 1}</span>
+            <div>
+              <div class="sb-name">${QAF.sanitize(t.collegeName)}</div>
+              <div class="sb-district">${t.district} · ${progCount} program${progCount !== 1 ? 's' : ''} won</div>
+            </div>
+            <span class="sb-points">${t.points}<span style="font-size:var(--fs-xs);font-weight:normal;color:var(--clr-brown-light)"> pts</span></span>
+          </div>
+        `;
+      }).join('');
+    }
+  </script>
+</body>
+</html>

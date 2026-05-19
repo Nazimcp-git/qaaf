@@ -1,0 +1,1695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QAF — Quran Art Festival</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Tenor+Sans&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        cream: '#F7F3EE',
+        sand: '#E8DFD0',
+        gold: '#B8963E',
+        'gold-light': '#D4AF6A',
+        'gold-pale': '#F0E6C8',
+        ink: '#1A1814',
+        'ink-soft': '#3D3A35',
+        'ink-muted': '#7A7570',
+        sage: '#8A9E8C',
+      },
+      fontFamily: {
+        display: ['Cormorant Garamond', 'serif'],
+        sans: ['Tenor Sans', 'sans-serif'],
+        serif: ['Playfair Display', 'serif'],
+      },
+      letterSpacing: {
+        'widest2': '0.3em',
+        'widest3': '0.45em',
+      }
+    }
+  }
+}
+</script>
+
+<style>
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background-color: #F7F3EE;
+    color: #1A1814;
+    font-family: 'Tenor Sans', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* Responsive side padding */
+  .qaf-container {
+    width: 100%;
+    max-width: 1280px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: clamp(20px, 5vw, 80px);
+    padding-right: clamp(20px, 5vw, 80px);
+  }
+
+  @media (max-width: 768px) {
+    .qaf-container {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+  }
+
+  /* Noise texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 900;
+    background: rgba(247, 243, 238, 0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(184, 150, 62, 0.15);
+    transition: all 0.4s ease;
+  }
+
+  .nav-link {
+    font-family: 'Tenor Sans', sans-serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: #7A7570;
+    transition: color 0.3s ease;
+    position: relative;
+  }
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px; left: 0; right: 0;
+    height: 1px;
+    background: #B8963E;
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+    transform-origin: left;
+  }
+  .nav-link:hover { color: #B8963E; }
+  .nav-link:hover::after { transform: scaleX(1); }
+
+  /* HERO */
+  .hero-section {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    padding: 120px 0 80px;
+    text-align: center;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 40%, rgba(184,150,62,0.06) 0%, transparent 70%),
+      radial-gradient(ellipse 60% 50% at 20% 80%, rgba(184,150,62,0.03) 0%, transparent 60%),
+      #F7F3EE;
+  }
+
+  .hero-bg-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(200px, 32vw, 450px);
+    font-weight: 300;
+    color: rgba(184, 150, 62, 0.04);
+    white-space: nowrap;
+    letter-spacing: -0.02em;
+    pointer-events: none;
+    user-select: none;
+    line-height: 1;
+    animation: heroTextFloat 8s ease-in-out infinite;
+  }
+
+  @keyframes heroTextFloat {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-50%, -50%) scale(1.03); }
+  }
+
+  /* Corner decorations */
+  .hero-corner {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    pointer-events: none;
+    opacity: 0.15;
+  }
+  .hero-corner svg { width: 100%; height: 100%; }
+  .hero-corner--tl { top: 60px; left: 40px; }
+  .hero-corner--tr { top: 60px; right: 40px; transform: scaleX(-1); }
+  .hero-corner--bl { bottom: 60px; left: 40px; transform: scaleY(-1); }
+  .hero-corner--br { bottom: 60px; right: 40px; transform: scale(-1); }
+
+  @media (max-width: 768px) {
+    .hero-corner { width: 60px; height: 60px; }
+    .hero-corner--tl { top: 80px; left: 16px; }
+    .hero-corner--tr { top: 80px; right: 16px; }
+    .hero-corner--bl { bottom: 80px; left: 16px; }
+    .hero-corner--br { bottom: 80px; right: 16px; }
+  }
+
+  /* Staggered entrance animation */
+  .hero-fade { opacity: 0; transform: translateY(20px); animation: heroFadeUp 0.9s ease forwards; }
+  .hero-fade-1 { animation-delay: 0.15s; }
+  .hero-fade-2 { animation-delay: 0.35s; }
+  .hero-fade-3 { animation-delay: 0.55s; }
+  .hero-fade-4 { animation-delay: 0.75s; }
+  .hero-fade-5 { animation-delay: 0.95s; }
+  .hero-fade-6 { animation-delay: 1.15s; }
+
+  @keyframes heroFadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-year {
+    font-size: 0.65rem;
+    letter-spacing: 0.45em;
+    text-transform: uppercase;
+    color: #B8963E;
+    display: inline-block;
+    border: 1px solid rgba(184,150,62,0.25);
+    padding: 6px 20px;
+    border-radius: 0;
+  }
+
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(56px, 10vw, 140px);
+    font-weight: 300;
+    line-height: 0.92;
+    letter-spacing: -0.02em;
+    color: #1A1814;
+  }
+
+  .hero-title em {
+    font-style: italic;
+    color: #B8963E;
+    position: relative;
+  }
+
+  .hero-subtitle {
+    font-size: 0.72rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: #7A7570;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Diamond ornament */
+  .hero-diamond {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin: 2rem auto;
+  }
+  .hero-diamond::before, .hero-diamond::after {
+    content: '';
+    width: 60px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(184,150,62,0.5));
+  }
+  .hero-diamond::after {
+    background: linear-gradient(to left, transparent, rgba(184,150,62,0.5));
+  }
+  .hero-diamond-shape {
+    width: 10px;
+    height: 10px;
+    border: 1px solid #B8963E;
+    transform: rotate(45deg);
+    flex-shrink: 0;
+    animation: diamondPulse 3s ease-in-out infinite;
+  }
+  @keyframes diamondPulse {
+    0%, 100% { opacity: 0.6; transform: rotate(45deg) scale(1); }
+    50% { opacity: 1; transform: rotate(45deg) scale(1.2); }
+  }
+
+  .hero-cta-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+  }
+
+  .hero-info-bar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 32px;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(184,150,62,0.15);
+  }
+  .hero-info-item {
+    text-align: center;
+  }
+  .hero-info-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: #1A1814;
+    line-height: 1.2;
+  }
+  .hero-info-label {
+    font-size: 0.55rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: #B8963E;
+    margin-top: 2px;
+  }
+
+  .btn-outline-gold {
+    font-family: 'Tenor Sans', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: #B8963E;
+    background: transparent;
+    border: 1px solid rgba(184,150,62,0.4);
+    padding: 13px 32px;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    text-decoration: none;
+  }
+  .btn-outline-gold:hover {
+    background: rgba(184,150,62,0.08);
+    border-color: #B8963E;
+  }
+
+  /* Scroll indicator */
+  .scroll-line {
+    position: absolute;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .scroll-line span {
+    font-size: 0.5rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: #B8963E;
+    opacity: 0.6;
+  }
+  .scroll-line-bar {
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, #B8963E, transparent);
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 1; transform: scaleY(1); }
+    50% { opacity: 0.3; transform: scaleY(0.5); }
+  }
+
+  /* SECTION STYLES */
+  .section-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.45em;
+    text-transform: uppercase;
+    color: #B8963E;
+  }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(36px, 5vw, 72px);
+    font-weight: 300;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+  }
+
+  .section-title em {
+    font-style: italic;
+    color: #B8963E;
+  }
+
+  /* ABOUT */
+  .about-large-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(100px, 18vw, 220px);
+    font-weight: 300;
+    color: rgba(184, 150, 62, 0.08);
+    line-height: 1;
+    position: absolute;
+    right: -20px;
+    top: -20px;
+    pointer-events: none;
+    user-select: none;
+    letter-spacing: -0.05em;
+  }
+
+  /* Horizontal rule gold */
+  .gold-rule {
+    border: none;
+    border-top: 1px solid rgba(184, 150, 62, 0.3);
+  }
+
+  /* PROGRAMS */
+  .program-item {
+    border-top: 1px solid rgba(184, 150, 62, 0.2);
+    transition: background 0.4s ease;
+    cursor: default;
+  }
+  .program-item:hover {
+    background: rgba(184, 150, 62, 0.04);
+  }
+
+  .program-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.75rem;
+    color: #B8963E;
+    letter-spacing: 0.15em;
+    font-style: italic;
+  }
+
+  .program-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(22px, 3.5vw, 40px);
+    font-weight: 400;
+    color: #1A1814;
+    line-height: 1.1;
+  }
+
+  .program-desc {
+    font-size: 0.8rem;
+    line-height: 1.8;
+    color: #7A7570;
+    max-width: 480px;
+  }
+
+  .program-arrow {
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(184, 150, 62, 0.3);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #B8963E;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+  }
+  .program-item:hover .program-arrow {
+    background: #B8963E;
+    color: white;
+    transform: rotate(45deg);
+  }
+
+  /* PRIZES */
+  .prize-card {
+    border: 1px solid rgba(184, 150, 62, 0.2);
+    background: rgba(247, 243, 238, 0.8);
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .prize-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #B8963E, transparent);
+    transform: scaleX(0);
+    transition: transform 0.5s ease;
+  }
+  .prize-card:hover::before { transform: scaleX(1); }
+  .prize-card:hover {
+    border-color: rgba(184, 150, 62, 0.4);
+    box-shadow: 0 12px 40px rgba(184, 150, 62, 0.08);
+    transform: translateY(-2px);
+  }
+
+  .prize-rank {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(56px, 8vw, 96px);
+    font-weight: 300;
+    line-height: 1;
+    color: rgba(184, 150, 62, 0.15);
+  }
+
+  .prize-amount {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 400;
+    color: #B8963E;
+  }
+
+  /* TIMELINE */
+  .timeline-item {
+    position: relative;
+  }
+  .timeline-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #B8963E;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+    margin-top: 6px;
+  }
+  .timeline-dot::before {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 1px solid rgba(184, 150, 62, 0.3);
+  }
+  .timeline-line {
+    position: absolute;
+    left: 4px;
+    top: 20px;
+    bottom: -20px;
+    width: 1px;
+    background: linear-gradient(to bottom, rgba(184,150,62,0.3), rgba(184,150,62,0.05));
+  }
+
+  .timeline-date {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.75rem;
+    font-style: italic;
+    color: #B8963E;
+    letter-spacing: 0.05em;
+  }
+
+  .timeline-event {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(18px, 2.5vw, 26px);
+    font-weight: 400;
+    color: #1A1814;
+    line-height: 1.2;
+  }
+
+  /* LEADERBOARD */
+  .lb-row {
+    border-bottom: 1px solid rgba(184, 150, 62, 0.1);
+    transition: background 0.3s ease;
+  }
+  .lb-row:hover { background: rgba(184, 150, 62, 0.04); }
+  .lb-rank {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    color: #B8963E;
+    font-size: 1.1rem;
+  }
+  .lb-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(16px, 2vw, 22px);
+    font-weight: 400;
+  }
+  .lb-score {
+    font-family: 'Tenor Sans', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    color: #7A7570;
+  }
+  .lb-bar-track {
+    height: 2px;
+    background: rgba(184, 150, 62, 0.1);
+    border-radius: 1px;
+    overflow: hidden;
+  }
+  .lb-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #B8963E, #D4AF6A);
+    border-radius: 1px;
+    transition: width 1s ease;
+  }
+
+  /* ANNOUNCEMENTS */
+  .announce-item {
+    border-left: 2px solid rgba(184, 150, 62, 0.3);
+    transition: border-color 0.3s ease;
+  }
+  .announce-item:hover { border-color: #B8963E; }
+  .announce-tag {
+    font-size: 0.58rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: #B8963E;
+    background: rgba(184, 150, 62, 0.08);
+    padding: 2px 8px;
+    border-radius: 2px;
+  }
+  .announce-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(18px, 2.5vw, 26px);
+    font-weight: 400;
+    line-height: 1.3;
+  }
+
+  /* CONTACT */
+  .contact-input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(184, 150, 62, 0.3);
+    padding: 12px 0;
+    font-family: 'Tenor Sans', sans-serif;
+    font-size: 0.85rem;
+    color: #1A1814;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.3s ease;
+    letter-spacing: 0.05em;
+  }
+  .contact-input:focus { border-color: #B8963E; }
+  .contact-input::placeholder { color: #7A7570; font-size: 0.78rem; letter-spacing: 0.08em; }
+
+  .btn-primary {
+    font-family: 'Tenor Sans', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: #F7F3EE;
+    background: #1A1814;
+    border: 1px solid #1A1814;
+    padding: 14px 36px;
+    cursor: pointer;
+    transition: all 0.4s ease;
+  }
+  .btn-primary:hover {
+    background: #B8963E;
+    border-color: #B8963E;
+  }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid rgba(184, 150, 62, 0.2);
+  }
+
+  /* Fade-in on scroll */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Decorative bismillah */
+  .bismillah-deco {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    color: rgba(184, 150, 62, 0.5);
+    letter-spacing: 0.1em;
+    font-style: italic;
+  }
+
+  /* Thin gold ornament line */
+  .ornament {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .ornament::before, .ornament::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(184,150,62,0.4), transparent);
+  }
+
+  /* Mobile nav */
+  #mobile-menu {
+    display: none;
+  }
+  #mobile-menu.open {
+    display: flex;
+  }
+
+  /* Marquee */
+  .marquee-track {
+    display: flex;
+    gap: 64px;
+    animation: marquee 25s linear infinite;
+    white-space: nowrap;
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* Section divider line */
+  .section-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(184,150,62,0.3), transparent);
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: #F7F3EE; }
+  ::-webkit-scrollbar-thumb { background: rgba(184,150,62,0.4); border-radius: 2px; }
+
+  /* PROGRAM MODAL */
+  .prog-modal-overlay {
+    position: fixed; inset: 0; z-index: 9999;
+    background: rgba(26,24,20,0.6);
+    backdrop-filter: blur(8px);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.35s ease;
+    padding: 24px;
+  }
+  .prog-modal-overlay.active { opacity: 1; pointer-events: auto; }
+  .prog-modal {
+    background: #F7F3EE;
+    border: 1px solid rgba(184,150,62,0.25);
+    max-width: 580px; width: 100%;
+    max-height: 85vh; overflow-y: auto;
+    position: relative;
+    transform: translateY(30px) scale(0.97);
+    transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
+  }
+  .prog-modal-overlay.active .prog-modal { transform: translateY(0) scale(1); }
+  .prog-modal-header {
+    padding: 40px 40px 0;
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
+  }
+  .prog-modal-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 4rem; font-weight: 300; line-height: 1;
+    color: rgba(184,150,62,0.15);
+  }
+  .prog-modal-close {
+    width: 36px; height: 36px;
+    border: 1px solid rgba(184,150,62,0.3); background: transparent;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: #7A7570; transition: all 0.3s; flex-shrink: 0;
+  }
+  .prog-modal-close:hover { border-color: #B8963E; color: #B8963E; }
+  .prog-modal-body { padding: 24px 40px 40px; }
+  .prog-modal-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(24px, 4vw, 36px); font-weight: 400;
+    color: #1A1814; line-height: 1.15; margin-bottom: 12px;
+  }
+  .prog-modal-divider {
+    width: 40px; height: 1px;
+    background: linear-gradient(to right, #B8963E, transparent);
+    margin: 20px 0;
+  }
+  .prog-modal-text {
+    font-size: 0.85rem; line-height: 1.9; color: #7A7570; margin-bottom: 24px;
+  }
+  .prog-modal-details { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 28px; }
+  .prog-modal-detail {
+    padding: 16px; border: 1px solid rgba(184,150,62,0.15);
+  }
+  .prog-modal-detail-label {
+    font-size: 0.55rem; letter-spacing: 0.3em; text-transform: uppercase; color: #B8963E; margin-bottom: 4px;
+  }
+  .prog-modal-detail-value {
+    font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; color: #1A1814;
+  }
+  .prog-modal-cta {
+    display: inline-block; font-family: 'Tenor Sans', sans-serif;
+    font-size: 0.62rem; letter-spacing: 0.35em; text-transform: uppercase;
+    color: #F7F3EE; background: #1A1814; border: 1px solid #1A1814;
+    padding: 13px 32px; cursor: pointer; transition: all 0.4s; text-decoration: none;
+  }
+  .prog-modal-cta:hover { background: #B8963E; border-color: #B8963E; }
+  @media (max-width: 640px) {
+    .prog-modal-header { padding: 24px 24px 0; }
+    .prog-modal-body { padding: 16px 24px 28px; }
+    .prog-modal-details { grid-template-columns: 1fr; }
+    .prog-modal-num { font-size: 3rem; }
+  }
+
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="max-w-7xl mx-auto px-8 flex items-center justify-between h-16">
+    <a href="#home" class="flex items-center gap-3">
+      <div class="flex flex-col items-center">
+        <span style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;letter-spacing:0.08em;line-height:1;color:#1A1814;">QAF</span>
+        <span style="font-size:0.42rem;letter-spacing:0.35em;text-transform:uppercase;color:#B8963E;">Quran Art Fest</span>
+      </div>
+    </a>
+    <div class="hidden lg:flex items-center gap-8">
+      <a href="#about" class="nav-link">About</a>
+      <a href="#programs" class="nav-link">Programs</a>
+      <a href="#prizes" class="nav-link">Prizes</a>
+      <a href="#timeline" class="nav-link">Timeline</a>
+      <a href="#leaderboard" class="nav-link">Leaderboard</a>
+      <a href="#announcements" class="nav-link">Announcements</a>
+      <a href="#contact" class="nav-link">Contact</a>
+      <div class="flex items-center gap-4 ml-4 pl-4 border-l border-gold-pale" style="border-left: 1px solid rgba(184,150,62,0.3);">
+        <a href="pages/team-login.html" class="nav-link" style="font-weight: 500; color: #1A1814;">Login</a>
+        <a href="pages/register.html" class="btn-primary" style="padding: 8px 20px; font-size: 0.55rem;">Register</a>
+      </div>
+    </div>
+    <button id="hamburger" class="lg:hidden flex flex-col gap-1.5 p-2" onclick="toggleMenu()">
+      <span class="block w-6 h-px bg-ink"></span>
+      <span class="block w-4 h-px bg-gold"></span>
+      <span class="block w-6 h-px bg-ink"></span>
+    </button>
+  </div>
+  <!-- Mobile menu -->
+  <div id="mobile-menu" class="lg:hidden flex-col px-8 pb-6 gap-4 border-t border-gold-pale">
+    <a href="#about" class="nav-link block pt-4" onclick="toggleMenu()">About</a>
+    <a href="#programs" class="nav-link block" onclick="toggleMenu()">Programs</a>
+    <a href="#prizes" class="nav-link block" onclick="toggleMenu()">Prizes</a>
+    <a href="#timeline" class="nav-link block" onclick="toggleMenu()">Timeline</a>
+    <a href="#leaderboard" class="nav-link block" onclick="toggleMenu()">Leaderboard</a>
+    <a href="#announcements" class="nav-link block" onclick="toggleMenu()">Announcements</a>
+    <a href="#contact" class="nav-link block" onclick="toggleMenu()">Contact</a>
+    <div class="flex flex-col gap-3 mt-4 pt-4" style="border-top: 1px solid rgba(184,150,62,0.2);">
+      <a href="pages/admin-login.html" class="nav-link block" style="font-weight: 500; color: #1A1814;" onclick="toggleMenu()">Login</a>
+      <a href="pages/register.html" class="btn-primary text-center" style="padding: 10px; width: 100%;" onclick="toggleMenu()">Register</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="home" class="hero-section">
+  <div class="hero-bg-text">QAF</div>
+
+  <!-- Corner ornaments -->
+  <div class="hero-corner hero-corner--tl"><svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h120v1H1v119H0z" fill="#B8963E"/><path d="M0 0l40 40" stroke="#B8963E" stroke-width="0.5"/><rect x="8" y="8" width="16" height="16" stroke="#B8963E" stroke-width="0.5" transform="rotate(45 16 16)"/></svg></div>
+  <div class="hero-corner hero-corner--tr"><svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h120v1H1v119H0z" fill="#B8963E"/><path d="M0 0l40 40" stroke="#B8963E" stroke-width="0.5"/><rect x="8" y="8" width="16" height="16" stroke="#B8963E" stroke-width="0.5" transform="rotate(45 16 16)"/></svg></div>
+  <div class="hero-corner hero-corner--bl"><svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h120v1H1v119H0z" fill="#B8963E"/><path d="M0 0l40 40" stroke="#B8963E" stroke-width="0.5"/><rect x="8" y="8" width="16" height="16" stroke="#B8963E" stroke-width="0.5" transform="rotate(45 16 16)"/></svg></div>
+  <div class="hero-corner hero-corner--br"><svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h120v1H1v119H0z" fill="#B8963E"/><path d="M0 0l40 40" stroke="#B8963E" stroke-width="0.5"/><rect x="8" y="8" width="16" height="16" stroke="#B8963E" stroke-width="0.5" transform="rotate(45 16 16)"/></svg></div>
+
+  <div class="qaf-container w-full relative" style="display:flex;flex-direction:column;align-items:center;">
+
+    <!-- Year badge -->
+    <div class="hero-fade hero-fade-1">
+      <p class="hero-year">2025 — Edition I</p>
+    </div>
+
+    <!-- Bismillah -->
+    <div class="hero-fade hero-fade-2" style="margin-top:2rem;">
+      <div class="bismillah-deco opacity-50" style="font-size:2.8rem;letter-spacing:0.05em;">﷽</div>
+    </div>
+
+    <!-- Title -->
+    <div class="hero-fade hero-fade-3" style="margin-top:1.5rem;">
+      <h1 class="hero-title">
+       QAF 26-27
+      </h1>
+      <p style="font-family:'Cormorant Garamond',serif;font-size:clamp(22px,2.6vw,28px);font-weight:600;line-height:1.8;color:#3D3A35;margin-bottom:24px;">Quranic Art Festival</p>
+    </div>
+
+    <!-- Diamond ornament -->
+    <div class="hero-fade hero-fade-4">
+      <div class="hero-diamond">
+        <div class="hero-diamond-shape"></div>
+      </div>
+    </div>
+
+    <!-- Subtitle -->
+    <div class="hero-fade hero-fade-5">
+      <p class="hero-subtitle">Where the word of God meets the language of art</p>
+    </div>
+
+    <!-- CTA buttons -->
+    <div class="hero-fade hero-fade-6" style="margin-top:2.5rem;">
+      <div class="hero-cta-group">
+        <a href="#about" class="btn-primary">Discover the Festival</a>
+        <a href="#programs" class="btn-outline-gold">View Programs</a>
+      </div>
+    </div>
+
+    <!-- Info bar -->
+    <div class="hero-fade hero-fade-6" style="width:100%;max-width:560px;">
+      <div class="hero-info-bar">
+        <div class="hero-info-item">
+          <p class="hero-info-value">7</p>
+          <p class="hero-info-label">Programs</p>
+        </div>
+        <div class="hero-info-item">
+          <p class="hero-info-value">70+</p>
+          <p class="hero-info-label">Participants</p>
+        </div>
+        <div class="hero-info-item">
+          <p class="hero-info-value">1 Day</p>
+          <p class="hero-info-label"></p>
+        </div>
+        <div class="hero-info-item">
+          <p class="hero-info-value">Kerala</p>
+          <p class="hero-info-label">India</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scroll-line">
+    <div class="scroll-line-bar"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- MARQUEE STRIP -->
+<div style="background:#1A1814;padding:14px 0;overflow:hidden;border-top:1px solid rgba(184,150,62,0.2);">
+  <div class="marquee-track">
+    <span style="font-size:0.6rem;letter-spacing:0.4em;text-transform:uppercase;color:#B8963E;">Calligraphy</span>
+    <span style="font-family:'Cormorant Garamond',serif;font-style:italic;color:rgba(247,243,238,0.2);font-size:0.9rem;">✦</span>
+    <span style="font-size:0.6rem;letter-spacing:0.4em;text-transform:uppercase;color:rgba(247,243,238,0.4);">Recitation</span>
+    <span style="font-family:'Cormorant Garamond',serif;font-style:italic;color:rgba(247,243,238,0.2);font-size:0.9rem;">✦</span>
+    <span style="font-size:0.6rem;letter-spacing:0.4em;text-transform:uppercase;color:#B8963E;">Nasheed</span>
+    <span style="font-family:'Cormorant Garamond',serif;font-style:italic;color:rgba(247,243,238,0.2);font-size:0.9rem;">✦</span>
+    <span style="font-size:0.6rem;letter-spacing:0.4em;text-transform:uppercase;color:rgba(247,243,238,0.4);">Illustration</span>
+    <span style="font-family:'Cormorant Garamond',serif;font-style:italic;color:rgba(247,243,238,0.2);font-size:0.9rem;">✦</span>
+    <span style="font-size:0.6rem;letter-spacing:0.4em;text-transform:uppercase;color:#B8963E;">Photography</span>
+    <span style="font-family:'Cormorant Garamond',serif;font-style:italic;color:rgba(247,243,238,0.2);font-size:0.9rem;">✦</span>
+    <span style="font-size:0.6rem;letter-spacing:0.4em;text-transform:uppercase;color:rgba(247,243,238,0.4);">Poetry</span>
+    <span style="font-family:'Cormorant Garamond',serif;font-style:italic;color:rgba(247,243,238,0.2);font-size:0.9rem;">✦</span>
+    <span style="font-size:0.6rem;letter-spacing:0.4em;text-transform:uppercase;color:#B8963E;">Design</span>
+    <span style="font-family:'Cormorant Garamond',serif;font-style:italic;color:rgba(247,243,238,0.2);font-size:0.9rem;">✦</span>
+    <!-- repeat -->
+    <span style="font-size:0.6rem;letter-spacing:0.4em;text-transform:uppercase;color:#B8963E;">Calligraphy</span>
+    <span style="font-family:'Cormorant Garamond',serif;font-style:italic;color:rgba(247,243,238,0.2);font-size:0.9rem;">✦</span>
+    <span style="font-size:0.6rem;letter-spacing:0.4em;text-transform:uppercase;color:rgba(247,243,238,0.4);">Recitation</span>
+    <span style="font-family:'Cormorant Garamond',serif;font-style:italic;color:rgba(247,243,238,0.2);font-size:0.9rem;">✦</span>
+    <span style="font-size:0.6rem;letter-spacing:0.4em;text-transform:uppercase;color:#B8963E;">Nasheed</span>
+    <span style="font-family:'Cormorant Garamond',serif;font-style:italic;color:rgba(247,243,238,0.2);font-size:0.9rem;">✦</span>
+    <span style="font-size:0.6rem;letter-spacing:0.4em;text-transform:uppercase;color:rgba(247,243,238,0.4);">Illustration</span>
+    <span style="font-family:'Cormorant Garamond',serif;font-style:italic;color:rgba(247,243,238,0.2);font-size:0.9rem;">✦</span>
+    <span style="font-size:0.6rem;letter-spacing:0.4em;text-transform:uppercase;color:#B8963E;">Photography</span>
+    <span style="font-family:'Cormorant Garamond',serif;font-style:italic;color:rgba(247,243,238,0.2);font-size:0.9rem;">✦</span>
+    <span style="font-size:0.6rem;letter-spacing:0.4em;text-transform:uppercase;color:rgba(247,243,238,0.4);">Poetry</span>
+    <span style="font-family:'Cormorant Garamond',serif;font-style:italic;color:rgba(247,243,238,0.2);font-size:0.9rem;">✦</span>
+    <span style="font-size:0.6rem;letter-spacing:0.4em;text-transform:uppercase;color:#B8963E;">Design</span>
+    <span style="font-family:'Cormorant Garamond',serif;font-style:italic;color:rgba(247,243,238,0.2);font-size:0.9rem;">✦</span>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="about" class="py-32">
+  <div class="qaf-container">
+    <div class="grid lg:grid-cols-12 gap-16 items-start">
+      <div class="lg:col-span-5 reveal">
+        <p class="section-label mb-5">About the Festival</p>
+        <h2 class="section-title mb-8">
+          Art rooted<br>in <em>revelation</em>
+        </h2>
+        <div class="ornament mb-8">
+          <span style="font-size:0.6rem;letter-spacing:0.3em;color:#B8963E;text-transform:uppercase;">QAF 2025</span>
+        </div>
+        <div class="grid grid-cols-2 gap-8">
+          <div>
+            <p style="font-family:'Cormorant Garamond',serif;font-size:2.5rem;font-weight:300;color:#B8963E;line-height:1;">7</p>
+            <p style="font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:#7A7570;margin-top:4px;">Programs</p>
+          </div>
+          <div>
+            <p style="font-family:'Cormorant Garamond',serif;font-size:2.5rem;font-weight:300;color:#B8963E;line-height:1;">75+</p>
+            <p style="font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:#7A7570;margin-top:4px;">Participants</p>
+          </div>
+          <div>
+            <p style="font-family:'Cormorant Garamond',serif;font-size:2.5rem;font-weight:300;color:#B8963E;line-height:1;">7+</p>
+            <p style="font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:#7A7570;margin-top:4px;">Judges</p>
+          </div>
+          <div>
+            <p style="font-family:'Cormorant Garamond',serif;font-size:2.5rem;font-weight:300;color:#B8963E;line-height:1;">1</p>
+            <p style="font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:#7A7570;margin-top:4px;">Day</p>
+          </div>
+        </div>
+      </div>
+      <div class="lg:col-span-7 lg:pl-16 reveal" style="transition-delay:0.2s">
+        <div style="position:relative;">
+          <span class="about-large-num">I</span>
+          <p style="font-family:'Cormorant Garamond',serif;font-size:clamp(18px,2.2vw,24px);font-weight:300;line-height:1.8;color:#3D3A35;margin-bottom:24px;">
+            QAF — Quran Art Festival is a celebration of the sacred and the beautiful. It is a space where artists, reciters, poets, and designers gather under one vision: to express the timeless words of the Quran through the lens of art.
+          </p>
+          <p style="font-size:0.82rem;line-height:2;color:#7A7570;margin-bottom:24px;">
+            Born from the belief that creativity is an act of gratitude, QAF invites participants to channel their God-given talents in service of something greater than themselves. Every brushstroke, every note, every verse spoken is a form of remembrance.
+          </p>
+          <p style="font-size:0.82rem;line-height:2;color:#7A7570;">
+            Open to all age groups and skill levels, QAF is not merely a competition — it is a movement. A gathering of souls who believe that art and faith are not opposites, but mirrors of the same light.
+          </p>
+          <div class="mt-8 pt-8 gold-rule">
+            <p class="bismillah-deco opacity-40 text-sm" style="color:#B8963E;">"And We have certainly made the Quran easy for remembrance." — 54:17</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider qaf-container"></div>
+
+<!-- PROGRAMS / SESSIONS -->
+<section id="programs" class="py-32">
+  <div class="qaf-container">
+    <div class="flex flex-col lg:flex-row lg:items-end justify-between mb-16 gap-8 reveal">
+      <div>
+        <p class="section-label mb-4">Competition Programs</p>
+        <h2 class="section-title">Seven <em>disciplines</em><br>one language</h2>
+      </div>
+      <p style="font-size:0.78rem;line-height:1.9;color:#7A7570;max-width:340px;">Each program is a gateway — an invitation to express the Quran through a distinct artistic form.</p>
+    </div>
+
+    <!-- Programs List -->
+    <div>
+      <!-- 01 -->
+      <div class="program-item px-0 py-8 lg:py-10 reveal" style="cursor:pointer;" onclick="openProgramModal('01', 'Quranic Recitation', 'The art of tajweed brought to life. Participants perform selected verses with mastery of pronunciation, melody, and spiritual presence. Judged on maqam accuracy, emotional depth, and adherence to rules of recitation.', { category: 'Quran Recitation', limit: '2 per institution', rules: 'Must recite from memory. Maqam changes allowed.' })">
+        <div class="flex items-start justify-between gap-6">
+          <div class="flex items-start gap-6 lg:gap-12 flex-1">
+            <span class="program-num pt-1">01</span>
+            <div class="flex-1">
+              <h3 class="program-name mb-3">Quranic Recitation</h3>
+              <p class="program-desc">The art of tajweed brought to life. Participants perform selected verses with mastery of pronunciation, melody, and spiritual presence. Judged on maqam accuracy, emotional depth, and adherence to rules of recitation.</p>
+            </div>
+          </div>
+          <div class="program-arrow mt-1">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M2 12L12 2M12 2H4M12 2V10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- 02 -->
+      <div class="program-item px-0 py-8 lg:py-10 reveal" style="cursor:pointer;" onclick="openProgramModal('02', 'Arabic Calligraphy', 'The silent music of letters. Participants render Quranic verses in classical or contemporary calligraphic styles — Naskh, Thuluth, Diwani, or modern fusion. Evaluated on composition, technique, and spiritual resonance.', { category: 'Visual Arts', limit: '2 per institution', materials: 'Bring your own pens and ink. Paper provided.' })">
+        <div class="flex items-start justify-between gap-6">
+          <div class="flex items-start gap-6 lg:gap-12 flex-1">
+            <span class="program-num pt-1">02</span>
+            <div class="flex-1">
+              <h3 class="program-name mb-3">Arabic Calligraphy</h3>
+              <p class="program-desc">The silent music of letters. Participants render Quranic verses in classical or contemporary calligraphic styles — Naskh, Thuluth, Diwani, or modern fusion. Evaluated on composition, technique, and spiritual resonance.</p>
+            </div>
+          </div>
+          <div class="program-arrow mt-1">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M2 12L12 2M12 2H4M12 2V10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- 03 -->
+      <div class="program-item px-0 py-8 lg:py-10 reveal" style="cursor:pointer;" onclick="openProgramModal('03', 'Nasheed & Vocal Arts', 'Sacred poetry in voice. Participants perform original or classical nasheeds drawing from Quranic themes. Solo and group categories. Criteria include vocal quality, lyrical depth, and the sincerity of expression.', { category: 'Performing Arts', limit: '1 solo, 1 group (max 5)', duration: 'Max 5 minutes per performance' })">
+        <div class="flex items-start justify-between gap-6">
+          <div class="flex items-start gap-6 lg:gap-12 flex-1">
+            <span class="program-num pt-1">03</span>
+            <div class="flex-1">
+              <h3 class="program-name mb-3">Nasheed & Vocal Arts</h3>
+              <p class="program-desc">Sacred poetry in voice. Participants perform original or classical nasheeds drawing from Quranic themes. Solo and group categories. Criteria include vocal quality, lyrical depth, and the sincerity of expression.</p>
+            </div>
+          </div>
+          <div class="program-arrow mt-1">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M2 12L12 2M12 2H4M12 2V10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- 04 -->
+      <div class="program-item px-0 py-8 lg:py-10 reveal" style="cursor:pointer;" onclick="openProgramModal('04', 'Quranic Illustration', 'Painting the unseen. Artists create visual works inspired by Quranic verses, stories, or concepts. Any medium accepted — watercolour, acrylic, digital, ink. The work must visibly connect to a Quranic reference.', { category: 'Visual Arts', limit: '2 per institution', format: 'A3 size. Digital entries allowed.' })">
+        <div class="flex items-start justify-between gap-6">
+          <div class="flex items-start gap-6 lg:gap-12 flex-1">
+            <span class="program-num pt-1">04</span>
+            <div class="flex-1">
+              <h3 class="program-name mb-3">Quranic Illustration</h3>
+              <p class="program-desc">Painting the unseen. Artists create visual works inspired by Quranic verses, stories, or concepts. Any medium accepted — watercolour, acrylic, digital, ink. The work must visibly connect to a Quranic reference.</p>
+            </div>
+          </div>
+          <div class="program-arrow mt-1">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M2 12L12 2M12 2H4M12 2V10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- 05 -->
+      <div class="program-item px-0 py-8 lg:py-10 reveal" style="cursor:pointer;" onclick="openProgramModal('05', 'Quranic Photography', 'The lens as a vessel for meaning. Photographers submit images that embody a Quranic verse or concept. Judged on conceptual clarity, technical excellence, and the ability to evoke the verse without literal depiction.', { category: 'Digital Media', limit: '3 entries per institution', submission: 'High-res digital format with 100-word context.' })">
+        <div class="flex items-start justify-between gap-6">
+          <div class="flex items-start gap-6 lg:gap-12 flex-1">
+            <span class="program-num pt-1">05</span>
+            <div class="flex-1">
+              <h3 class="program-name mb-3">Quranic Photography</h3>
+              <p class="program-desc">The lens as a vessel for meaning. Photographers submit images that embody a Quranic verse or concept. Judged on conceptual clarity, technical excellence, and the ability to evoke the verse without literal depiction.</p>
+            </div>
+          </div>
+          <div class="program-arrow mt-1">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M2 12L12 2M12 2H4M12 2V10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- 06 -->
+      <div class="program-item px-0 py-8 lg:py-10 reveal" style="cursor:pointer;" onclick="openProgramModal('06', 'Quranic Poetry & Creative Writing', 'Words that illuminate words. Participants compose original poems or short prose inspired by Quranic verses. Submissions may be in Arabic, English, or Malayalam. Evaluated on literary quality, imagery, and Quranic connection.', { category: 'Literary Arts', languages: 'Arabic, English, Malayalam', limit: '1 entry per language per institution' })">
+        <div class="flex items-start justify-between gap-6">
+          <div class="flex items-start gap-6 lg:gap-12 flex-1">
+            <span class="program-num pt-1">06</span>
+            <div class="flex-1">
+              <h3 class="program-name mb-3">Quranic Poetry & Creative Writing</h3>
+              <p class="program-desc">Words that illuminate words. Participants compose original poems or short prose inspired by Quranic verses. Submissions may be in Arabic, English, or Malayalam. Evaluated on literary quality, imagery, and Quranic connection.</p>
+            </div>
+          </div>
+          <div class="program-arrow mt-1">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M2 12L12 2M12 2H4M12 2V10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- 07 -->
+      <div class="program-item px-0 py-8 lg:py-10 reveal" style="border-bottom:1px solid rgba(184,150,62,0.2); cursor:pointer;" onclick="openProgramModal('07', 'Quranic Graphic Design', 'Where tradition meets the digital age. Participants create poster designs, typographic compositions, or motion graphics rooted in Quranic verses. Assessed on visual communication, originality, and typographic mastery.', { category: 'Digital Media', format: 'Vector or High-Res Raster', limit: '2 per institution' })">
+        <div class="flex items-start justify-between gap-6">
+          <div class="flex items-start gap-6 lg:gap-12 flex-1">
+            <span class="program-num pt-1">07</span>
+            <div class="flex-1">
+              <h3 class="program-name mb-3">Quranic Graphic Design</h3>
+              <p class="program-desc">Where tradition meets the digital age. Participants create poster designs, typographic compositions, or motion graphics rooted in Quranic verses. Assessed on visual communication, originality, and typographic mastery.</p>
+            </div>
+          </div>
+          <div class="program-arrow mt-1">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M2 12L12 2M12 2H4M12 2V10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider qaf-container"></div>
+
+<!-- PRIZES -->
+<section id="prizes" class="py-32" style="background:rgba(26,24,20,0.02);">
+  <div class="qaf-container">
+    <div class="text-center mb-20 reveal">
+      <p class="section-label mb-4">Recognition of Excellence</p>
+      <h2 class="section-title">Winners <em>Prize</em></h2>
+      <p style="font-size:0.78rem;line-height:1.9;color:#7A7570;max-width:420px;margin:16px auto 0;">Honouring the best from each program. Each prize is more than a reward — it is an acknowledgment that your art carried light.</p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-8 mb-16">
+      <!-- Gold -->
+      <div class="prize-card p-8 lg:p-10 reveal" style="transition-delay:0s">
+        <div class="prize-rank">I</div>
+        <p style="font-size:0.58rem;letter-spacing:0.4em;text-transform:uppercase;color:#B8963E;margin-bottom:8px;margin-top:4px;">First Place</p>
+        <p class="prize-amount">₹25,000</p>
+        <div class="gold-rule my-6"></div>
+        <ul style="font-size:0.75rem;line-height:2;color:#7A7570;list-style:none;padding:0;">
+          <li>+ Gold Certificate of Excellence</li>
+          <li>+ Trophy & Medal</li>
+          <li>+ Feature in QAF Annual Book</li>
+          <li>+ Mentorship Session</li>
+        </ul>
+      </div>
+
+      <!-- Silver -->
+      <div class="prize-card p-8 lg:p-10 reveal" style="transition-delay:0.1s">
+        <div class="prize-rank">II</div>
+        <p style="font-size:0.58rem;letter-spacing:0.4em;text-transform:uppercase;color:#B8963E;margin-bottom:8px;margin-top:4px;">Second Place</p>
+        <p class="prize-amount">₹15,000</p>
+        <div class="gold-rule my-6"></div>
+        <ul style="font-size:0.75rem;line-height:2;color:#7A7570;list-style:none;padding:0;">
+          <li>+ Silver Certificate of Merit</li>
+          <li>+ Trophy & Medal</li>
+          <li>+ Digital Portfolio Feature</li>
+          <li>+ QAF Merchandise Set</li>
+        </ul>
+      </div>
+
+      <!-- Bronze -->
+      <div class="prize-card p-8 lg:p-10 reveal" style="transition-delay:0.2s">
+        <div class="prize-rank">III</div>
+        <p style="font-size:0.58rem;letter-spacing:0.4em;text-transform:uppercase;color:#B8963E;margin-bottom:8px;margin-top:4px;">Third Place</p>
+        <p class="prize-amount">₹8,000</p>
+        <div class="gold-rule my-6"></div>
+        <ul style="font-size:0.75rem;line-height:2;color:#7A7570;list-style:none;padding:0;">
+          <li>+ Certificate of Commendation</li>
+          <li>+ Medal</li>
+          <li>+ Social Media Feature</li>
+          <li>+ QAF Merchandise</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Special awards -->
+    <div style="border:1px solid rgba(184,150,62,0.2);padding:40px;text-align:center;" class="reveal">
+      <p class="section-label mb-4">Special Awards</p>
+      <div class="grid md:grid-cols-3 gap-8 mt-6">
+        <div>
+          <p style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:400;color:#1A1814;margin-bottom:6px;">Spirit of QAF Award</p>
+          <p style="font-size:0.72rem;color:#7A7570;line-height:1.7;">Awarded to the participant who best embodies the values of the festival — humility, sincerity, and creative courage.</p>
+        </div>
+        <div>
+          <p style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:400;color:#1A1814;margin-bottom:6px;">Best Young Artist</p>
+          <p style="font-size:0.72rem;color:#7A7570;line-height:1.7;">Recognizing outstanding talent from participants under the age of 15 across any program category.</p>
+        </div>
+        <div>
+          <p style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:400;color:#1A1814;margin-bottom:6px;">People's Choice</p>
+          <p style="font-size:0.72rem;color:#7A7570;line-height:1.7;">Voted by the audience and community. The work that moved the most hearts wins this celebrated honour.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider qaf-container"></div>
+
+<!-- TIMELINE -->
+<section id="timeline" class="py-32">
+  <div class="qaf-container">
+    <div class="grid lg:grid-cols-12 gap-16">
+      <div class="lg:col-span-4 reveal">
+        <p class="section-label mb-4">Schedule of Events</p>
+        <h2 class="section-title">Festival<br><em>Timeline</em></h2>
+        <p style="font-size:0.78rem;line-height:1.9;color:#7A7570;margin-top:20px;">Every moment is by design. The festival unfolds across three days of craft, competition, and community.</p>
+        <div class="mt-10 p-6" style="border:1px solid rgba(184,150,62,0.2);">
+          <p style="font-size:0.6rem;letter-spacing:0.35em;text-transform:uppercase;color:#B8963E;margin-bottom:8px;">Festival Dates</p>
+          <p style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:300;line-height:1.2;color:#1A1814;">15 — 17<br>November 2025</p>
+          <p style="font-size:0.7rem;color:#7A7570;margin-top:8px;letter-spacing:0.05em;">Venue TBA, Kerala</p>
+        </div>
+      </div>
+      <div class="lg:col-span-8 reveal" style="transition-delay:0.15s">
+        <div class="space-y-0">
+          <!-- items -->
+          <div class="timeline-item flex gap-6 pb-10" style="position:relative">
+            <div style="position:relative;display:flex;flex-direction:column;align-items:center;">
+              <div class="timeline-dot"></div>
+              <div style="flex:1;width:1px;background:linear-gradient(to bottom,rgba(184,150,62,0.3),rgba(184,150,62,0.05));margin-top:8px;"></div>
+            </div>
+            <div class="pb-4">
+              <p class="timeline-date">1 October 2025</p>
+              <p class="timeline-event">Registrations Open</p>
+              <p style="font-size:0.75rem;color:#7A7570;margin-top:6px;line-height:1.7;">All seven programs open for participant registration. Early bird incentives available for first 100 registrations.</p>
+            </div>
+          </div>
+          <div class="timeline-item flex gap-6 pb-10">
+            <div style="position:relative;display:flex;flex-direction:column;align-items:center;">
+              <div class="timeline-dot"></div>
+              <div style="flex:1;width:1px;background:linear-gradient(to bottom,rgba(184,150,62,0.3),rgba(184,150,62,0.05));margin-top:8px;"></div>
+            </div>
+            <div class="pb-4">
+              <p class="timeline-date">31 October 2025</p>
+              <p class="timeline-event">Registration Deadline</p>
+              <p style="font-size:0.75rem;color:#7A7570;margin-top:6px;line-height:1.7;">Last day to submit registration forms. Submission materials for illustration, photography, poetry, and design also due.</p>
+            </div>
+          </div>
+          <div class="timeline-item flex gap-6 pb-10">
+            <div style="position:relative;display:flex;flex-direction:column;align-items:center;">
+              <div class="timeline-dot"></div>
+              <div style="flex:1;width:1px;background:linear-gradient(to bottom,rgba(184,150,62,0.3),rgba(184,150,62,0.05));margin-top:8px;"></div>
+            </div>
+            <div class="pb-4">
+              <p class="timeline-date">10 November 2025</p>
+              <p class="timeline-event">Shortlist Announcement</p>
+              <p style="font-size:0.75rem;color:#7A7570;margin-top:6px;line-height:1.7;">Selected participants across all programs notified. Schedule and detailed briefings distributed.</p>
+            </div>
+          </div>
+          <div class="timeline-item flex gap-6 pb-10">
+            <div style="position:relative;display:flex;flex-direction:column;align-items:center;">
+              <div class="timeline-dot"></div>
+              <div style="flex:1;width:1px;background:linear-gradient(to bottom,rgba(184,150,62,0.3),rgba(184,150,62,0.05));margin-top:8px;"></div>
+            </div>
+            <div class="pb-4">
+              <p class="timeline-date">15 November 2025 — Day I</p>
+              <p class="timeline-event">Opening Ceremony & Recitation</p>
+              <p style="font-size:0.75rem;color:#7A7570;margin-top:6px;line-height:1.7;">Official inauguration. Quranic Recitation competition begins. Evening exhibition of visual art submissions opens to the public.</p>
+            </div>
+          </div>
+          <div class="timeline-item flex gap-6 pb-10">
+            <div style="position:relative;display:flex;flex-direction:column;align-items:center;">
+              <div class="timeline-dot"></div>
+              <div style="flex:1;width:1px;background:linear-gradient(to bottom,rgba(184,150,62,0.3),rgba(184,150,62,0.05));margin-top:8px;"></div>
+            </div>
+            <div class="pb-4">
+              <p class="timeline-date">16 November 2025 — Day II</p>
+              <p class="timeline-event">Nasheed, Poetry & Calligraphy</p>
+              <p style="font-size:0.75rem;color:#7A7570;margin-top:6px;line-height:1.7;">Live performances, poetry readings, and calligraphy demonstrations. Interactive sessions with master calligraphers.</p>
+            </div>
+          </div>
+          <div class="timeline-item flex gap-6">
+            <div style="position:relative;display:flex;flex-direction:column;align-items:center;">
+              <div class="timeline-dot"></div>
+            </div>
+            <div>
+              <p class="timeline-date">17 November 2025 — Day III</p>
+              <p class="timeline-event">Finals & Closing Ceremony</p>
+              <p style="font-size:0.75rem;color:#7A7570;margin-top:6px;line-height:1.7;">Grand finals, People's Choice voting, and the awards ceremony. A night to celebrate light through art.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider qaf-container"></div>
+
+<!-- LEADERBOARD -->
+<section id="leaderboard" class="py-32" style="background:rgba(26,24,20,0.015);">
+  <div class="qaf-container">
+    <div class="flex flex-col lg:flex-row lg:items-end justify-between mb-16 gap-6 reveal">
+      <div>
+        <p class="section-label mb-4">Live Rankings</p>
+        <h2 class="section-title">Leader<em>board</em></h2>
+      </div>
+      <div class="flex items-center gap-3">
+        <div style="width:8px;height:8px;border-radius:50%;background:#B8963E;animation:pulse 2s infinite;"></div>
+        <p style="font-size:0.62rem;letter-spacing:0.25em;text-transform:uppercase;color:#B8963E;">Updated Live</p>
+      </div>
+    </div>
+
+    <!-- Category Tabs -->
+    <div class="flex flex-wrap gap-2 mb-10 reveal">
+      <button onclick="filterLeaderboard('all')" id="tab-all" class="lb-tab active" style="font-size:0.6rem;letter-spacing:0.25em;text-transform:uppercase;padding:8px 20px;border:1px solid #B8963E;background:#B8963E;color:#F7F3EE;cursor:pointer;transition:all 0.3s;">All</button>
+      <button onclick="filterLeaderboard('recitation')" id="tab-recitation" class="lb-tab" style="font-size:0.6rem;letter-spacing:0.25em;text-transform:uppercase;padding:8px 20px;border:1px solid rgba(184,150,62,0.3);background:transparent;color:#7A7570;cursor:pointer;transition:all 0.3s;">Recitation</button>
+      <button onclick="filterLeaderboard('calligraphy')" id="tab-calligraphy" class="lb-tab" style="font-size:0.6rem;letter-spacing:0.25em;text-transform:uppercase;padding:8px 20px;border:1px solid rgba(184,150,62,0.3);background:transparent;color:#7A7570;cursor:pointer;transition:all 0.3s;">Calligraphy</button>
+      <button onclick="filterLeaderboard('nasheed')" id="tab-nasheed" class="lb-tab" style="font-size:0.6rem;letter-spacing:0.25em;text-transform:uppercase;padding:8px 20px;border:1px solid rgba(184,150,62,0.3);background:transparent;color:#7A7570;cursor:pointer;transition:all 0.3s;">Nasheed</button>
+      <button onclick="filterLeaderboard('design')" id="tab-design" class="lb-tab" style="font-size:0.6rem;letter-spacing:0.25em;text-transform:uppercase;padding:8px 20px;border:1px solid rgba(184,150,62,0.3);background:transparent;color:#7A7570;cursor:pointer;transition:all 0.3s;">Design</button>
+    </div>
+
+    <div id="leaderboard-table" class="reveal" style="transition-delay:0.1s">
+      <!-- Rows injected by JS -->
+    </div>
+
+    <p style="font-size:0.65rem;color:#7A7570;margin-top:24px;letter-spacing:0.05em;text-align:center;opacity:0.6;">Rankings are provisional and subject to jury review. Final results announced on Day III.</p>
+  </div>
+</section>
+
+<style>
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.4); }
+}
+</style>
+
+<div class="section-divider qaf-container"></div>
+
+<!-- ANNOUNCEMENTS -->
+<section id="announcements" class="py-32">
+  <div class="qaf-container">
+    <div class="grid lg:grid-cols-12 gap-16">
+      <div class="lg:col-span-4 reveal">
+        <p class="section-label mb-4">Latest Updates</p>
+        <h2 class="section-title">Announce<em>ments</em></h2>
+        <p style="font-size:0.78rem;line-height:1.9;color:#7A7570;margin-top:20px;">Stay informed. Every update, every deadline, every revelation.</p>
+      </div>
+      <div class="lg:col-span-8 reveal" style="transition-delay:0.15s">
+        <div id="announcements-list">
+          <!-- Loading state -->
+          <div id="announcements-loading" class="announce-item pl-6 py-8" style="border-bottom:1px solid rgba(184,150,62,0.1);">
+            <p style="font-size:0.78rem;color:#7A7570;letter-spacing:0.05em;">Loading announcements...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider qaf-container"></div>
+
+<!-- CONTACT -->
+<section id="contact" class="py-32">
+  <div class="qaf-container">
+    <div class="grid lg:grid-cols-12 gap-16 items-start">
+      <div class="lg:col-span-5 reveal">
+        <p class="section-label mb-4">Get in Touch</p>
+        <h2 class="section-title mb-8">Let us<br><em>hear</em> you</h2>
+        <p style="font-size:0.78rem;line-height:1.9;color:#7A7570;margin-bottom:40px;">For enquiries, collaborations, sponsorship opportunities, or any questions about the festival, we welcome you.</p>
+        <div class="space-y-6">
+          <div>
+            <p style="font-size:0.58rem;letter-spacing:0.35em;text-transform:uppercase;color:#B8963E;margin-bottom:4px;">Email</p>
+            <p style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:#1A1814;">info@quranartfest.com</p>
+          </div>
+          <div>
+            <p style="font-size:0.58rem;letter-spacing:0.35em;text-transform:uppercase;color:#B8963E;margin-bottom:4px;">Phone</p>
+            <p style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:#1A1814;">+91 94XXX XXXXX</p>
+          </div>
+          <div>
+            <p style="font-size:0.58rem;letter-spacing:0.35em;text-transform:uppercase;color:#B8963E;margin-bottom:4px;">Location</p>
+            <p style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:#1A1814;">Kerala, India</p>
+          </div>
+        </div>
+        <div class="flex gap-4 mt-10">
+          <a href="#" style="font-size:0.6rem;letter-spacing:0.25em;text-transform:uppercase;color:#7A7570;transition:color 0.3s;" onmouseover="this.style.color='#B8963E'" onmouseout="this.style.color='#7A7570'">Instagram</a>
+          <span style="color:rgba(184,150,62,0.3);">—</span>
+          <a href="#" style="font-size:0.6rem;letter-spacing:0.25em;text-transform:uppercase;color:#7A7570;transition:color 0.3s;" onmouseover="this.style.color='#B8963E'" onmouseout="this.style.color='#7A7570'">Facebook</a>
+          <span style="color:rgba(184,150,62,0.3);">—</span>
+          <a href="#" style="font-size:0.6rem;letter-spacing:0.25em;text-transform:uppercase;color:#7A7570;transition:color 0.3s;" onmouseover="this.style.color='#B8963E'" onmouseout="this.style.color='#7A7570'">YouTube</a>
+        </div>
+      </div>
+      <div class="lg:col-span-7 reveal" style="transition-delay:0.2s">
+        <div style="border:1px solid rgba(184,150,62,0.2);padding:48px;">
+          <p style="font-size:0.6rem;letter-spacing:0.35em;text-transform:uppercase;color:#B8963E;margin-bottom:32px;">Send a Message</p>
+          <div class="space-y-8">
+            <div class="grid grid-cols-2 gap-8">
+              <div>
+                <input type="text" placeholder="Your Name" class="contact-input">
+              </div>
+              <div>
+                <input type="email" placeholder="Your Email" class="contact-input">
+              </div>
+            </div>
+            <div>
+              <input type="text" placeholder="Subject" class="contact-input">
+            </div>
+            <div>
+              <select class="contact-input" style="cursor:pointer;appearance:none;">
+                <option value="" disabled selected style="color:#7A7570;">Program of Interest</option>
+                <option>Quranic Recitation</option>
+                <option>Arabic Calligraphy</option>
+                <option>Nasheed & Vocal Arts</option>
+                <option>Quranic Illustration</option>
+                <option>Quranic Photography</option>
+                <option>Quranic Poetry</option>
+                <option>Graphic Design</option>
+                <option>General Enquiry</option>
+                <option>Sponsorship</option>
+              </select>
+            </div>
+            <div>
+              <textarea placeholder="Your message..." class="contact-input" rows="4" style="resize:none;padding-top:12px;"></textarea>
+            </div>
+            <div class="pt-4">
+              <button class="btn-primary" onclick="handleSubmit(event)">Send Message</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROGRAM MODAL -->
+<div class="prog-modal-overlay" id="progModalOverlay" onclick="if(event.target===this)closeProgramModal()">
+  <div class="prog-modal">
+    <div class="prog-modal-header">
+      <span class="prog-modal-num" id="progModalNum"></span>
+      <button class="prog-modal-close" onclick="closeProgramModal()">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="prog-modal-body">
+      <h3 class="prog-modal-title" id="progModalTitle"></h3>
+      <div class="prog-modal-divider"></div>
+      <p class="prog-modal-text" id="progModalDesc"></p>
+      <div class="prog-modal-details" id="progModalDetails"></div>
+      <a href="pages/register.html" class="prog-modal-cta">Register Now</a>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="py-16">
+  <div class="qaf-container">
+    <div class="grid md:grid-cols-12 gap-8 items-center mb-12">
+      <div class="md:col-span-4">
+        <div class="mb-4">
+          <span style="font-family:'Cormorant Garamond',serif;font-size:2.5rem;font-weight:300;letter-spacing:0.08em;color:#1A1814;line-height:1;">QAF</span>
+          <p style="font-size:0.55rem;letter-spacing:0.4em;text-transform:uppercase;color:#B8963E;margin-top:2px;">Quran Art Festival</p>
+        </div>
+        <p style="font-size:0.72rem;line-height:1.8;color:#7A7570;max-width:260px;">A festival of faith, artistry, and the eternal word. Kerala, 2025.</p>
+      </div>
+      <div class="md:col-span-4 md:col-start-5">
+        <div class="grid grid-cols-2 gap-4">
+          <div class="space-y-2">
+            <a href="#about" style="display:block;font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:#7A7570;transition:color 0.3s;text-decoration:none;" onmouseover="this.style.color='#B8963E'" onmouseout="this.style.color='#7A7570'">About</a>
+            <a href="#programs" style="display:block;font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:#7A7570;transition:color 0.3s;text-decoration:none;" onmouseover="this.style.color='#B8963E'" onmouseout="this.style.color='#7A7570'">Programs</a>
+            <a href="#prizes" style="display:block;font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:#7A7570;transition:color 0.3s;text-decoration:none;" onmouseover="this.style.color='#B8963E'" onmouseout="this.style.color='#7A7570'">Prizes</a>
+            <a href="#timeline" style="display:block;font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:#7A7570;transition:color 0.3s;text-decoration:none;" onmouseover="this.style.color='#B8963E'" onmouseout="this.style.color='#7A7570'">Timeline</a>
+          </div>
+          <div class="space-y-2">
+            <a href="#leaderboard" style="display:block;font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:#7A7570;transition:color 0.3s;text-decoration:none;" onmouseover="this.style.color='#B8963E'" onmouseout="this.style.color='#7A7570'">Leaderboard</a>
+            <a href="#announcements" style="display:block;font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:#7A7570;transition:color 0.3s;text-decoration:none;" onmouseover="this.style.color='#B8963E'" onmouseout="this.style.color='#7A7570'">Announcements</a>
+            <a href="#contact" style="display:block;font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:#7A7570;transition:color 0.3s;text-decoration:none;" onmouseover="this.style.color='#B8963E'" onmouseout="this.style.color='#7A7570'">Contact</a>
+          </div>
+        </div>
+      </div>
+      <div class="md:col-span-3 md:col-start-10 text-right">
+        <p style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1rem;color:rgba(184,150,62,0.6);line-height:1.6;">"Recite in the name of your Lord who created"</p>
+        <p style="font-size:0.6rem;letter-spacing:0.15em;color:#7A7570;margin-top:4px;">Surah Al-Alaq, 96:1</p>
+      </div>
+    </div>
+    <div class="gold-rule mb-8"></div>
+    <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+      <p style="font-size:0.6rem;letter-spacing:0.15em;color:#7A7570;">© 2025 QAF — Quran Art Festival. All rights reserved.</p>
+      <p style="font-size:0.6rem;letter-spacing:0.15em;color:rgba(184,150,62,0.5);">Made with reverence · Kerala, India</p>
+    </div>
+  </div>
+</footer>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="config/firebase.js"></script>
+<script src="js/services/database.js"></script>
+
+<script>
+  // ── LEADERBOARD ──
+  // Fallback data if Firebase has no entries
+  const fallbackLbData = [
+    { name: 'Ahmed Farhan Al-Hussaini', category: 'recitation', score: 98, region: 'Kozhikode' },
+    { name: 'Maryam bint Ismail', category: 'calligraphy', score: 97, region: 'Malappuram' },
+    { name: 'Abdur Rahman Siddiqui', category: 'nasheed', score: 95, region: 'Thrissur' },
+    { name: 'Zainab Al-Rashidi', category: 'design', score: 94, region: 'Kochi' },
+    { name: 'Ibrahim Hassan Noor', category: 'recitation', score: 93, region: 'Kannur' },
+    { name: 'Fatimah Al-Zahra', category: 'calligraphy', score: 92, region: 'Thiruvananthapuram' },
+    { name: 'Yusuf Al-Qaradawi', category: 'nasheed', score: 91, region: 'Palakkad' },
+    { name: 'Aisha bint Umar', category: 'design', score: 90, region: 'Wayanad' },
+  ];
+
+  let lbData = [];
+  let currentFilter = 'all';
+
+  function filterLeaderboard(cat) {
+    currentFilter = cat;
+    document.querySelectorAll('.lb-tab').forEach(t => {
+      t.style.background = 'transparent';
+      t.style.color = '#7A7570';
+      t.style.borderColor = 'rgba(184,150,62,0.3)';
+    });
+    const active = document.getElementById('tab-' + cat);
+    if (active) {
+      active.style.background = '#B8963E';
+      active.style.color = '#F7F3EE';
+      active.style.borderColor = '#B8963E';
+    }
+    renderLeaderboard();
+  }
+
+  function renderLeaderboard() {
+    const filtered = currentFilter === 'all' ? lbData : lbData.filter(d => d.category === currentFilter);
+    const container = document.getElementById('leaderboard-table');
+    const maxScore = 100;
+
+    if (!filtered.length) {
+      container.innerHTML = '<div style="text-align:center;padding:40px 0;"><p style="font-family:\'Cormorant Garamond\',serif;font-size:1.3rem;color:#7A7570;">No results for this category yet</p></div>';
+      return;
+    }
+
+    container.innerHTML = filtered.map((item, i) => `
+      <div class="lb-row flex items-center gap-6 py-5 px-2">
+        <span class="lb-rank w-8">${i + 1}</span>
+        <div class="flex-1 min-w-0">
+          <p class="lb-name truncate">${item.name}</p>
+          <p style="font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:#B8963E;margin-top:2px;">${item.category}</p>
+        </div>
+        <div class="hidden md:block w-32">
+          <div class="lb-bar-track">
+            <div class="lb-bar-fill" style="width:${(item.score / maxScore) * 100}%;"></div>
+          </div>
+        </div>
+        <div class="text-right">
+          <p style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;color:#1A1814;line-height:1;">${item.score}</p>
+          <p class="lb-score">${item.region}</p>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // ── ANNOUNCEMENTS RENDERER ──
+  function renderAnnouncements(announcements) {
+    const container = document.getElementById('announcements-list');
+    if (!announcements || !announcements.length) {
+      container.innerHTML = `
+        <div class="announce-item pl-6 py-8">
+          <p style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;color:#7A7570;">No announcements yet. Stay tuned for updates.</p>
+        </div>`;
+      return;
+    }
+
+    const tagColors = [
+      { bg: 'rgba(184,150,62,0.08)', color: '#B8963E' },
+      { bg: 'rgba(138,158,140,0.1)', color: '#8A9E8C' },
+      { bg: 'rgba(26,24,20,0.05)', color: '#3D3A35' }
+    ];
+
+    container.innerHTML = announcements.map((a, i) => {
+      const tagStyle = tagColors[i % tagColors.length];
+      const dateStr = a.createdAt ? new Date(a.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
+      const isLast = i === announcements.length - 1;
+      const borderStyle = isLast ? '' : 'border-bottom:1px solid rgba(184,150,62,0.1);';
+
+      return `
+        <div class="announce-item pl-6 py-8" style="${borderStyle}">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="announce-tag" style="background:${tagStyle.bg};color:${tagStyle.color};">${i === 0 ? 'New' : 'Update'}</span>
+            <span style="font-size:0.62rem;color:#7A7570;letter-spacing:0.05em;">${dateStr}</span>
+          </div>
+          <p class="announce-title mb-3">${a.title || ''}</p>
+          <p style="font-size:0.75rem;line-height:1.8;color:#7A7570;">${a.text || ''}</p>
+        </div>`;
+    }).join('');
+  }
+
+  // ── LOAD DATA FROM FIREBASE ──
+  async function loadDynamicData() {
+    if (typeof db === 'undefined' || typeof DbService === 'undefined') {
+      console.warn('Firebase not available, using fallback data');
+      lbData = fallbackLbData;
+      renderLeaderboard();
+      return;
+    }
+
+    try {
+      // Load Announcements (real-time)
+      DbService.announcements.onUpdate((announcements) => {
+        renderAnnouncements(announcements);
+      });
+
+      // Load Leaderboard from results
+      const results = await DbService.results.getAll();
+      const teams = await DbService.teams.getAll();
+      const programs = await DbService.programs.getAll();
+
+      if (Object.keys(results).length > 0) {
+        // Build leaderboard from actual results
+        const studentScores = {};
+        Object.values(results).forEach(r => {
+          const key = r.studentId || r.studentName || r.id;
+          if (!studentScores[key]) {
+            const team = teams[r.teamId] || {};
+            const prog = programs[r.programId] || {};
+            studentScores[key] = {
+              name: r.studentName || 'Participant',
+              category: (prog.category || prog.title || 'general').toLowerCase().split(' ')[0],
+              score: 0,
+              region: team.district || team.place || ''
+            };
+          }
+          studentScores[key].score += (r.points || 0);
+        });
+        lbData = Object.values(studentScores).sort((a, b) => b.score - a.score).slice(0, 10);
+      } else {
+        lbData = fallbackLbData;
+      }
+      renderLeaderboard();
+
+    } catch (e) {
+      console.error('Error loading dynamic data:', e);
+      lbData = fallbackLbData;
+      renderLeaderboard();
+    }
+  }
+
+  // ── INIT ──
+  document.addEventListener('DOMContentLoaded', () => {
+    loadDynamicData();
+  });
+
+  // ── PROGRAM MODAL ──
+  function openProgramModal(num, title, desc, details) {
+    document.getElementById('progModalNum').innerText = num;
+    document.getElementById('progModalTitle').innerText = title;
+    document.getElementById('progModalDesc').innerText = desc;
+    
+    let detailsHtml = '';
+    for (const [key, value] of Object.entries(details)) {
+      detailsHtml += `
+        <div class="prog-modal-detail">
+          <p class="prog-modal-detail-label">${key}</p>
+          <p class="prog-modal-detail-value">${value}</p>
+        </div>
+      `;
+    }
+    document.getElementById('progModalDetails').innerHTML = detailsHtml;
+    
+    document.getElementById('progModalOverlay').classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeProgramModal() {
+    document.getElementById('progModalOverlay').classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  // SCROLL REVEAL
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  reveals.forEach(el => observer.observe(el));
+
+  // MOBILE NAV
+  function toggleMenu() {
+    const menu = document.getElementById('mobile-menu');
+    menu.classList.toggle('open');
+  }
+
+  // CONTACT SUBMIT
+  function handleSubmit(e) {
+    e.preventDefault();
+    const btn = e.target;
+    btn.textContent = 'Message Sent ✦';
+    btn.style.background = '#B8963E';
+    btn.style.borderColor = '#B8963E';
+    setTimeout(() => {
+      btn.textContent = 'Send Message';
+      btn.style.background = '#1A1814';
+      btn.style.borderColor = '#1A1814';
+    }, 3000);
+  }
+
+  // NAV SHRINK ON SCROLL
+  window.addEventListener('scroll', () => {
+    const nav = document.querySelector('nav');
+    if (window.scrollY > 60) {
+      nav.style.borderBottomColor = 'rgba(184,150,62,0.25)';
+    } else {
+      nav.style.borderBottomColor = 'rgba(184,150,62,0.15)';
+    }
+  });
+</script>
+</body>
+</html>

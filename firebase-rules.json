@@ -1,0 +1,62 @@
+{
+  "rules": {
+    "teams": {
+      ".read": true,
+      "$teamId": {
+        ".write": "auth != null && (root.child('users/' + auth.uid + '/role').val() === 'admin' || root.child('users/' + auth.uid + '/teamId').val() === $teamId)"
+      }
+    },
+    "students": {
+      ".read": true,
+      "$studentId": {
+        ".write": "auth != null && (root.child('users/' + auth.uid + '/role').val() === 'admin' || root.child('users/' + auth.uid + '/teamId').val() === data.child('teamId').val() || root.child('users/' + auth.uid + '/teamId').val() === newData.child('teamId').val())"
+      }
+    },
+    "programs": {
+      ".read": true,
+      ".write": "auth != null && root.child('users/' + auth.uid + '/role').val() === 'admin'"
+    },
+    "categories": {
+      ".read": true,
+      ".write": "auth != null && root.child('users/' + auth.uid + '/role').val() === 'admin'"
+    },
+    "topicSubmissions": {
+      ".read": "auth != null",
+      "$subId": {
+        ".write": "auth != null && (root.child('users/' + auth.uid + '/role').val() === 'admin' || root.child('users/' + auth.uid + '/teamId').val() === data.child('teamId').val() || root.child('users/' + auth.uid + '/teamId').val() === newData.child('teamId').val())"
+      }
+    },
+    "results": {
+      ".read": true,
+      ".write": "auth != null && root.child('users/' + auth.uid + '/role').val() === 'admin'"
+    },
+    "leaderboard": {
+      ".read": true,
+      ".write": "auth != null && root.child('users/' + auth.uid + '/role').val() === 'admin'"
+    },
+    "announcements": {
+      ".read": true,
+      ".write": "auth != null && root.child('users/' + auth.uid + '/role').val() === 'admin'"
+    },
+    "settings": {
+      ".read": true,
+      ".write": "auth != null && root.child('users/' + auth.uid + '/role').val() === 'admin'"
+    },
+    "notifications": {
+      "$teamId": {
+        ".read": "auth != null && (root.child('users/' + auth.uid + '/role').val() === 'admin' || root.child('users/' + auth.uid + '/teamId').val() === $teamId)",
+        ".write": "auth != null"
+      }
+    },
+    "users": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid"
+      }
+    },
+    "auditLogs": {
+      ".read": "auth != null && root.child('users/' + auth.uid + '/role').val() === 'admin'",
+      ".write": "auth != null"
+    }
+  }
+}

@@ -1,0 +1,163 @@
+/* ============================================================
+   QAF – Quranic Art Fest | Design Tokens
+   Luxury Editorial Theme — Synced with Landing Page
+   ============================================================ */
+
+:root {
+  /* ── Primary Palette (from landing page) ── */
+  --clr-cream:         #F7F3EE;
+  --clr-sand:          #E8DFD0;
+  --clr-gold:          #B8963E;
+  --clr-gold-light:    #D4AF6A;
+  --clr-gold-pale:     #F0E6C8;
+  --clr-gold-dark:     #9A7A2E;
+  --clr-gold-muted:    #B8963E;
+  --clr-gold-shine:    #D4AF6A;
+  --clr-ink:           #1A1814;
+  --clr-ink-soft:      #3D3A35;
+  --clr-ink-muted:     #7A7570;
+  --clr-sage:          #8A9E8C;
+
+  /* ── Extended Neutrals ── */
+  --clr-ivory:         #F7F3EE;
+  --clr-ivory-warm:    #EFE8D8;
+  --clr-parchment:     #E8DFD0;
+  --clr-parchment-dark:#D4CAB8;
+  --clr-brown:         #3D3A35;
+  --clr-brown-light:   #7A7570;
+  --clr-brown-dark:    #1A1814;
+
+  /* ── Legacy aliases (backward compat) ── */
+  --clr-forest:        #1A1814;
+  --clr-forest-deep:   #0F0E0C;
+  --clr-forest-light:  #3D3A35;
+  --clr-forest-muted:  #7A7570;
+  
+  /* ── Semantic Colors ── */
+  --clr-success:       #5B8C5A;
+  --clr-error:         #C45454;
+  --clr-warning:       #B8963E;
+  --clr-info:          #5A7FA0;
+  
+  /* ── Medal Colors ── */
+  --clr-medal-gold:    #B8963E;
+  --clr-medal-silver:  #A0A09A;
+  --clr-medal-bronze:  #A07040;
+  
+  /* ── Typography (matching landing page fonts) ── */
+  --ff-display:        'Cormorant Garamond', 'Georgia', serif;
+  --ff-heading:        'Cormorant Garamond', 'Georgia', serif;
+  --ff-body:           'Tenor Sans', 'Segoe UI', sans-serif;
+  --ff-serif:          'Playfair Display', 'Georgia', serif;
+  --ff-mono:           'JetBrains Mono', 'Consolas', monospace;
+  --ff-arabic:         'Amiri', 'Traditional Arabic', serif;
+  
+  --fs-xs:             0.7rem;
+  --fs-sm:             0.82rem;
+  --fs-base:           0.95rem;
+  --fs-md:             1.1rem;
+  --fs-lg:             1.25rem;
+  --fs-xl:             1.5rem;
+  --fs-2xl:            2rem;
+  --fs-3xl:            2.5rem;
+  --fs-4xl:            3.25rem;
+  --fs-5xl:            4rem;
+  
+  --fw-light:          300;
+  --fw-normal:         400;
+  --fw-medium:         500;
+  --fw-semibold:       600;
+  --fw-bold:           700;
+  
+  --lh-tight:          1.05;
+  --lh-normal:         1.6;
+  --lh-relaxed:        1.8;
+  
+  /* ── Spacing ── */
+  --sp-1:  0.25rem;
+  --sp-2:  0.5rem;
+  --sp-3:  0.75rem;
+  --sp-4:  1rem;
+  --sp-5:  1.25rem;
+  --sp-6:  1.5rem;
+  --sp-8:  2rem;
+  --sp-10: 2.5rem;
+  --sp-12: 3rem;
+  --sp-16: 4rem;
+  --sp-20: 5rem;
+  --sp-24: 6rem;
+  --sp-32: 8rem;
+  
+  /* ── Border Radius ── */
+  --radius-none: 0px;
+  --radius-sm:   2px;
+  --radius-md:   4px;
+  --radius-lg:   6px;
+  --radius-xl:   8px;
+  --radius-2xl:  12px;
+  --radius-full: 50%;
+  
+  /* ── Shadows (warm tone) ── */
+  --shadow-xs:   0 1px 2px rgba(26, 24, 20, 0.04);
+  --shadow-sm:   0 2px 4px rgba(26, 24, 20, 0.06);
+  --shadow-md:   0 4px 16px rgba(184, 150, 62, 0.08);
+  --shadow-lg:   0 8px 32px rgba(184, 150, 62, 0.1);
+  --shadow-xl:   0 16px 48px rgba(184, 150, 62, 0.12);
+  --shadow-gold: 0 4px 16px rgba(184, 150, 62, 0.15);
+  --shadow-inner: inset 0 2px 4px rgba(26, 24, 20, 0.04);
+  
+  /* ── Transitions ── */
+  --ease-out:     cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out:  cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring:  cubic-bezier(0.34, 1.56, 0.64, 1);
+  --duration-fast: 150ms;
+  --duration-base: 300ms;
+  --duration-slow: 500ms;
+  
+  /* ── Z-Index Scale ── */
+  --z-dropdown:  100;
+  --z-sticky:    200;
+  --z-fixed:     300;
+  --z-overlay:   400;
+  --z-modal:     500;
+  --z-toast:     600;
+  --z-tooltip:   700;
+  
+  /* ── Layout ── */
+  --container-xs:  480px;
+  --container-sm:  640px;
+  --container-md:  768px;
+  --container-lg:  1024px;
+  --container-xl:  1200px;
+  --container-2xl: 1400px;
+  
+  --nav-height:    64px;
+  --sidebar-width: 260px;
+}
+
+/* ── Dark Mode Overrides ── */
+[data-theme="dark"] {
+  --clr-cream:         #141210;
+  --clr-ivory:         #1A1814;
+  --clr-ivory-warm:    #1E1C18;
+  --clr-parchment:     #2A2720;
+  --clr-parchment-dark:#38342C;
+  --clr-sand:          #3A3630;
+  --clr-brown:         #E8DFD0;
+  --clr-brown-light:   #B0A898;
+  --clr-brown-dark:    #F7F3EE;
+  --clr-ink:           #F7F3EE;
+  --clr-ink-soft:      #E8DFD0;
+  --clr-ink-muted:     #B0A898;
+  --clr-forest:        #F7F3EE;
+  --clr-forest-deep:   #0A0908;
+  --clr-gold:          #D4AF6A;
+  --clr-gold-light:    #E4CC7A;
+  --clr-gold-dark:     #B8963E;
+  
+  --shadow-xs:   0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-sm:   0 2px 4px rgba(0, 0, 0, 0.25);
+  --shadow-md:   0 4px 12px rgba(0, 0, 0, 0.3);
+  --shadow-lg:   0 8px 24px rgba(0, 0, 0, 0.35);
+  --shadow-xl:   0 16px 48px rgba(0, 0, 0, 0.4);
+}

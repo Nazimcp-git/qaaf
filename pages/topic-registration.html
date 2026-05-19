@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Topic Registration – QAF</title>
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/animations.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <style>
+    .topic-page {
+      padding-top: calc(var(--nav-height) + 40px);
+      padding-bottom: var(--sp-12);
+      min-height: 100vh;
+      background: var(--clr-cream);
+    }
+    .topic-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .topic-programs {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 24px;
+    }
+    .topic-card {
+      border-radius: var(--radius-none);
+      background: rgba(247, 243, 238, 0.8);
+      border: 1px solid rgba(184, 150, 62, 0.15);
+      transition: all 0.4s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    .topic-card:hover {
+      border-color: rgba(184, 150, 62, 0.3);
+      box-shadow: 0 8px 32px rgba(184, 150, 62, 0.06);
+    }
+    .topic-card-header {
+      background: transparent;
+      padding: 24px 24px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 1px solid rgba(184, 150, 62, 0.1);
+    }
+    .topic-card-header h4 {
+      font-family: 'Cormorant Garamond', serif;
+      color: var(--clr-ink);
+      font-size: 1.25rem;
+      font-weight: 400;
+      margin: 0;
+      line-height: 1.2;
+    }
+    .topic-card-body {
+      padding: 20px 24px 24px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .topic-submission {
+      margin-top: auto;
+      padding-top: 20px;
+      border-top: 1px solid rgba(184, 150, 62, 0.1);
+    }
+    .topic-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 12px;
+      font-family: 'Tenor Sans', sans-serif;
+      font-size: 0.55rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      border: 1px solid transparent;
+    }
+    .topic-status.pending { background: rgba(184,150,62,0.05); color: var(--clr-gold); border-color: rgba(184,150,62,0.2); }
+    .topic-status.approved { background: rgba(91,140,90,0.05); color: var(--clr-success); border-color: rgba(91,140,90,0.2); }
+    .topic-status.rejected { background: rgba(196,84,84,0.05); color: var(--clr-error); border-color: rgba(196,84,84,0.2); }
+    
+    .topic-info {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .topic-info-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .topic-info-label {
+      font-family: 'Tenor Sans', sans-serif;
+      font-size: 0.55rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--clr-ink-muted);
+    }
+    .topic-info-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      color: var(--clr-ink);
+    }
+    .no-students-msg {
+      background: rgba(184,150,62,0.05);
+      border: 1px solid rgba(184,150,62,0.15);
+      padding: 12px 16px;
+      font-size: 0.75rem;
+      color: var(--clr-gold-dark);
+      margin-top: 16px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar" id="navbar">
+    <div class="navbar-inner">
+      <a href="../index.html" class="navbar-brand">
+        <div class="flex flex-col items-center">
+          <span class="navbar-title">Q<span>A</span>F</span>
+        </div>
+      </a>
+      <div class="navbar-nav" id="navMenu">
+        <a href="team-dashboard.html" class="nav-link">Dashboard</a>
+        <a href="#" class="nav-link active">Topics</a>
+        <a href="results.html" class="nav-link">Results</a>
+      </div>
+      <div class="navbar-actions">
+        <button class="btn btn-outline btn-sm" id="logoutBtn" onclick="handleLogout()">Logout</button>
+        <button class="menu-toggle" id="menuToggle" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="topic-page">
+    <div class="container">
+      <div class="topic-header">
+        <h1 class="reveal">Topic Registration</h1>
+        <div class="ornament"><span class="ornament-icon"></span></div>
+        <p class="section-subtitle reveal">Submit topics for programs that require prior topic approval</p>
+      </div>
+
+      <div id="loadingState" style="text-align:center;padding:80px 0">
+        <div class="spinner" style="margin:0 auto 20px"></div>
+        <p style="font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase">Loading programs...</p>
+      </div>
+
+      <div class="topic-programs" id="topicPrograms" style="display:none"></div>
+    </div>
+  </main>
+
+  <!-- Topic Submit Modal -->
+  <div class="modal-overlay" id="topicModal">
+    <div class="modal">
+      <button class="modal-close" onclick="QAF.modal.close('topicModal')">✕</button>
+      <h3 class="modal-title" id="topicModalTitle">Submit Topic</h3>
+      <div class="modal-body">
+        <form id="topicForm">
+          <input type="hidden" id="topicProgramId">
+          <input type="hidden" id="topicEditId">
+          <div class="form-group">
+            <label class="form-label">Topic Title <span class="required">*</span></label>
+            <input class="form-input" id="topicTitle" required placeholder="Enter your topic title">
+            <div class="form-hint">Be specific and descriptive</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Description</label>
+            <textarea class="form-textarea" id="topicDesc" rows="4" placeholder="Describe your topic, approach, and key points..."></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Student <span class="required">*</span></label>
+            <select class="form-select" id="topicStudent" required>
+              <option value="">Select student</option>
+            </select>
+            <div class="form-hint">Only students registered for this program are shown</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Attachment (optional)</label>
+            <div class="form-file">
+              <input type="file" id="topicFile" accept="image/*,.pdf,.doc,.docx">
+              <div class="form-file-icon">📎</div>
+              <div class="form-file-text">Upload document or image (max 5MB)</div>
+            </div>
+            <div id="filePreview" style="margin-top:8px;font-size:0.7rem;color:var(--clr-gold);display:none;letter-spacing:0.05em"></div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="QAF.modal.close('topicModal')">Cancel</button>
+        <button class="btn btn-outline btn-sm" onclick="saveDraft()">Save Draft</button>
+        <button class="btn btn-primary" id="submitTopicBtn" onclick="submitTopic()">Submit Topic</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toast-container"></div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="../config/firebase.js"></script>
+  <script src="../js/utils/helpers.js"></script>
+  <script src="../js/services/database.js"></script>
+  <script src="../js/services/auth.js"></script>
+  <script>
+    let teamId = null;
+    let teamStudents = [];
+    let allPrograms = {};
+
+    function handleLogout() {
+      if (typeof auth !== 'undefined') {
+        auth.signOut().then(() => { location.href = 'team-login.html'; });
+      } else {
+        location.href = 'team-login.html';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (typeof auth === 'undefined' || typeof db === 'undefined') {
+        document.getElementById('loadingState').innerHTML = '<div class="empty-state"><div class="empty-state-icon">⚠️</div><div class="empty-state-title">Connection Error</div><div class="empty-state-text">Firebase not loaded. Please refresh the page.</div></div>';
+        return;
+      }
+
+      auth.onAuthStateChanged(async (user) => {
+        if (!user) { location.href = 'team-login.html'; return; }
+        try {
+          const snap = await db.ref('users/' + user.uid).once('value');
+          const ud = snap.val();
+          if (!ud || ud.role !== 'team') { location.href = 'team-login.html'; return; }
+          teamId = ud.teamId;
+
+          const students = await DbService.students.getByTeam(teamId);
+          teamStudents = Object.values(students);
+          allPrograms = await DbService.programs.getAll();
+
+          loadTopicPrograms();
+        } catch (e) {
+          console.error('Topic page error:', e);
+          document.getElementById('loadingState').innerHTML = '<div class="empty-state"><div class="empty-state-icon">⚠️</div><div class="empty-state-title">Error Loading</div><div class="empty-state-text">' + e.message + '</div></div>';
+        }
+      });
+    });
+
+    async function loadTopicPrograms() {
+      const submissions = await DbService.topics.getByTeam(teamId);
+      const subMap = {};
+      Object.values(submissions).forEach(s => { subMap[s.programId] = s; });
+
+      const topicProgs = Object.values(allPrograms).filter(p => p.topicRequired);
+      const container = document.getElementById('topicPrograms');
+      const loading = document.getElementById('loadingState');
+
+      loading.style.display = 'none';
+      container.style.display = 'grid';
+
+      if (!topicProgs.length) {
+        container.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="empty-state-icon">✧</div><div class="empty-state-title">No Topic Programs</div><div class="empty-state-text">No programs require topic submission currently. Check back later.</div><a href="team-dashboard.html" class="btn btn-outline btn-sm" style="margin-top:24px">← Back to Dashboard</a></div>';
+        container.style.display = 'block';
+        return;
+      }
+
+      container.innerHTML = topicProgs.map(p => {
+        const sub = subMap[p.id];
+        const eligibleStudents = teamStudents.filter(s => s.programId === p.id);
+
+        let statusHTML = '';
+        if (sub) {
+          const statusIcon = sub.status === 'pending' ? '⏳' : sub.status === 'approved' ? '✅' : '❌';
+          const statusText = sub.status === 'pending' ? 'Pending Review' : sub.status === 'approved' ? 'Approved' : 'Rejected';
+          const student = teamStudents.find(s => s.id === sub.studentId);
+
+          statusHTML = `<div class="topic-submission">
+            <div class="topic-status ${sub.status}">${statusIcon} ${statusText}</div>
+            <div class="topic-info">
+              <div class="topic-info-row"><span class="topic-info-label">Topic</span><span class="topic-info-value">${QAF.sanitize(sub.title)}</span></div>
+              ${student ? `<div class="topic-info-row"><span class="topic-info-label">Student</span><span style="font-size:0.9rem">${QAF.sanitize(student.name)}</span></div>` : ''}
+              ${sub.description ? `<div class="topic-info-row"><span class="topic-info-label">Description</span><span style="font-size:0.8rem;color:var(--clr-ink-muted);line-height:1.6">${QAF.sanitize(sub.description).substring(0, 100)}${sub.description.length > 100 ? '...' : ''}</span></div>` : ''}
+            </div>
+            ${sub.adminComment ? `<div style="margin-top:16px;padding:12px;background:rgba(184,150,62,0.05);border:1px solid rgba(184,150,62,0.1);font-size:0.75rem;line-height:1.5"><strong style="color:var(--clr-gold);text-transform:uppercase;font-size:0.6rem;letter-spacing:0.1em;display:block;margin-bottom:4px">Admin feedback:</strong> ${QAF.sanitize(sub.adminComment)}</div>` : ''}
+            ${sub.status !== 'approved' ? `<button class="btn btn-outline btn-sm" style="margin-top:20px;width:100%" onclick="openEditTopic('${p.id}','${sub.id}')">Edit Submission</button>` : ''}
+          </div>`;
+        } else {
+          if (eligibleStudents.length === 0) {
+            statusHTML = `<div class="no-students-msg">Register students for this program first before submitting a topic.<br><br><a href="team-dashboard.html" style="color:var(--clr-gold);border-bottom:1px solid var(--clr-gold);font-family:'Tenor Sans';font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;padding-bottom:2px">Go to Dashboard →</a></div>`;
+          } else {
+            statusHTML = `<div class="topic-submission"><button class="btn btn-primary btn-sm" style="width:100%" onclick="openTopicModal('${p.id}','${QAF.sanitize(p.title).replace(/'/g, "\\'")}')">Submit Topic</button></div>`;
+          }
+        }
+
+        return `<div class="topic-card">
+          <div class="topic-card-header">
+            <h4>${QAF.sanitize(p.title)}</h4>
+            <span class="badge badge-gold">${p.category || 'General'}</span>
+          </div>
+          <div class="topic-card-body">
+            <p style="font-size:0.8rem;color:var(--clr-ink-muted);margin-bottom:12px">${QAF.sanitize(p.description || 'Submit your topic for this program')}</p>
+            <div style="font-family:'Tenor Sans',sans-serif;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--clr-gold)">${eligibleStudents.length} student${eligibleStudents.length !== 1 ? 's' : ''} registered</div>
+            ${statusHTML}
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    function openTopicModal(programId, title) {
+      const eligibleStudents = teamStudents.filter(s => s.programId === programId);
+
+      document.getElementById('topicProgramId').value = programId;
+      document.getElementById('topicEditId').value = '';
+      document.getElementById('topicModalTitle').textContent = 'Submit Topic – ' + title;
+      document.getElementById('topicForm').reset();
+      document.getElementById('filePreview').style.display = 'none';
+
+      const sel = document.getElementById('topicStudent');
+      sel.innerHTML = '<option value="">Select student</option>' +
+        eligibleStudents.map(s => `<option value="${s.id}">${QAF.sanitize(s.name)}</option>`).join('');
+
+      const draft = localStorage.getItem('qaf-topic-draft-' + programId);
+      if (draft) {
+        try {
+          const d = JSON.parse(draft);
+          document.getElementById('topicTitle').value = d.title || '';
+          document.getElementById('topicDesc').value = d.desc || '';
+          QAF.toast.info('Draft Loaded', 'Your saved draft has been restored');
+        } catch(e) {}
+      }
+
+      QAF.modal.open('topicModal');
+    }
+
+    async function openEditTopic(programId, subId) {
+      try {
+        const sub = await DbService.topics.getByTeam(teamId);
+        const topic = Object.values(sub).find(s => s.id === subId);
+        if (!topic) { QAF.toast.error('Error', 'Topic not found'); return; }
+
+        const program = allPrograms[programId];
+        const eligibleStudents = teamStudents.filter(s => s.programId === programId);
+
+        document.getElementById('topicProgramId').value = programId;
+        document.getElementById('topicEditId').value = subId;
+        document.getElementById('topicModalTitle').textContent = 'Edit Topic – ' + (program?.title || '');
+        document.getElementById('topicTitle').value = topic.title || '';
+        document.getElementById('topicDesc').value = topic.description || '';
+        document.getElementById('filePreview').style.display = 'none';
+
+        const sel = document.getElementById('topicStudent');
+        sel.innerHTML = '<option value="">Select student</option>' +
+          eligibleStudents.map(s => `<option value="${s.id}" ${s.id === topic.studentId ? 'selected' : ''}>${QAF.sanitize(s.name)}</option>`).join('');
+
+        if (eligibleStudents.length === 0) {
+          sel.innerHTML = '<option value="">Select student</option>' +
+            teamStudents.map(s => `<option value="${s.id}" ${s.id === topic.studentId ? 'selected' : ''}>${QAF.sanitize(s.name)}</option>`).join('');
+        }
+
+        QAF.modal.open('topicModal');
+      } catch(e) {
+        QAF.toast.error('Error', 'Could not load topic: ' + e.message);
+      }
+    }
+
+    async function submitTopic() {
+      const title = document.getElementById('topicTitle').value.trim();
+      const studentId = document.getElementById('topicStudent').value;
+      const programId = document.getElementById('topicProgramId').value;
+
+      if (!title) { QAF.toast.error('Error', 'Topic title is required'); return; }
+      if (!studentId) { QAF.toast.error('Error', 'Please select a student'); return; }
+
+      const btn = document.getElementById('submitTopicBtn');
+      btn.disabled = true;
+      btn.textContent = 'Submitting...';
+
+      try {
+        const editId = document.getElementById('topicEditId').value;
+        const student = teamStudents.find(s => s.id === studentId);
+        const program = allPrograms[programId];
+
+        const data = {
+          title: QAF.sanitize(title),
+          description: QAF.sanitize(document.getElementById('topicDesc').value.trim()),
+          studentId,
+          studentName: student?.name || '',
+          programId,
+          programName: program?.title || '',
+          teamId,
+          status: 'pending',
+          updatedAt: Date.now()
+        };
+
+        if (editId) {
+          await DbService.topics.update(editId, data);
+          QAF.toast.success('Updated', 'Topic updated and resubmitted for review');
+        } else {
+          await DbService.topics.create(data);
+          QAF.toast.success('Submitted', 'Topic submitted for review');
+        }
+
+        localStorage.removeItem('qaf-topic-draft-' + programId);
+        QAF.modal.close('topicModal');
+        loadTopicPrograms();
+      } catch (e) {
+        console.error('Submit topic error:', e);
+        QAF.toast.error('Error', e.message || 'Failed to submit topic');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Submit Topic';
+      }
+    }
+
+    function saveDraft() {
+      const programId = document.getElementById('topicProgramId').value;
+      const data = {
+        title: document.getElementById('topicTitle').value,
+        desc: document.getElementById('topicDesc').value
+      };
+      localStorage.setItem('qaf-topic-draft-' + programId, JSON.stringify(data));
+      QAF.toast.info('Draft Saved', 'Your draft has been saved locally');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const fileInput = document.getElementById('topicFile');
+      if (fileInput) {
+        fileInput.addEventListener('change', (e) => {
+          const file = e.target.files[0];
+          const preview = document.getElementById('filePreview');
+          if (file) {
+            preview.textContent = '📎 ' + file.name + ' (' + (file.size / 1024).toFixed(1) + ' KB)';
+            preview.style.display = 'block';
+          } else {
+            preview.style.display = 'none';
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

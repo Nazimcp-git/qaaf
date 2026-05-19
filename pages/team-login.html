@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Team Login – QAF Quranic Art Fest</title>
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/animations.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <style>
+    .login-page {
+      min-height: 100vh;
+      display: flex;
+    }
+    .login-artwork {
+      flex: 1;
+      background: radial-gradient(ellipse 80% 80% at 50% 50%, #1A1814 0%, #0A0908 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(40px, 8vw, 80px);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      color: var(--clr-cream);
+    }
+    .login-artwork::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
+      pointer-events: none;
+    }
+    .login-artwork::after {
+      content: 'QAF';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(200px, 40vw, 500px);
+      font-weight: 300;
+      color: rgba(184, 150, 62, 0.03);
+      white-space: nowrap;
+      pointer-events: none;
+      line-height: 1;
+    }
+    .login-artwork-content {
+      position: relative;
+      z-index: 2;
+      max-width: 480px;
+    }
+    .login-artwork h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(40px, 5vw, 64px);
+      font-weight: 300;
+      color: var(--clr-cream);
+      margin-bottom: 24px;
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+    }
+    .login-artwork h2 em {
+      color: var(--clr-gold);
+      font-style: italic;
+    }
+    .login-artwork p {
+      color: rgba(247, 243, 238, 0.6);
+      font-size: 0.9rem;
+      line-height: 1.8;
+      letter-spacing: 0.05em;
+    }
+    .login-artwork .arabic-text {
+      font-family: 'Amiri', serif;
+      font-size: clamp(32px, 4vw, 48px);
+      color: rgba(184, 150, 62, 0.4);
+      margin-bottom: 32px;
+    }
+    .login-form-side {
+      flex: 1;
+      max-width: 600px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(40px, 6vw, 80px);
+      background: var(--clr-cream);
+    }
+    .login-form-container {
+      width: 100%;
+      max-width: 420px;
+    }
+    .login-form-container h1 {
+      font-size: clamp(32px, 4vw, 48px);
+      margin-bottom: 8px;
+    }
+    .login-form-container > p {
+      font-family: 'Tenor Sans', sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--clr-gold);
+      margin-bottom: 48px;
+    }
+    @media(max-width: 900px) {
+      .login-page { flex-direction: column; }
+      .login-artwork { display: none; }
+      .login-form-side { max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-page">
+    <div class="login-artwork">
+      <div class="login-artwork-content page-enter">
+        <div class="arabic-text">بِسْمِ ٱللَّهِ</div>
+        <h2>Quranic<br><em>Art Fest</em></h2>
+        <div class="ornament" style="margin: 32px auto; max-width: 200px;">
+          <span class="ornament-icon"></span>
+        </div>
+        <p>Access your institution's dashboard to manage program registrations, submit topics, and view results.</p>
+      </div>
+    </div>
+    
+    <div class="login-form-side">
+      <div class="login-form-container page-enter" style="animation-delay: 0.2s">
+        <a href="../index.html" style="display:inline-flex;align-items:center;gap:8px;color:var(--clr-ink-muted);font-size:0.65rem;letter-spacing:0.25em;text-transform:uppercase;margin-bottom:32px;transition:color 0.3s">← Back to Home</a>
+        
+        <h1>Team Login</h1>
+        <p>Sign in to your dashboard</p>
+        
+        <form id="loginForm" onsubmit="return false">
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input class="form-input" type="email" id="loginEmail" placeholder="your@institution.com" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input class="form-input" type="password" id="loginPassword" placeholder="Enter your password" required>
+          </div>
+          
+          <button type="submit" class="btn btn-primary btn-block btn-lg mt-6" id="loginBtn" onclick="handleLogin()">
+            Sign In
+          </button>
+        </form>
+        
+        <div style="margin-top:40px;padding-top:32px;border-top:1px solid rgba(184,150,62,0.15);text-align:center">
+          <p style="font-size:0.75rem;letter-spacing:0.05em;margin-bottom:16px">
+            Don't have an account? <a href="register.html" style="color:var(--clr-gold);border-bottom:1px solid var(--clr-gold);padding-bottom:1px">Register here</a>
+          </p>
+          <a href="admin-login.html" style="font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--clr-ink-muted);transition:color 0.3s">Admin Login →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="toast-container" id="toast-container"></div>
+  
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="../config/firebase.js"></script>
+  <script src="../js/utils/helpers.js"></script>
+  <script src="../js/services/database.js"></script>
+  <script src="../js/services/auth.js"></script>
+  <script>
+    // Redirect if already logged in
+    auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        const snap = await db.ref('users/' + user.uid).once('value');
+        const data = snap.val();
+        if (data && data.role === 'team') window.location.href = 'team-dashboard.html';
+      }
+    });
+
+    async function handleLogin() {
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      
+      if (!email || !password) { 
+        QAF.toast.error('Error', 'Please fill all fields'); 
+        return; 
+      }
+      
+      const btn = document.getElementById('loginBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner spinner-sm"></span> Authenticating...';
+      
+      try {
+        await AuthService.loginTeam(email, password);
+        QAF.toast.success('Welcome', 'Redirecting to dashboard...');
+        setTimeout(() => window.location.href = 'team-dashboard.html', 1000);
+      } catch (error) {
+        let msg = 'Login failed. Please check credentials.';
+        if (error.code === 'auth/user-not-found') msg = 'No account found with this email.';
+        if (error.code === 'auth/wrong-password') msg = 'Incorrect password.';
+        QAF.toast.error('Login Failed', msg);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = 'Sign In';
+      }
+    }
+  </script>
+</body>
+</html>
