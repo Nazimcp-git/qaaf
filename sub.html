@@ -1276,22 +1276,14 @@ tailwind.config = {
   <div class="qaf-container">
     <div class="flex flex-col lg:flex-row lg:items-end justify-between mb-16 gap-6 reveal">
       <div>
-        <p class="section-label mb-4">Live Rankings</p>
+        <p class="section-label mb-4">Institution Rankings</p>
         <h2 class="section-title">Leader<em>board</em></h2>
+        <p style="font-size:0.78rem;line-height:1.9;color:#7A7570;margin-top:12px;max-width:400px;">Total scores of participating institutions across all programs.</p>
       </div>
       <div class="flex items-center gap-3">
         <div style="width:8px;height:8px;border-radius:50%;background:#B8963E;animation:pulse 2s infinite;"></div>
         <p style="font-size:0.62rem;letter-spacing:0.25em;text-transform:uppercase;color:#B8963E;">Updated Live</p>
       </div>
-    </div>
-
-    <!-- Category Tabs -->
-    <div class="flex flex-wrap gap-2 mb-10 reveal">
-      <button onclick="filterLeaderboard('all')" id="tab-all" class="lb-tab active" style="font-size:0.6rem;letter-spacing:0.25em;text-transform:uppercase;padding:8px 20px;border:1px solid #B8963E;background:#B8963E;color:#F7F3EE;cursor:pointer;transition:all 0.3s;">All</button>
-      <button onclick="filterLeaderboard('recitation')" id="tab-recitation" class="lb-tab" style="font-size:0.6rem;letter-spacing:0.25em;text-transform:uppercase;padding:8px 20px;border:1px solid rgba(184,150,62,0.3);background:transparent;color:#7A7570;cursor:pointer;transition:all 0.3s;">Recitation</button>
-      <button onclick="filterLeaderboard('calligraphy')" id="tab-calligraphy" class="lb-tab" style="font-size:0.6rem;letter-spacing:0.25em;text-transform:uppercase;padding:8px 20px;border:1px solid rgba(184,150,62,0.3);background:transparent;color:#7A7570;cursor:pointer;transition:all 0.3s;">Calligraphy</button>
-      <button onclick="filterLeaderboard('nasheed')" id="tab-nasheed" class="lb-tab" style="font-size:0.6rem;letter-spacing:0.25em;text-transform:uppercase;padding:8px 20px;border:1px solid rgba(184,150,62,0.3);background:transparent;color:#7A7570;cursor:pointer;transition:all 0.3s;">Nasheed</button>
-      <button onclick="filterLeaderboard('design')" id="tab-design" class="lb-tab" style="font-size:0.6rem;letter-spacing:0.25em;text-transform:uppercase;padding:8px 20px;border:1px solid rgba(184,150,62,0.3);background:transparent;color:#7A7570;cursor:pointer;transition:all 0.3s;">Design</button>
     </div>
 
     <div id="leaderboard-table" class="reveal" style="transition-delay:0.1s">
@@ -1472,66 +1464,81 @@ tailwind.config = {
 <script src="js/services/database.js"></script>
 
 <script>
-  // ── LEADERBOARD ──
+  // ── LEADERBOARD (Institution Total Scores) ──
   // Fallback data if Firebase has no entries
   const fallbackLbData = [
-    { name: 'Ahmed Farhan Al-Hussaini', category: 'recitation', score: 98, region: 'Kozhikode' },
-    { name: 'Maryam bint Ismail', category: 'calligraphy', score: 97, region: 'Malappuram' },
-    { name: 'Abdur Rahman Siddiqui', category: 'nasheed', score: 95, region: 'Thrissur' },
-    { name: 'Zainab Al-Rashidi', category: 'design', score: 94, region: 'Kochi' },
-    { name: 'Ibrahim Hassan Noor', category: 'recitation', score: 93, region: 'Kannur' },
-    { name: 'Fatimah Al-Zahra', category: 'calligraphy', score: 92, region: 'Thiruvananthapuram' },
-    { name: 'Yusuf Al-Qaradawi', category: 'nasheed', score: 91, region: 'Palakkad' },
-    { name: 'Aisha bint Umar', category: 'design', score: 90, region: 'Wayanad' },
+    { name: 'Darul Huda Islamic University', score: 285, district: 'Malappuram' },
+    { name: 'Jamia Nadwiyyah', score: 268, district: 'Kozhikode' },
+    { name: 'Ma\'din Academy', score: 245, district: 'Malappuram' },
+    { name: 'Sullamussalam Science College', score: 230, district: 'Malappuram' },
+    { name: 'Markaz Knowledge City', score: 215, district: 'Kozhikode' },
+    { name: 'Farook College', score: 198, district: 'Kozhikode' },
+    { name: 'MES College', score: 182, district: 'Kochi' },
+    { name: 'Unity Women\'s College', score: 170, district: 'Manjeri' },
   ];
 
   let lbData = [];
-  let currentFilter = 'all';
-
-  function filterLeaderboard(cat) {
-    currentFilter = cat;
-    document.querySelectorAll('.lb-tab').forEach(t => {
-      t.style.background = 'transparent';
-      t.style.color = '#7A7570';
-      t.style.borderColor = 'rgba(184,150,62,0.3)';
-    });
-    const active = document.getElementById('tab-' + cat);
-    if (active) {
-      active.style.background = '#B8963E';
-      active.style.color = '#F7F3EE';
-      active.style.borderColor = '#B8963E';
-    }
-    renderLeaderboard();
-  }
 
   function renderLeaderboard() {
-    const filtered = currentFilter === 'all' ? lbData : lbData.filter(d => d.category === currentFilter);
     const container = document.getElementById('leaderboard-table');
-    const maxScore = 100;
 
-    if (!filtered.length) {
-      container.innerHTML = '<div style="text-align:center;padding:40px 0;"><p style="font-family:\'Cormorant Garamond\',serif;font-size:1.3rem;color:#7A7570;">No results for this category yet</p></div>';
+    if (!lbData.length) {
+      container.innerHTML = '<div style="text-align:center;padding:40px 0;"><p style="font-family:\'Cormorant Garamond\',serif;font-size:1.3rem;color:#7A7570;">No institution scores available yet</p></div>';
       return;
     }
 
-    container.innerHTML = filtered.map((item, i) => `
-      <div class="lb-row flex items-center gap-6 py-5 px-2">
-        <span class="lb-rank w-8">${i + 1}</span>
-        <div class="flex-1 min-w-0">
-          <p class="lb-name truncate">${item.name}</p>
-          <p style="font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:#B8963E;margin-top:2px;">${item.category}</p>
-        </div>
-        <div class="hidden md:block w-32">
-          <div class="lb-bar-track">
-            <div class="lb-bar-fill" style="width:${(item.score / maxScore) * 100}%;"></div>
-          </div>
-        </div>
-        <div class="text-right">
-          <p style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;color:#1A1814;line-height:1;">${item.score}</p>
-          <p class="lb-score">${item.region}</p>
-        </div>
-      </div>
-    `).join('');
+    const maxScore = lbData[0].score || 1;
+
+    // Top 3 podium cards
+    const top3 = lbData.slice(0, 3);
+    const rest = lbData.slice(3);
+    const medals = ['🥇', '🥈', '🥉'];
+    const podiumLabels = ['First Place', 'Second Place', 'Third Place'];
+
+    let html = '';
+
+    if (top3.length) {
+      html += '<div class="grid md:grid-cols-3 gap-6 mb-10">';
+      top3.forEach((item, i) => {
+        html += `
+          <div class="prize-card p-6 lg:p-8" style="transition-delay:${i * 0.1}s;text-align:center;">
+            <div style="font-size:2rem;margin-bottom:4px;">${medals[i]}</div>
+            <p style="font-size:0.55rem;letter-spacing:0.35em;text-transform:uppercase;color:#B8963E;margin-bottom:8px;">${podiumLabels[i]}</p>
+            <p class="lb-name" style="font-size:clamp(18px,2.5vw,24px);margin-bottom:4px;">${item.name}</p>
+            <p style="font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:#7A7570;margin-bottom:12px;">${item.district || ''}</p>
+            <div class="gold-rule my-4"></div>
+            <p style="font-family:'Cormorant Garamond',serif;font-size:clamp(28px,4vw,40px);font-weight:300;color:#B8963E;line-height:1;">${item.score}</p>
+            <p style="font-size:0.5rem;letter-spacing:0.3em;text-transform:uppercase;color:#7A7570;margin-top:4px;">Total Points</p>
+          </div>`;
+      });
+      html += '</div>';
+    }
+
+    // Remaining rows
+    if (rest.length) {
+      rest.forEach((item, i) => {
+        const rank = i + 4;
+        html += `
+          <div class="lb-row flex items-center gap-6 py-5 px-2">
+            <span class="lb-rank w-8">${rank}</span>
+            <div class="flex-1 min-w-0">
+              <p class="lb-name truncate">${item.name}</p>
+              <p style="font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:#7A7570;margin-top:2px;">${item.district || ''}</p>
+            </div>
+            <div class="hidden md:block w-40">
+              <div class="lb-bar-track">
+                <div class="lb-bar-fill" style="width:${(item.score / maxScore) * 100}%;"></div>
+              </div>
+            </div>
+            <div class="text-right">
+              <p style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:300;color:#1A1814;line-height:1;">${item.score}</p>
+              <p class="lb-score">points</p>
+            </div>
+          </div>`;
+      });
+    }
+
+    container.innerHTML = html;
   }
 
   // ── ANNOUNCEMENTS RENDERER ──
@@ -1584,29 +1591,27 @@ tailwind.config = {
         renderAnnouncements(announcements);
       });
 
-      // Load Leaderboard from results
+      // Load Leaderboard — aggregate total scores per institution
       const results = await DbService.results.getAll();
       const teams = await DbService.teams.getAll();
-      const programs = await DbService.programs.getAll();
 
       if (Object.keys(results).length > 0) {
-        // Build leaderboard from actual results
-        const studentScores = {};
+        // Aggregate scores by team (institution)
+        const teamScores = {};
         Object.values(results).forEach(r => {
-          const key = r.studentId || r.studentName || r.id;
-          if (!studentScores[key]) {
-            const team = teams[r.teamId] || {};
-            const prog = programs[r.programId] || {};
-            studentScores[key] = {
-              name: r.studentName || 'Participant',
-              category: (prog.category || prog.title || 'general').toLowerCase().split(' ')[0],
-              score: 0,
-              region: team.district || team.place || ''
+          const teamId = r.teamId;
+          if (!teamId) return;
+          if (!teamScores[teamId]) {
+            const team = teams[teamId] || {};
+            teamScores[teamId] = {
+              name: team.collegeName || team.institution || team.name || team.teamName || 'Unknown Institution',
+              district: team.district || team.place || '',
+              score: 0
             };
           }
-          studentScores[key].score += (r.points || 0);
+          teamScores[teamId].score += (r.points || 0);
         });
-        lbData = Object.values(studentScores).sort((a, b) => b.score - a.score).slice(0, 10);
+        lbData = Object.values(teamScores).sort((a, b) => b.score - a.score).slice(0, 15);
       } else {
         lbData = fallbackLbData;
       }
