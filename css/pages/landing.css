@@ -10,7 +10,7 @@
 .hero-badge{display:inline-flex;align-items:center;gap:var(--sp-2);padding:var(--sp-2) var(--sp-5);background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.2);border-radius:var(--radius-2xl);color:var(--clr-gold-light);font-size:var(--fs-xs);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:var(--sp-6);backdrop-filter:blur(8px)}
 .hero-title{font-family:var(--ff-heading);font-size:clamp(2.8rem,7vw,5rem);color:var(--clr-ivory);line-height:1.05;margin-bottom:var(--sp-5);letter-spacing:-0.02em}
 .hero-title .gold{color:var(--clr-gold-light);display:block;font-size:clamp(2rem,5vw,3.5rem)}
-.hero-subtitle{font-size:var(--fs-md);color:rgba(245,240,225,0.6);max-width:540px;margin:0 auto var(--sp-8);line-height:var(--lh-relaxed);font-weight:var(--fw-light)}
+.hero-subtitle{font-size:var(--fs-md);color:rgba(245,240,225,0.6);max-width:540px;margin:0 auto var(--sp-8);line-height:var(--lh-relaxed);font-weight:var(--fw-normal)}
 .hero-actions{display:flex;gap:var(--sp-4);justify-content:center;flex-wrap:wrap}
 .hero-scroll{position:absolute;bottom:200px;left:50%;transform:translateX(-50%);z-index:2;color:rgba(201,168,76,0.3);animation:float 2.5s ease-in-out infinite;font-size:var(--fs-lg)}
 
