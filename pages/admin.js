@@ -4,22 +4,33 @@
 
 let allTeams={},allStudents={},allPrograms={},allTopics={},allResults={};
 
+function hideSplash() {
+  const splash = document.getElementById('splash-screen');
+  if (splash) {
+    splash.classList.add('fade-out');
+    setTimeout(() => splash.remove(), 400);
+  }
+}
+
 // Auth guard - wait for DOM + Firebase
 document.addEventListener('DOMContentLoaded', () => {
   if (typeof auth === 'undefined' || typeof db === 'undefined') {
     console.error('Firebase not loaded');
     document.querySelector('.dashboard-body').innerHTML = '<div class="empty-state"><div class="empty-state-icon">⚠️</div><div class="empty-state-title">Connection Error</div><div class="empty-state-text">Firebase not loaded. Refresh the page.</div></div>';
+    hideSplash();
     return;
   }
   auth.onAuthStateChanged(async(user)=>{
-    if(!user){location.href='admin-login.html';return;}
+    if(!user){location.href='admin-login';return;}
     try {
       const snap=await db.ref('users/'+user.uid).once('value');
       const ud=snap.val();
-      if(!ud||ud.role!=='admin'){auth.signOut();location.href='admin-login.html';return;}
-      initAdmin();
+      if(!ud||ud.role!=='admin'){auth.signOut();location.href='admin-login';return;}
+      await initAdmin();
     } catch(e) {
       console.error('Admin init error:', e);
+    } finally {
+      hideSplash();
     }
   });
 });

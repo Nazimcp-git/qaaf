@@ -248,9 +248,77 @@ tailwind.config = {
   #mobile-menu.open {
     clip-path: circle(150% at top right);
   }
+
+  /* Splash Screen Styles */
+  #splash-screen {
+    position: fixed;
+    inset: 0;
+    background: #F9F9F9;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.4s;
+    opacity: 1;
+    visibility: visible;
+  }
+  #splash-screen.fade-out {
+    opacity: 0;
+    visibility: hidden;
+  }
+  .splash-logo {
+    font-family: 'Syne', sans-serif;
+    font-size: 4rem;
+    font-weight: 800;
+    color: #111111;
+    letter-spacing: -0.04em;
+    margin: 0 0 12px 0;
+    line-height: 1;
+  }
+  .splash-subtitle {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #666666;
+    margin: 0;
+  }
+  .splash-loader-bar {
+    margin-top: 48px;
+    width: 80px;
+    height: 2px;
+    background: #E5E5E5;
+    position: relative;
+    overflow: hidden;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .splash-loader-progress {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 50%;
+    background: #111111;
+    animation: splashProgress 1.2s infinite ease-in-out;
+  }
+  @keyframes splashProgress {
+    0% { left: -50%; }
+    100% { left: 100%; }
+  }
 </style>
 </head>
 <body>
+  <!-- Splash Screen -->
+  <div id="splash-screen">
+    <div style="text-align: center;">
+      <h1 class="splash-logo">QAF</h1>
+      <h2 class="splash-subtitle">Quranic Art Fest</h2>
+      <div class="splash-loader-bar">
+        <div class="splash-loader-progress"></div>
+      </div>
+    </div>
+  </div>
 
 <nav class="fixed w-full top-0 z-50 bg-background/90 backdrop-blur-md border-b border-divider transition-all duration-300">
   <div class="grid-container flex items-center justify-between h-24">
@@ -272,8 +340,8 @@ tailwind.config = {
 
     <!-- Actions -->
     <div class="hidden lg:flex items-center gap-6">
-      <a href="pages/team-login.html" class="text-sm font-semibold text-ink hover:text-accent transition-colors">Login</a>
-      <a href="pages/register.html" class="btn-solid py-3 px-6 text-xs">Register</a>
+      <a href="pages/team-login" class="text-sm font-semibold text-ink hover:text-accent transition-colors">Login</a>
+      <a href="pages/register" class="btn-solid py-3 px-6 text-xs">Register</a>
     </div>
 
     <!-- Mobile Toggle -->
@@ -297,8 +365,8 @@ tailwind.config = {
     <a href="#contact" class="hover:text-accent transition-colors" onclick="toggleMenu()">Contact</a>
   </div>
   <div class="mt-auto flex flex-col gap-4">
-    <a href="pages/admin-login.html" class="btn-outline w-full" onclick="toggleMenu()">Login</a>
-    <a href="pages/register.html" class="btn-solid w-full" onclick="toggleMenu()">Register</a>
+    <a href="pages/admin-login" class="btn-outline w-full" onclick="toggleMenu()">Login</a>
+    <a href="pages/register" class="btn-solid w-full" onclick="toggleMenu()">Register</a>
   </div>
 </div>
 
@@ -308,7 +376,7 @@ tailwind.config = {
       
       <!-- Left side: Massive Typography -->
       <div class="lg:col-span-8 reveal">
-        <p class="text-sm font-medium tracking-[0.2em] uppercase text-accent mb-6">Edition I — 2025</p>
+        <p class="text-sm font-medium tracking-[0.2em] uppercase text-accent mb-6">Edition III — 2026</p>
         <h1 class="font-display text-huge font-bold text-ink mb-6">
           Quranic Art<br>Festival.
         </h1>
@@ -506,7 +574,7 @@ tailwind.config = {
       <div class="bg-surface/5 border border-surface/10 p-10 lg:p-12 hover:bg-surface/10 transition-colors reveal">
         <p class="font-display text-6xl font-bold text-accent mb-2">01</p>
         <h3 class="text-xl font-bold mb-1">First Place</h3>
-        <p class="font-display text-4xl mb-8">₹25,000</p>
+        <p class="font-display text-4xl mb-8">₹7777</p>
         <ul class="space-y-4 text-sm text-ink-light">
           <li class="flex items-center gap-3"><span class="w-1 h-1 bg-accent rounded-full"></span> Gold Certificate</li>
           <li class="flex items-center gap-3"><span class="w-1 h-1 bg-accent rounded-full"></span> Trophy & Medal</li>
@@ -519,7 +587,7 @@ tailwind.config = {
       <div class="bg-surface/5 border border-surface/10 p-10 lg:p-12 hover:bg-surface/10 transition-colors reveal" style="transition-delay: 0.1s;">
         <p class="font-display text-6xl font-bold text-surface/50 mb-2">02</p>
         <h3 class="text-xl font-bold mb-1">Second Place</h3>
-        <p class="font-display text-4xl mb-8">₹15,000</p>
+        <p class="font-display text-4xl mb-8">₹5555</p>
         <ul class="space-y-4 text-sm text-ink-light">
           <li class="flex items-center gap-3"><span class="w-1 h-1 bg-surface/50 rounded-full"></span> Silver Certificate</li>
           <li class="flex items-center gap-3"><span class="w-1 h-1 bg-surface/50 rounded-full"></span> Trophy & Medal</li>
@@ -532,7 +600,7 @@ tailwind.config = {
       <div class="bg-surface/5 border border-surface/10 p-10 lg:p-12 hover:bg-surface/10 transition-colors reveal" style="transition-delay: 0.2s;">
         <p class="font-display text-6xl font-bold text-surface/30 mb-2">03</p>
         <h3 class="text-xl font-bold mb-1">Third Place</h3>
-        <p class="font-display text-4xl mb-8">₹8,000</p>
+        <p class="font-display text-4xl mb-8">₹3333</p>
         <ul class="space-y-4 text-sm text-ink-light">
           <li class="flex items-center gap-3"><span class="w-1 h-1 bg-surface/30 rounded-full"></span> Commendation Certificate</li>
           <li class="flex items-center gap-3"><span class="w-1 h-1 bg-surface/30 rounded-full"></span> Medal</li>
@@ -770,7 +838,7 @@ tailwind.config = {
         <!-- Injected via JS -->
       </div>
       
-      <a href="pages/register.html" class="btn-solid w-full">Register for this Program</a>
+      <a href="pages/register" class="btn-solid w-full">Register for this Program</a>
     </div>
   </div>
 </div>
@@ -1008,7 +1076,23 @@ tailwind.config = {
     }
   }
 
-  document.addEventListener('DOMContentLoaded', loadDynamicData);
+  function hideSplash() {
+    const splash = document.getElementById('splash-screen');
+    if (splash) {
+      splash.classList.add('fade-out');
+      setTimeout(() => splash.remove(), 400);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    try {
+      await loadDynamicData();
+    } catch(e) {
+      console.error(e);
+    } finally {
+      hideSplash();
+    }
+  });
 </script>
 </body>
 </html>

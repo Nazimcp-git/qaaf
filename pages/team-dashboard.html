@@ -141,14 +141,83 @@
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
+
+    /* Splash Screen Styles */
+    #splash-screen {
+      position: fixed;
+      inset: 0;
+      background: #F9F9F9;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.4s;
+      opacity: 1;
+      visibility: visible;
+    }
+    #splash-screen.fade-out {
+      opacity: 0;
+      visibility: hidden;
+    }
+    .splash-logo {
+      font-family: 'Syne', sans-serif;
+      font-size: 4rem;
+      font-weight: 800;
+      color: #111111;
+      letter-spacing: -0.04em;
+      margin: 0 0 12px 0;
+      line-height: 1;
+    }
+    .splash-subtitle {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #666666;
+      margin: 0;
+    }
+    .splash-loader-bar {
+      margin-top: 48px;
+      width: 80px;
+      height: 2px;
+      background: #E5E5E5;
+      position: relative;
+      overflow: hidden;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .splash-loader-progress {
+      position: absolute;
+      top: 0;
+      height: 100%;
+      width: 50%;
+      background: #111111;
+      animation: splashProgress 1.2s infinite ease-in-out;
+    }
+    @keyframes splashProgress {
+      0% { left: -50%; }
+      100% { left: 100%; }
+    }
   </style>
 </head>
 <body>
+  <!-- Splash Screen -->
+  <div id="splash-screen">
+    <div style="text-align: center;">
+      <h1 class="splash-logo">QAF</h1>
+      <h2 class="splash-subtitle">Quranic Art Fest</h2>
+      <div class="splash-loader-bar">
+        <div class="splash-loader-progress"></div>
+      </div>
+    </div>
+  </div>
+
   <!-- Sidebar -->
-  <button class="sidebar-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open');document.querySelector('.sidebar-overlay').classList.toggle('active')">
-    <div style="width:16px;height:1px;background:var(--clr-gold-light);margin-bottom:4px"></div>
-    <div style="width:24px;height:1px;background:var(--clr-gold-light);margin-bottom:4px"></div>
-    <div style="width:16px;height:1px;background:var(--clr-gold-light)"></div>
+  <button class="sidebar-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open');document.querySelector('.sidebar-overlay').classList.toggle('active')" aria-label="Toggle Sidebar">
+    <div style="width:18px;height:2px;background:#FFFFFF;border-radius:1px"></div>
+    <div style="width:18px;height:2px;background:#FFFFFF;border-radius:1px"></div>
+    <div style="width:18px;height:2px;background:#FFFFFF;border-radius:1px"></div>
   </button>
   <div class="sidebar-overlay" onclick="document.querySelector('.sidebar').classList.remove('open');this.classList.remove('active')"></div>
   
@@ -252,7 +321,7 @@
         <div id="tab-topics">
           <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:32px;border-bottom:1px solid #E5E5E5;padding-bottom:16px;flex-wrap:wrap;gap:16px">
             <h3 class="section-title" style="margin-bottom:0;border:none;padding:0">Topic Submissions</h3>
-            <a href="topic-registration.html" class="btn btn-outline btn-sm">Open Full Page</a>
+            <a href="topic-registration" class="btn btn-outline btn-sm">Open Full Page</a>
           </div>
           <div id="topicsList">
             <div style="text-align:center;padding:48px"><div class="spinner" style="margin:0 auto"></div></div>
@@ -397,24 +466,35 @@
       document.querySelector('.sidebar-overlay')?.classList.remove('active');
     }
 
+    function hideSplash() {
+      const splash = document.getElementById('splash-screen');
+      if (splash) {
+        splash.classList.add('fade-out');
+        setTimeout(() => splash.remove(), 400);
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       if (typeof auth === 'undefined' || typeof db === 'undefined') {
         document.querySelector('.dashboard-body').innerHTML = '<div class="empty-state"><div class="empty-state-icon">⚠️</div><div class="empty-state-title">Connection Error</div><div class="empty-state-text">Could not connect to Firebase. Please refresh.</div></div>';
+        hideSplash();
         return;
       }
       auth.onAuthStateChanged(async (user) => {
-        if (!user) { window.location.href = 'team-login.html'; return; }
+        if (!user) { window.location.href = 'team-login'; return; }
         try {
           const snap = await db.ref('users/' + user.uid).once('value');
           const userData = snap.val();
-          if (!userData || userData.role !== 'team') { window.location.href = 'team-login.html'; return; }
+          if (!userData || userData.role !== 'team') { window.location.href = 'team-login'; return; }
           teamId = userData.teamId;
           currentTeam = await DbService.teams.get(teamId);
-          if (!currentTeam) { window.location.href = 'team-login.html'; return; }
-          initDashboard();
+          if (!currentTeam) { window.location.href = 'team-login'; return; }
+          await initDashboard();
         } catch (e) {
           console.error('Dashboard init error:', e);
           QAF.toast.error('Error', 'Failed to load dashboard data');
+        } finally {
+          hideSplash();
         }
       });
     });
@@ -435,10 +515,12 @@
       document.getElementById('statPoints').textContent = currentTeam.points || 0;
       document.getElementById('totalPoints').textContent = currentTeam.points || 0;
       
-      loadPrograms();
-      loadStudents();
-      loadTopics();
-      loadNotifications();
+      await Promise.all([
+        loadPrograms(),
+        loadStudents(),
+        loadTopics(),
+        loadNotifications()
+      ]);
     }
 
     async function loadPrograms() {
@@ -694,9 +776,9 @@
 
     function handleLogout() {
       if (typeof auth !== 'undefined') {
-        auth.signOut().then(() => window.location.href = 'team-login.html');
+        auth.signOut().then(() => window.location.href = 'team-login');
       } else {
-        window.location.href = 'team-login.html';
+        window.location.href = 'team-login';
       }
     }
   </script>

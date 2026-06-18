@@ -118,15 +118,15 @@
 <body>
   <nav class="navbar" id="navbar">
     <div class="navbar-inner">
-      <a href="../index.html" class="navbar-brand">
+      <a href="../" class="navbar-brand">
         <div class="flex flex-col items-center">
           <span class="navbar-title">Q<span>A</span>F</span>
         </div>
       </a>
       <div class="navbar-nav" id="navMenu">
-        <a href="team-dashboard.html" class="nav-link">Dashboard</a>
+        <a href="team-dashboard" class="nav-link">Dashboard</a>
         <a href="#" class="nav-link active">Topics</a>
-        <a href="results.html" class="nav-link">Results</a>
+        <a href="results" class="nav-link">Results</a>
       </div>
       <div class="navbar-actions">
         <button class="btn btn-outline btn-sm" id="logoutBtn" onclick="handleLogout()">Logout</button>
@@ -214,9 +214,9 @@
 
     function handleLogout() {
       if (typeof auth !== 'undefined') {
-        auth.signOut().then(() => { location.href = 'team-login.html'; });
+        auth.signOut().then(() => { location.href = 'team-login'; });
       } else {
-        location.href = 'team-login.html';
+        location.href = 'team-login';
       }
     }
 
@@ -227,11 +227,11 @@
       }
 
       auth.onAuthStateChanged(async (user) => {
-        if (!user) { location.href = 'team-login.html'; return; }
+        if (!user) { location.href = 'team-login'; return; }
         try {
           const snap = await db.ref('users/' + user.uid).once('value');
           const ud = snap.val();
-          if (!ud || ud.role !== 'team') { location.href = 'team-login.html'; return; }
+          if (!ud || ud.role !== 'team') { location.href = 'team-login'; return; }
           teamId = ud.teamId;
 
           const students = await DbService.students.getByTeam(teamId);
@@ -259,7 +259,7 @@
       container.style.display = 'grid';
 
       if (!topicProgs.length) {
-        container.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="empty-state-icon">✧</div><div class="empty-state-title">No Topic Programs</div><div class="empty-state-text">No programs require topic submission currently. Check back later.</div><a href="team-dashboard.html" class="btn btn-outline btn-sm" style="margin-top:24px">← Back to Dashboard</a></div>';
+        container.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="empty-state-icon">✧</div><div class="empty-state-title">No Topic Programs</div><div class="empty-state-text">No programs require topic submission currently. Check back later.</div><a href="team-dashboard" class="btn btn-outline btn-sm" style="margin-top:24px">← Back to Dashboard</a></div>';
         container.style.display = 'block';
         return;
       }
@@ -286,7 +286,7 @@
           </div>`;
         } else {
           if (eligibleStudents.length === 0) {
-            statusHTML = `<div class="no-students-msg">Register students for this program first before submitting a topic.<br><br><a href="team-dashboard.html" style="color:var(--clr-gold);border-bottom:1px solid var(--clr-gold);font-family:'Inter';font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;padding-bottom:2px">Go to Dashboard →</a></div>`;
+            statusHTML = `<div class="no-students-msg">Register students for this program first before submitting a topic.<br><br><a href="team-dashboard" style="color:var(--clr-gold);border-bottom:1px solid var(--clr-gold);font-family:'Inter';font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;padding-bottom:2px">Go to Dashboard →</a></div>`;
           } else {
             statusHTML = `<div class="topic-submission"><button class="btn btn-primary btn-sm" style="width:100%" onclick="openTopicModal('${p.id}','${QAF.sanitize(p.title).replace(/'/g, "\\'")}')">Submit Topic</button></div>`;
           }

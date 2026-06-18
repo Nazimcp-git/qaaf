@@ -84,9 +84,78 @@
       background: var(--clr-gold);
       color: var(--clr-ink);
     }
+
+    /* Splash Screen Styles */
+    #splash-screen {
+      position: fixed;
+      inset: 0;
+      background: #F9F9F9;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.4s;
+      opacity: 1;
+      visibility: visible;
+    }
+    #splash-screen.fade-out {
+      opacity: 0;
+      visibility: hidden;
+    }
+    .splash-logo {
+      font-family: 'Syne', sans-serif;
+      font-size: 4rem;
+      font-weight: 800;
+      color: #111111;
+      letter-spacing: -0.04em;
+      margin: 0 0 12px 0;
+      line-height: 1;
+    }
+    .splash-subtitle {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #666666;
+      margin: 0;
+    }
+    .splash-loader-bar {
+      margin-top: 48px;
+      width: 80px;
+      height: 2px;
+      background: #E5E5E5;
+      position: relative;
+      overflow: hidden;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .splash-loader-progress {
+      position: absolute;
+      top: 0;
+      height: 100%;
+      width: 50%;
+      background: #111111;
+      animation: splashProgress 1.2s infinite ease-in-out;
+    }
+    @keyframes splashProgress {
+      0% { left: -50%; }
+      100% { left: 100%; }
+    }
   </style>
 </head>
 <body>
+  <!-- Splash Screen -->
+  <div id="splash-screen">
+    <div style="text-align: center;">
+      <h1 class="splash-logo">QAF</h1>
+      <h2 class="splash-subtitle">Quranic Art Fest</h2>
+      <div class="splash-loader-bar">
+        <div class="splash-loader-progress"></div>
+      </div>
+    </div>
+  </div>
+
   <div class="admin-login-page">
     <div class="admin-login-card page-enter">
       <div class="card">
@@ -110,9 +179,9 @@
         
         <div style="text-align:center;margin-top:32px;padding-top:24px;border-top:1px solid rgba(166,138,86,0.15)">
           <p style="font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase">
-            <a href="team-login.html" style="color:rgba(249,249,249,0.5);transition:color 0.3s">← Team Login</a>
+            <a href="team-login" style="color:rgba(249,249,249,0.5);transition:color 0.3s">← Team Login</a>
             <span style="color:rgba(166,138,86,0.3);margin:0 12px">|</span>
-            <a href="../index.html" style="color:rgba(249,249,249,0.5);transition:color 0.3s">Home</a>
+            <a href="../" style="color:rgba(249,249,249,0.5);transition:color 0.3s">Home</a>
           </p>
         </div>
       </div>
@@ -129,10 +198,43 @@
   <script src="../js/services/database.js"></script>
   <script src="../js/services/auth.js"></script>
   <script>
+    let authChecked = false;
+    let timerFired = false;
+
+    function hideSplash() {
+      const splash = document.getElementById('splash-screen');
+      if (splash) {
+        splash.classList.add('fade-out');
+        setTimeout(() => splash.remove(), 400);
+      }
+    }
+
+    setTimeout(() => {
+      timerFired = true;
+      if (authChecked) hideSplash();
+    }, 3000);
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (typeof auth === 'undefined') {
+        authChecked = true;
+        hideSplash();
+      }
+    });
+
     auth.onAuthStateChanged(async(u)=>{
-      if(u){
-        const s=await db.ref('users/'+u.uid).once('value');
-        if(s.val()&&s.val().role==='admin')window.location.href='admin-dashboard.html';
+      try {
+        if(u){
+          const s=await db.ref('users/'+u.uid).once('value');
+          if(s.val()&&s.val().role==='admin') {
+            window.location.href='admin-dashboard';
+            return;
+          }
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        authChecked = true;
+        if (timerFired) hideSplash();
       }
     });
     
@@ -149,7 +251,7 @@
       try{
         await AuthService.loginAdmin(email,pwd);
         QAF.toast.success('Welcome Admin','Redirecting...');
-        setTimeout(()=>window.location.href='admin-dashboard.html',1000);
+        setTimeout(()=>window.location.href='admin-dashboard',1000);
       }catch(e){
         QAF.toast.error('Access Denied',e.message||'Invalid credentials');
       }finally{

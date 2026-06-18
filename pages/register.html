@@ -107,12 +107,81 @@
       height: 100%;
       object-fit: cover;
     }
+
+    /* Splash Screen Styles */
+    #splash-screen {
+      position: fixed;
+      inset: 0;
+      background: #F9F9F9;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.4s;
+      opacity: 1;
+      visibility: visible;
+    }
+    #splash-screen.fade-out {
+      opacity: 0;
+      visibility: hidden;
+    }
+    .splash-logo {
+      font-family: 'Syne', sans-serif;
+      font-size: 4rem;
+      font-weight: 800;
+      color: #111111;
+      letter-spacing: -0.04em;
+      margin: 0 0 12px 0;
+      line-height: 1;
+    }
+    .splash-subtitle {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #666666;
+      margin: 0;
+    }
+    .splash-loader-bar {
+      margin-top: 48px;
+      width: 80px;
+      height: 2px;
+      background: #E5E5E5;
+      position: relative;
+      overflow: hidden;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .splash-loader-progress {
+      position: absolute;
+      top: 0;
+      height: 100%;
+      width: 50%;
+      background: #111111;
+      animation: splashProgress 1.2s infinite ease-in-out;
+    }
+    @keyframes splashProgress {
+      0% { left: -50%; }
+      100% { left: 100%; }
+    }
   </style>
 </head>
 <body>
+  <!-- Splash Screen -->
+  <div id="splash-screen">
+    <div style="text-align: center;">
+      <h1 class="splash-logo">QAF</h1>
+      <h2 class="splash-subtitle">Quranic Art Fest</h2>
+      <div class="splash-loader-bar">
+        <div class="splash-loader-progress"></div>
+      </div>
+    </div>
+  </div>
+
   <div class="register-page">
     <div class="register-container page-enter">
-      <a href="../index.html" class="register-back">← Back to Home</a>
+      <a href="../" class="register-back">← Back to Home</a>
       <div class="register-header">
         <h1>Institution Registration</h1>
         <div style="width:40px;height:1px;background:#E5E5E5;margin:8px auto 0"></div>
@@ -187,7 +256,7 @@
           </button>
           
           <p style="text-align:center;margin-top:32px;font-size:0.75rem;letter-spacing:0.05em">
-            Already registered? <a href="team-login.html" style="color:var(--clr-gold);border-bottom:1px solid var(--clr-gold);padding-bottom:1px">Login here</a>
+            Already registered? <a href="team-login" style="color:var(--clr-gold);border-bottom:1px solid var(--clr-gold);padding-bottom:1px">Login here</a>
           </p>
         </form>
       </div>
@@ -208,7 +277,7 @@
         <p style="font-size:0.7rem;margin-top:20px;color:var(--clr-gold);letter-spacing:0.05em">Please save your Team ID for future reference. (never forget the email and password)</p>
       </div>
       <div class="modal-footer" style="justify-content:center;border:none">
-        <a href="team-login.html" class="btn btn-primary">Go to Login</a>
+        <a href="team-login" class="btn btn-primary">Go to Login</a>
       </div>
     </div>
   </div>
@@ -224,6 +293,18 @@
   <script src="../js/services/database.js"></script>
   <script src="../js/services/auth.js"></script>
   <script>
+    function hideSplash() {
+      const splash = document.getElementById('splash-screen');
+      if (splash) {
+        splash.classList.add('fade-out');
+        setTimeout(() => splash.remove(), 400);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(hideSplash, 3000);
+    });
+
     function previewLogo(input) {
       const preview = document.getElementById('logoPreview');
       if (input.files && input.files[0]) {

@@ -138,13 +138,82 @@
       flex-wrap: wrap;
       border-radius: var(--radius-lg);
     }
+
+    /* Splash Screen Styles */
+    #splash-screen {
+      position: fixed;
+      inset: 0;
+      background: #F9F9F9;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.4s;
+      opacity: 1;
+      visibility: visible;
+    }
+    #splash-screen.fade-out {
+      opacity: 0;
+      visibility: hidden;
+    }
+    .splash-logo {
+      font-family: 'Syne', sans-serif;
+      font-size: 4rem;
+      font-weight: 800;
+      color: #111111;
+      letter-spacing: -0.04em;
+      margin: 0 0 12px 0;
+      line-height: 1;
+    }
+    .splash-subtitle {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #666666;
+      margin: 0;
+    }
+    .splash-loader-bar {
+      margin-top: 48px;
+      width: 80px;
+      height: 2px;
+      background: #E5E5E5;
+      position: relative;
+      overflow: hidden;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .splash-loader-progress {
+      position: absolute;
+      top: 0;
+      height: 100%;
+      width: 50%;
+      background: #111111;
+      animation: splashProgress 1.2s infinite ease-in-out;
+    }
+    @keyframes splashProgress {
+      0% { left: -50%; }
+      100% { left: 100%; }
+    }
   </style>
 </head>
 <body>
-  <button class="sidebar-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open');document.querySelector('.sidebar-overlay').classList.toggle('active')">
-    <div style="width:16px;height:1px;background:var(--clr-gold-light);margin-bottom:4px"></div>
-    <div style="width:24px;height:1px;background:var(--clr-gold-light);margin-bottom:4px"></div>
-    <div style="width:16px;height:1px;background:var(--clr-gold-light)"></div>
+  <!-- Splash Screen -->
+  <div id="splash-screen">
+    <div style="text-align: center;">
+      <h1 class="splash-logo">QAF</h1>
+      <h2 class="splash-subtitle">Quranic Art Fest</h2>
+      <div class="splash-loader-bar">
+        <div class="splash-loader-progress"></div>
+      </div>
+    </div>
+  </div>
+
+  <button class="sidebar-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open');document.querySelector('.sidebar-overlay').classList.toggle('active')" aria-label="Toggle Sidebar">
+    <div style="width:18px;height:2px;background:#FFFFFF;border-radius:1px"></div>
+    <div style="width:18px;height:2px;background:#FFFFFF;border-radius:1px"></div>
+    <div style="width:18px;height:2px;background:#FFFFFF;border-radius:1px"></div>
   </button>
   <div class="sidebar-overlay" onclick="document.querySelector('.sidebar').classList.remove('open');this.classList.remove('active')"></div>
 
@@ -173,7 +242,7 @@
       </div>
     </nav>
     <div class="sidebar-footer">
-      <button class="btn btn-outline btn-sm btn-block" onclick="if(typeof auth!=='undefined')auth.signOut().then(()=>location.href='admin-login.html');else location.href='admin-login.html'">Sign Out</button>
+      <button class="btn btn-outline btn-sm btn-block" onclick="if(typeof auth!=='undefined')auth.signOut().then(()=>location.href='admin-login');else location.href='admin-login'">Sign Out</button>
     </div>
   </aside>
 
@@ -181,7 +250,7 @@
     <div class="dashboard-topbar">
       <div class="dashboard-topbar-title" id="pageTitle">Admin Overview</div>
       <div style="display:flex;gap:16px;align-items:center">
-        <button class="btn-icon btn-ghost btn-sm" onclick="if(typeof auth!=='undefined')auth.signOut().then(()=>location.href='admin-login.html');else location.href='admin-login.html'" style="border:none">
+        <button class="btn-icon btn-ghost btn-sm" onclick="if(typeof auth!=='undefined')auth.signOut().then(()=>location.href='admin-login');else location.href='admin-login'" style="border:none">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
         </button>
       </div>

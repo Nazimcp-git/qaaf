@@ -108,9 +108,78 @@
       .login-artwork { display: none; }
       .login-form-side { max-width: 100%; }
     }
+
+    /* Splash Screen Styles */
+    #splash-screen {
+      position: fixed;
+      inset: 0;
+      background: #F9F9F9;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.4s;
+      opacity: 1;
+      visibility: visible;
+    }
+    #splash-screen.fade-out {
+      opacity: 0;
+      visibility: hidden;
+    }
+    .splash-logo {
+      font-family: 'Syne', sans-serif;
+      font-size: 4rem;
+      font-weight: 800;
+      color: #111111;
+      letter-spacing: -0.04em;
+      margin: 0 0 12px 0;
+      line-height: 1;
+    }
+    .splash-subtitle {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #666666;
+      margin: 0;
+    }
+    .splash-loader-bar {
+      margin-top: 48px;
+      width: 80px;
+      height: 2px;
+      background: #E5E5E5;
+      position: relative;
+      overflow: hidden;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .splash-loader-progress {
+      position: absolute;
+      top: 0;
+      height: 100%;
+      width: 50%;
+      background: #111111;
+      animation: splashProgress 1.2s infinite ease-in-out;
+    }
+    @keyframes splashProgress {
+      0% { left: -50%; }
+      100% { left: 100%; }
+    }
   </style>
 </head>
 <body>
+  <!-- Splash Screen -->
+  <div id="splash-screen">
+    <div style="text-align: center;">
+      <h1 class="splash-logo">QAF</h1>
+      <h2 class="splash-subtitle">Quranic Art Fest</h2>
+      <div class="splash-loader-bar">
+        <div class="splash-loader-progress"></div>
+      </div>
+    </div>
+  </div>
+
   <div class="login-page">
     <div class="login-artwork">
       <div class="login-artwork-content page-enter">
@@ -123,7 +192,7 @@
     
     <div class="login-form-side">
       <div class="login-form-container page-enter" style="animation-delay: 0.2s">
-        <a href="../index.html" style="display:inline-flex;align-items:center;gap:8px;color:var(--clr-ink-muted);font-size:0.8rem;font-weight:500;margin-bottom:32px;transition:color 0.3s">← Back to Home</a>
+        <a href="../" style="display:inline-flex;align-items:center;gap:8px;color:var(--clr-ink-muted);font-size:0.8rem;font-weight:500;margin-bottom:32px;transition:color 0.3s">← Back to Home</a>
         
         <h1>Team Login</h1>
         <p>Sign in to your dashboard</p>
@@ -145,9 +214,9 @@
         
         <div style="margin-top:40px;padding-top:32px;border-top:1px solid #E5E5E5;text-align:center">
           <p style="font-size:0.85rem;margin-bottom:16px">
-            Don't have an account? <a href="register.html" style="color:var(--clr-gold);border-bottom:1px solid var(--clr-gold);padding-bottom:1px">Register here</a>
+            Don't have an account? <a href="register" style="color:var(--clr-gold);border-bottom:1px solid var(--clr-gold);padding-bottom:1px">Register here</a>
           </p>
-          <a href="admin-login.html" style="font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--clr-ink-muted);transition:color 0.3s">Admin Login →</a>
+          <a href="admin-login" style="font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--clr-ink-muted);transition:color 0.3s">Admin Login →</a>
         </div>
       </div>
     </div>
@@ -163,12 +232,45 @@
   <script src="../js/services/database.js"></script>
   <script src="../js/services/auth.js"></script>
   <script>
+    let authChecked = false;
+    let timerFired = false;
+
+    function hideSplash() {
+      const splash = document.getElementById('splash-screen');
+      if (splash) {
+        splash.classList.add('fade-out');
+        setTimeout(() => splash.remove(), 400);
+      }
+    }
+
+    setTimeout(() => {
+      timerFired = true;
+      if (authChecked) hideSplash();
+    }, 3000);
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (typeof auth === 'undefined') {
+        authChecked = true;
+        hideSplash();
+      }
+    });
+
     // Redirect if already logged in
     auth.onAuthStateChanged(async (user) => {
-      if (user) {
-        const snap = await db.ref('users/' + user.uid).once('value');
-        const data = snap.val();
-        if (data && data.role === 'team') window.location.href = 'team-dashboard.html';
+      try {
+        if (user) {
+          const snap = await db.ref('users/' + user.uid).once('value');
+          const data = snap.val();
+          if (data && data.role === 'team') {
+            window.location.href = 'team-dashboard';
+            return;
+          }
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        authChecked = true;
+        if (timerFired) hideSplash();
       }
     });
 
@@ -188,7 +290,7 @@
       try {
         await AuthService.loginTeam(email, password);
         QAF.toast.success('Welcome', 'Redirecting to dashboard...');
-        setTimeout(() => window.location.href = 'team-dashboard.html', 1000);
+        setTimeout(() => window.location.href = 'team-dashboard', 1000);
       } catch (error) {
         let msg = 'Login failed. Please check credentials.';
         if (error.code === 'auth/user-not-found') msg = 'No account found with this email.';
