@@ -1,5 +1,6 @@
 /* ============================================================
-   QAF – iOS Glassmorphism Design System
+   QAF – Glassmorphism Design System
+   Modern Swiss Art-House Theme
    ============================================================ */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
@@ -11,16 +12,16 @@
   --glass-border-light: rgba(255,255,255,0.2);
   --glass-blur: 20px;
   --glass-blur-heavy: 40px;
-  --accent: #10b981;
-  --accent-light: #34d399;
-  --accent-glow: rgba(16,185,129,0.3);
-  --gold: #f59e0b;
-  --gold-light: #fbbf24;
-  --surface: #0a0f1a;
-  --surface-2: #111827;
-  --text-primary: #f8fafc;
-  --text-secondary: rgba(248,250,252,0.6);
-  --text-muted: rgba(248,250,252,0.35);
+  --accent: #A68A56;
+  --accent-light: #BFA06A;
+  --accent-glow: rgba(166,138,86,0.3);
+  --gold: #A68A56;
+  --gold-light: #BFA06A;
+  --surface: #111111;
+  --surface-2: #1A1A1A;
+  --text-primary: #F9F9F9;
+  --text-secondary: rgba(249,249,249,0.6);
+  --text-muted: rgba(249,249,249,0.35);
   --radius-glass: 20px;
   --radius-pill: 100px;
 }
@@ -59,9 +60,9 @@
   pointer-events: none;
   animation: orbFloat 12s ease-in-out infinite;
 }
-.orb-1 { width: 500px; height: 500px; background: #10b981; top: -10%; left: -5%; }
-.orb-2 { width: 400px; height: 400px; background: #6366f1; bottom: -10%; right: -5%; animation-delay: -4s; }
-.orb-3 { width: 300px; height: 300px; background: #f59e0b; top: 40%; left: 50%; animation-delay: -8s; opacity: 0.2; }
+.orb-1 { width: 500px; height: 500px; background: #A68A56; top: -10%; left: -5%; }
+.orb-2 { width: 400px; height: 400px; background: #111111; bottom: -10%; right: -5%; animation-delay: -4s; }
+.orb-3 { width: 300px; height: 300px; background: #BFA06A; top: 40%; left: 50%; animation-delay: -8s; opacity: 0.2; }
 
 @keyframes orbFloat {
   0%, 100% { transform: translate(0, 0) scale(1); }
@@ -72,13 +73,13 @@
 /* Glass Navbar */
 .nav-glass {
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-  background: rgba(10,15,26,0.6);
+  background: rgba(17,17,17,0.6);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   border-bottom: 1px solid rgba(255,255,255,0.06);
 }
 
-/* iOS Pill Button */
+/* Pill Button */
 .btn-pill {
   padding: 10px 24px;
   border-radius: var(--radius-pill);
@@ -92,7 +93,7 @@
   gap: 8px;
 }
 .btn-pill-accent {
-  background: linear-gradient(135deg, var(--accent), #059669);
+  background: linear-gradient(135deg, var(--accent), var(--accent-light));
   color: white;
   box-shadow: 0 4px 20px var(--accent-glow);
 }
@@ -105,11 +106,11 @@
 }
 .btn-pill-glass:hover { background: var(--glass-bg-strong); }
 .btn-pill-gold {
-  background: linear-gradient(135deg, var(--gold), #d97706);
-  color: #0a0f1a;
-  box-shadow: 0 4px 20px rgba(245,158,11,0.3);
+  background: linear-gradient(135deg, var(--gold), var(--accent-light));
+  color: #111111;
+  box-shadow: 0 4px 20px rgba(166,138,86,0.3);
 }
-.btn-pill-gold:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(245,158,11,0.4); }
+.btn-pill-gold:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(166,138,86,0.4); }
 
 /* Glow text */
 .text-glow { text-shadow: 0 0 40px var(--accent-glow); }
@@ -124,7 +125,7 @@
 .glass-badge {
   display: inline-flex; align-items: center; gap: 6px;
   padding: 6px 16px; border-radius: var(--radius-pill);
-  background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2);
+  background: rgba(166,138,86,0.1); border: 1px solid rgba(166,138,86,0.2);
   color: var(--accent-light); font-size: 12px; font-weight: 600;
   letter-spacing: 0.5px; text-transform: uppercase;
 }
@@ -132,20 +133,20 @@
 /* Scroll reveal */
 .reveal-up {
   opacity: 0; transform: translateY(30px);
-  transition: opacity 0.8s cubic-bezier(0.4,0,0.2,1), transform 0.8s cubic-bezier(0.4,0,0.2,1);
+  transition: opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1);
 }
 .reveal-up.visible { opacity: 1; transform: translateY(0); }
 
 /* Mobile menu */
 .mobile-menu-glass {
   position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 99;
-  background: rgba(10,15,26,0.95);
+  background: rgba(17,17,17,0.95);
   backdrop-filter: blur(30px);
   -webkit-backdrop-filter: blur(30px);
   display: flex; flex-direction: column;
   padding: 100px 32px 32px;
   transform: translateX(100%);
-  transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+  transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
 }
 .mobile-menu-glass.open { transform: translateX(0); }
 

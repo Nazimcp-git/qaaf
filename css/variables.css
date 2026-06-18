@@ -1,59 +1,60 @@
 /* ============================================================
    QAF – Quranic Art Fest | Design Tokens
-   Luxury Editorial Theme — Synced with Landing Page
+   Modern Swiss Art-House Theme
    ============================================================ */
 
 :root {
-  /* ── Primary Palette (from landing page) ── */
-  --clr-cream:         #F7F3EE;
-  --clr-sand:          #E8DFD0;
-  --clr-gold:          #B8963E;
-  --clr-gold-light:    #D4AF6A;
-  --clr-gold-pale:     #F0E6C8;
-  --clr-gold-dark:     #9A7A2E;
-  --clr-gold-muted:    #B8963E;
-  --clr-gold-shine:    #D4AF6A;
-  --clr-ink:           #1A1814;
-  --clr-ink-soft:      #3D3A35;
-  --clr-ink-muted:     #7A7570;
-  --clr-sage:          #8A9E8C;
+  /* ── Primary Palette ── */
+  --clr-cream:         #F9F9F9;
+  --clr-sand:          #E5E5E5;
+  --clr-gold:          #A68A56;
+  --clr-gold-light:    #BFA06A;
+  --clr-gold-pale:     #E8DCCA;
+  --clr-gold-dark:     #8B7346;
+  --clr-gold-muted:    #A68A56;
+  --clr-gold-shine:    #BFA06A;
+  --clr-ink:           #111111;
+  --clr-ink-soft:      #333333;
+  --clr-ink-muted:     #666666;
+  --clr-ink-light:     #999999;
+  --clr-sage:          #7A9E7C;
 
   /* ── Extended Neutrals ── */
-  --clr-ivory:         #F7F3EE;
-  --clr-ivory-warm:    #EFE8D8;
-  --clr-parchment:     #E8DFD0;
-  --clr-parchment-dark:#D4CAB8;
-  --clr-brown:         #3D3A35;
-  --clr-brown-light:   #7A7570;
-  --clr-brown-dark:    #1A1814;
+  --clr-ivory:         #F9F9F9;
+  --clr-ivory-warm:    #F2F2F2;
+  --clr-parchment:     #E5E5E5;
+  --clr-parchment-dark:#D0D0D0;
+  --clr-brown:         #333333;
+  --clr-brown-light:   #666666;
+  --clr-brown-dark:    #111111;
 
   /* ── Legacy aliases (backward compat) ── */
-  --clr-forest:        #1A1814;
-  --clr-forest-deep:   #0F0E0C;
-  --clr-forest-light:  #3D3A35;
-  --clr-forest-muted:  #7A7570;
+  --clr-forest:        #111111;
+  --clr-forest-deep:   #0A0A0A;
+  --clr-forest-light:  #333333;
+  --clr-forest-muted:  #666666;
   
   /* ── Semantic Colors ── */
-  --clr-success:       #5B8C5A;
-  --clr-error:         #C45454;
-  --clr-warning:       #B8963E;
-  --clr-info:          #5A7FA0;
+  --clr-success:       #22C55E;
+  --clr-error:         #EF4444;
+  --clr-warning:       #A68A56;
+  --clr-info:          #3B82F6;
   
   /* ── Medal Colors ── */
-  --clr-medal-gold:    #B8963E;
-  --clr-medal-silver:  #A0A09A;
-  --clr-medal-bronze:  #A07040;
+  --clr-medal-gold:    #A68A56;
+  --clr-medal-silver:  #9CA3AF;
+  --clr-medal-bronze:  #B45309;
   
-  /* ── Typography (matching landing page fonts) ── */
-  --ff-display:        'Cormorant Garamond', 'Georgia', serif;
-  --ff-heading:        'Cormorant Garamond', 'Georgia', serif;
-  --ff-body:           'Tenor Sans', 'Segoe UI', sans-serif;
-  --ff-serif:          'Playfair Display', 'Georgia', serif;
+  /* ── Typography ── */
+  --ff-display:        'Syne', 'Arial Black', sans-serif;
+  --ff-heading:        'Syne', 'Arial Black', sans-serif;
+  --ff-body:           'Inter', 'Segoe UI', sans-serif;
+  --ff-serif:          'Syne', sans-serif;
   --ff-mono:           'JetBrains Mono', 'Consolas', monospace;
   --ff-arabic:         'Amiri', 'Traditional Arabic', serif;
   
-  --fs-xs:             0.7rem;
-  --fs-sm:             0.82rem;
+  --fs-xs:             0.75rem;
+  --fs-sm:             0.85rem;
   --fs-base:           0.95rem;
   --fs-md:             1.1rem;
   --fs-lg:             1.25rem;
@@ -68,8 +69,10 @@
   --fw-medium:         500;
   --fw-semibold:       600;
   --fw-bold:           700;
+  --fw-extrabold:      800;
   
   --lh-tight:          1.05;
+  --lh-snug:           1.2;
   --lh-normal:         1.6;
   --lh-relaxed:        1.8;
   
@@ -90,21 +93,23 @@
   
   /* ── Border Radius ── */
   --radius-none: 0px;
-  --radius-sm:   2px;
-  --radius-md:   4px;
-  --radius-lg:   6px;
-  --radius-xl:   8px;
-  --radius-2xl:  12px;
+  --radius-sm:   4px;
+  --radius-md:   8px;
+  --radius-lg:   12px;
+  --radius-xl:   16px;
+  --radius-2xl:  20px;
   --radius-full: 50%;
+  --radius-pill: 100px;
   
-  /* ── Shadows (warm tone) ── */
-  --shadow-xs:   0 1px 2px rgba(26, 24, 20, 0.04);
-  --shadow-sm:   0 2px 4px rgba(26, 24, 20, 0.06);
-  --shadow-md:   0 4px 16px rgba(184, 150, 62, 0.08);
-  --shadow-lg:   0 8px 32px rgba(184, 150, 62, 0.1);
-  --shadow-xl:   0 16px 48px rgba(184, 150, 62, 0.12);
-  --shadow-gold: 0 4px 16px rgba(184, 150, 62, 0.15);
-  --shadow-inner: inset 0 2px 4px rgba(26, 24, 20, 0.04);
+  /* ── Shadows (neutral) ── */
+  --shadow-xs:   0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-sm:   0 2px 4px rgba(0, 0, 0, 0.06);
+  --shadow-md:   0 4px 16px rgba(0, 0, 0, 0.06);
+  --shadow-lg:   0 8px 32px rgba(0, 0, 0, 0.08);
+  --shadow-xl:   0 16px 48px rgba(0, 0, 0, 0.1);
+  --shadow-gold: 0 4px 16px rgba(166, 138, 86, 0.12);
+  --shadow-inner: inset 0 2px 4px rgba(0, 0, 0, 0.04);
+  --shadow-hover: 0 30px 60px -20px rgba(0, 0, 0, 0.08);
   
   /* ── Transitions ── */
   --ease-out:     cubic-bezier(0.16, 1, 0.3, 1);
@@ -129,7 +134,7 @@
   --container-md:  768px;
   --container-lg:  1024px;
   --container-xl:  1200px;
-  --container-2xl: 1400px;
+  --container-2xl: 1600px;
   
   --nav-height:    64px;
   --sidebar-width: 260px;
@@ -137,27 +142,28 @@
 
 /* ── Dark Mode Overrides ── */
 [data-theme="dark"] {
-  --clr-cream:         #141210;
-  --clr-ivory:         #1A1814;
-  --clr-ivory-warm:    #1E1C18;
-  --clr-parchment:     #2A2720;
-  --clr-parchment-dark:#38342C;
-  --clr-sand:          #3A3630;
-  --clr-brown:         #E8DFD0;
-  --clr-brown-light:   #B0A898;
-  --clr-brown-dark:    #F7F3EE;
-  --clr-ink:           #F7F3EE;
-  --clr-ink-soft:      #E8DFD0;
-  --clr-ink-muted:     #B0A898;
-  --clr-forest:        #F7F3EE;
-  --clr-forest-deep:   #0A0908;
-  --clr-gold:          #D4AF6A;
-  --clr-gold-light:    #E4CC7A;
-  --clr-gold-dark:     #B8963E;
+  --clr-cream:         #0A0A0A;
+  --clr-ivory:         #111111;
+  --clr-ivory-warm:    #1A1A1A;
+  --clr-parchment:     #222222;
+  --clr-parchment-dark:#333333;
+  --clr-sand:          #2A2A2A;
+  --clr-brown:         #E5E5E5;
+  --clr-brown-light:   #999999;
+  --clr-brown-dark:    #F9F9F9;
+  --clr-ink:           #F9F9F9;
+  --clr-ink-soft:      #E5E5E5;
+  --clr-ink-muted:     #999999;
+  --clr-ink-light:     #666666;
+  --clr-forest:        #F9F9F9;
+  --clr-forest-deep:   #050505;
+  --clr-gold:          #BFA06A;
+  --clr-gold-light:    #D4B87A;
+  --clr-gold-dark:     #A68A56;
   
-  --shadow-xs:   0 1px 2px rgba(0, 0, 0, 0.2);
-  --shadow-sm:   0 2px 4px rgba(0, 0, 0, 0.25);
-  --shadow-md:   0 4px 12px rgba(0, 0, 0, 0.3);
-  --shadow-lg:   0 8px 24px rgba(0, 0, 0, 0.35);
-  --shadow-xl:   0 16px 48px rgba(0, 0, 0, 0.4);
+  --shadow-xs:   0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-sm:   0 2px 4px rgba(0, 0, 0, 0.35);
+  --shadow-md:   0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg:   0 8px 24px rgba(0, 0, 0, 0.45);
+  --shadow-xl:   0 16px 48px rgba(0, 0, 0, 0.5);
 }

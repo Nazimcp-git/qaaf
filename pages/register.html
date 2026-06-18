@@ -40,7 +40,7 @@
       align-items: center;
       gap: 8px;
       color: var(--clr-ink-muted);
-      font-family: 'Tenor Sans', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-size: 0.65rem;
       letter-spacing: 0.25em;
       text-transform: uppercase;
@@ -55,7 +55,7 @@
       align-items: center;
       gap: 16px;
       margin: 40px 0 24px;
-      font-family: 'Tenor Sans', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-size: 0.6rem;
       letter-spacing: 0.3em;
       text-transform: uppercase;
@@ -65,7 +65,7 @@
       content: '';
       flex: 1;
       height: 1px;
-      background: linear-gradient(to right, transparent, rgba(184,150,62,0.3), transparent);
+      background: linear-gradient(to right, transparent, #E5E5E5, transparent);
     }
     .form-row {
       display: grid;
@@ -77,7 +77,7 @@
     }
     .password-strength {
       height: 2px;
-      background: rgba(184,150,62,0.1);
+      background: rgba(166,138,86,0.1);
       margin-top: 8px;
       overflow: hidden;
     }
@@ -92,7 +92,7 @@
     .logo-preview {
       width: 80px;
       height: 80px;
-      border: 1px solid rgba(184,150,62,0.3);
+      border: 1px solid #E5E5E5;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -100,7 +100,7 @@
       margin-top: 12px;
       font-size: 1.5rem;
       color: var(--clr-gold);
-      background: rgba(247,243,238,0.5);
+      background: #F9F9F9;
     }
     .logo-preview img {
       width: 100%;
@@ -115,7 +115,7 @@
       <a href="../index.html" class="register-back">← Back to Home</a>
       <div class="register-header">
         <h1>Institution Registration</h1>
-        <div class="ornament"><span class="ornament-icon"></span></div>
+        <div style="width:40px;height:1px;background:#E5E5E5;margin:8px auto 0"></div>
         <p>Register your college or institution to participate in QAF 2026</p>
       </div>
       <div class="card">
@@ -201,9 +201,9 @@
       <h3 class="modal-title">Registration Successful</h3>
       <div class="modal-body">
         <p style="margin-bottom:24px">Your institution has been registered successfully for the Quranic Art Fest.</p>
-        <div style="text-align:left;padding:24px;background:rgba(184,150,62,0.05);border:1px solid rgba(184,150,62,0.15)">
-          <p style="margin-bottom:12px;font-family:'Tenor Sans',sans-serif;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--clr-ink-muted)"><strong>Team ID:</strong> <span id="generatedTeamId" style="color:var(--clr-ink);font-family:'Cormorant Garamond',serif;font-size:1.2rem;letter-spacing:0.02em;text-transform:none"></span></p>
-          <p style="margin-bottom:0;font-family:'Tenor Sans',sans-serif;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--clr-ink-muted)"><strong>Email:</strong> <span id="registeredEmail" style="color:var(--clr-ink);letter-spacing:0.05em;text-transform:none"></span></p>
+        <div style="text-align:left;padding:24px;background:rgba(166,138,86,0.05);border:1px solid #E5E5E5">
+          <p style="margin-bottom:12px;font-family:'Inter',sans-serif;font-size:0.75rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--clr-ink-muted)"><strong>Team ID:</strong> <span id="generatedTeamId" style="color:var(--clr-ink);font-family:'Syne',sans-serif;font-size:1.2rem;letter-spacing:0.02em;text-transform:none"></span></p>
+          <p style="margin-bottom:0;font-family:'Inter',sans-serif;font-size:0.75rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--clr-ink-muted)"><strong>Email:</strong> <span id="registeredEmail" style="color:var(--clr-ink);letter-spacing:0.05em;text-transform:none"></span></p>
         </div>
         <p style="font-size:0.7rem;margin-top:20px;color:var(--clr-gold);letter-spacing:0.05em">Please save your Team ID for future reference. (never forget the email and password)</p>
       </div>
