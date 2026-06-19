@@ -306,8 +306,36 @@
       }
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      setTimeout(hideSplash, 3000);
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (typeof db === 'undefined') {
+        setTimeout(hideSplash, 3000);
+        return;
+      }
+      try {
+        const settings = await DbService.settings.get();
+        if (settings.registrationOpen === false) {
+          const card = document.querySelector('.register-container .card');
+          if (card) {
+            card.innerHTML = `
+              <div class="empty-state" style="padding:48px 24px">
+                <div class="empty-state-icon" style="font-size:3.5rem;margin-bottom:16px">🔒</div>
+                <div class="empty-state-title" style="font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:600;margin-bottom:12px;color:var(--clr-ink)">Registrations Closed</div>
+                <p style="color:var(--clr-ink-muted);font-size:0.85rem;line-height:1.6;max-width:340px;margin:0 auto 24px">
+                  New team registrations are currently closed by the event organizers. Please check back later or contact the admin.
+                </p>
+                <div style="display:flex;gap:12px;justify-content:center">
+                  <a href="../" class="btn btn-outline">Back to Home</a>
+                  <a href="team-login" class="btn btn-primary">Go to Login</a>
+                </div>
+              </div>
+            `;
+          }
+        }
+      } catch (e) {
+        console.error('Settings fetch error:', e);
+      } finally {
+        hideSplash();
+      }
     });
 
     function previewLogo(input) {

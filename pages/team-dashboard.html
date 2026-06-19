@@ -49,14 +49,16 @@
     }
     .program-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
       gap: 24px;
     }
     .program-card {
-      padding: 24px;
+      padding: 28px;
       border: 1px solid #E5E5E5;
       background: #FFFFFF;
       transition: all 0.4s ease;
+      display: flex;
+      flex-direction: column;
     }
     .program-card:hover {
       border-color: #CCCCCC;
@@ -94,9 +96,125 @@
       border-radius: var(--radius-pill);
     }
     .participant-list {
-      margin-top: 16px;
+      margin-top: auto;
       border-top: 1px solid #E5E5E5;
       padding-top: 16px;
+    }
+    .student-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .student-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px 6px 6px;
+      border: 1px solid #E5E5E5;
+      border-radius: var(--radius-pill);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.78rem;
+      color: var(--clr-ink);
+      background: #FAFAFA;
+      transition: all 0.2s ease;
+    }
+    .student-chip:hover {
+      border-color: #CCC;
+      background: #F5F5F5;
+    }
+    .student-chip-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: var(--clr-ink);
+      color: var(--clr-gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+    .student-chip-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .student-chip-remove {
+      margin-left: 4px;
+      cursor: pointer;
+      color: var(--clr-ink-muted);
+      font-size: 0.65rem;
+      opacity: 0.6;
+      transition: opacity 0.2s;
+    }
+    .student-chip-remove:hover {
+      opacity: 1;
+      color: #c0392b;
+    }
+    .program-register-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 12px 20px;
+      border: 1.5px dashed #D5D5D5;
+      background: transparent;
+      color: var(--clr-ink-muted);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 8px;
+    }
+    .program-register-btn:hover {
+      border-color: var(--clr-gold);
+      color: var(--clr-ink);
+      background: rgba(0,0,0,0.01);
+    }
+    .photo-preview-area {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    .photo-preview-circle {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      border: 2px dashed #D5D5D5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: #FAFAFA;
+    }
+    .photo-preview-circle:hover {
+      border-color: var(--clr-gold);
+      background: #F5F5F5;
+    }
+    .photo-preview-circle img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .photo-preview-circle .placeholder-icon {
+      font-size: 2rem;
+      color: #CCC;
+    }
+    .program-card-footer {
+      margin-top: auto;
+      padding-top: 16px;
+      border-top: 1px solid #F0F0F0;
     }
     .notif-list {
       max-height: 400px;
@@ -217,12 +335,6 @@
     </div>
   </div>
 
-  <!-- Sidebar -->
-  <button class="sidebar-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open');document.querySelector('.sidebar-overlay').classList.toggle('active')" aria-label="Toggle Sidebar">
-    <div style="width:18px;height:2px;background:#FFFFFF;border-radius:1px"></div>
-    <div style="width:18px;height:2px;background:#FFFFFF;border-radius:1px"></div>
-    <div style="width:18px;height:2px;background:#FFFFFF;border-radius:1px"></div>
-  </button>
   <div class="sidebar-overlay" onclick="document.querySelector('.sidebar').classList.remove('open');this.classList.remove('active')"></div>
   
   <aside class="sidebar" id="sidebar">
@@ -259,7 +371,12 @@
   <!-- Main Content -->
   <div class="dashboard-content">
     <div class="dashboard-topbar">
-      <div class="dashboard-topbar-title" id="pageTitle">Overview</div>
+      <div style="display:flex;align-items:center">
+        <button class="topbar-sidebar-toggle" onclick="document.querySelector('.sidebar').classList.add('open');document.querySelector('.sidebar-overlay').classList.add('active')" aria-label="Open Sidebar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </button>
+        <div class="dashboard-topbar-title" id="pageTitle">Overview</div>
+      </div>
       <div style="display:flex;align-items:center;gap:16px">
         <button class="btn-icon btn-ghost btn-sm" onclick="handleLogout()" style="border:none">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
@@ -282,7 +399,7 @@
             <div class="card">
               <h4 style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:600;margin-bottom:24px;color:var(--clr-ink);border-bottom:1px solid #E5E5E5;padding-bottom:16px">Quick Actions</h4>
               <div style="display:flex;flex-direction:column;gap:12px">
-                <button class="btn btn-primary btn-block" onclick="showTab('students')">Register New Student</button>
+                <button class="btn btn-primary btn-block" onclick="showTab('programs')">Register New Student</button>
                 <button class="btn btn-outline btn-block" onclick="showTab('topics')">Submit Topic</button>
                 <button class="btn btn-ghost btn-block" onclick="showTab('points')">View Leaderboard</button>
               </div>
@@ -299,7 +416,10 @@
 
         <!-- Programs -->
         <div id="tab-programs">
-          <h3 class="section-title">Available Programs</h3>
+          <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:32px;border-bottom:1px solid #E5E5E5;padding-bottom:16px;flex-wrap:wrap;gap:16px">
+            <h3 class="section-title" style="margin-bottom:0;border:none;padding:0">Available Programs</h3>
+            <div style="font-family:'Inter',sans-serif;font-size:0.7rem;letter-spacing:0.08em;color:var(--clr-ink-muted);text-transform:uppercase">Register students directly from each program</div>
+          </div>
           <div class="program-grid" id="programsGrid">
             <div class="skeleton skeleton-card"></div>
             <div class="skeleton skeleton-card"></div>
@@ -311,12 +431,12 @@
         <div id="tab-students">
           <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:32px;border-bottom:1px solid #E5E5E5;padding-bottom:16px">
             <h3 class="section-title" style="margin-bottom:0;border:none;padding:0">Registered Students</h3>
-            <button class="btn btn-primary btn-sm" onclick="QAF.modal.open('addStudentModal')">Add Student</button>
+            <button class="btn btn-primary btn-sm" onclick="showTab('programs')">Register via Programs</button>
           </div>
           <div class="table-wrapper">
             <table class="table" id="studentsTable">
               <thead><tr><th>Name</th><th>Program</th><th>Age</th><th>Gender</th><th>Status</th><th>Actions</th></tr></thead>
-              <tbody id="studentsBody"><tr><td colspan="6" class="text-center" style="padding:48px 24px;color:var(--clr-ink-muted)">No students registered yet. <a href="#" onclick="QAF.modal.open('addStudentModal')" style="color:var(--clr-gold);text-decoration:underline">Register one now.</a></td></tr></tbody>
+              <tbody id="studentsBody"><tr><td colspan="6" class="text-center" style="padding:48px 24px;color:var(--clr-ink-muted)">No students registered yet. <a href="#" onclick="showTab('programs')" style="color:var(--clr-gold);text-decoration:underline">Go to Programs to register.</a></td></tr></tbody>
             </table>
           </div>
         </div>
@@ -399,27 +519,49 @@
     </div>
   </div>
 
-  <!-- Add Student Modal -->
+  <!-- Add Student Modal (Simplified – triggered from Program cards) -->
   <div class="modal-overlay" id="addStudentModal">
     <div class="modal">
       <button class="modal-close" onclick="QAF.modal.close('addStudentModal')">✕</button>
-      <h3 class="modal-title">Register Student</h3>
+      <h3 class="modal-title" id="regModalTitle">Register Student</h3>
       <div class="modal-body">
         <form id="studentForm">
-          <div class="form-group"><label class="form-label">Student Name <span class="required">*</span></label><input class="form-input" id="stuName" required></div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
-            <div class="form-group"><label class="form-label">Age <span class="required">*</span></label><input class="form-input" type="number" id="stuAge" min="5" max="30" required></div>
-            <div class="form-group"><label class="form-label">Gender <span class="required">*</span></label><select class="form-select" id="stuGender" required><option value="">Select</option><option>Male</option><option>Female</option></select></div>
-          </div>
-          <div class="form-group"><label class="form-label">Program <span class="required">*</span></label><select class="form-select" id="stuProgram" required><option value="">Select Program</option></select></div>
-          <div class="form-group"><label class="form-label">School/College</label><input class="form-input" id="stuSchool"></div>
-          <div class="form-group"><label class="form-label">Guardian Phone</label><input class="form-input" id="stuGuardian" type="tel"></div>
+          <input type="hidden" id="stuProgramId">
+          <input type="hidden" id="stuProgramName">
+
+          <!-- College info (auto-filled, read-only) -->
           <div class="form-group">
-            <label class="form-label">Photo</label>
-            <div class="form-file">
-              <input type="file" id="stuPhoto" accept="image/*">
-              <div class="form-file-icon">📷</div>
-              <div class="form-file-text">Upload student photo (optional)</div>
+            <label class="form-label">College / Institution</label>
+            <input class="form-input" id="stuCollege" readonly style="color:var(--clr-ink-muted);border-bottom-color:transparent;cursor:default">
+          </div>
+
+          <!-- Student Name -->
+          <div class="form-group">
+            <label class="form-label">Student Name <span class="required">*</span></label>
+            <input class="form-input" id="stuName" required placeholder="Full name of the student">
+          </div>
+
+          <!-- Age -->
+          <div class="form-group">
+            <label class="form-label">Age <span class="required">*</span></label>
+            <input class="form-input" type="number" id="stuAge" min="5" max="30" required placeholder="Student's age">
+          </div>
+
+          <!-- Program (read-only, pre-selected) -->
+          <div class="form-group">
+            <label class="form-label">Program</label>
+            <input class="form-input" id="stuProgramDisplay" readonly style="color:var(--clr-ink-muted);border-bottom-color:transparent;cursor:default">
+          </div>
+
+          <!-- Photo Upload -->
+          <div class="form-group">
+            <label class="form-label">Student Photo <span class="required">*</span></label>
+            <div class="photo-preview-area">
+              <div class="photo-preview-circle" id="photoPreviewCircle" onclick="document.getElementById('stuPhoto').click()">
+                <span class="placeholder-icon" id="photoPlaceholder">📷</span>
+              </div>
+              <input type="file" id="stuPhoto" accept="image/*" style="display:none" onchange="previewStudentPhoto(this)">
+              <span style="font-family:'Inter',sans-serif;font-size:0.7rem;color:var(--clr-ink-muted);letter-spacing:0.04em">Click to upload photo</span>
             </div>
           </div>
         </form>
@@ -493,6 +635,11 @@
           teamId = userData.teamId;
           currentTeam = await DbService.teams.get(teamId);
           if (!currentTeam) { window.location.href = 'team-login'; return; }
+          if (currentTeam.approved !== true) {
+            await auth.signOut();
+            window.location.href = 'team-login?pending=1';
+            return;
+          }
           await initDashboard();
         } catch (e) {
           console.error('Dashboard init error:', e);
@@ -530,31 +677,75 @@
     async function loadPrograms() {
       const programs = await DbService.programs.getAll();
       const grid = document.getElementById('programsGrid');
-      const select = document.getElementById('stuProgram');
       const arr = Object.values(programs);
       
+      // Also fetch students for this team to show per-program
+      const stuSnap = await DbService.students.getByTeam(teamId);
+      const teamStudents = Object.values(stuSnap);
+      
       if (!arr.length) { 
-        grid.innerHTML = '<div class="empty-state" style="grid-column: 1/-1"><div class="empty-state-icon">✧</div><div class="empty-state-title">No Programs Yet</div></div>'; 
+        grid.innerHTML = '<div class="empty-state" style="grid-column: 1/-1"><div class="empty-state-icon">✧</div><div class="empty-state-title">No Programs Yet</div><div class="empty-state-text">Programs will appear here once admin adds them</div></div>'; 
         return; 
       }
       
       document.getElementById('statPrograms').textContent = arr.length;
-      select.innerHTML = '<option value="">Select Program</option>' + arr.map(p => `<option value="${p.id}">${p.title}</option>`).join('');
       
-      grid.innerHTML = arr.map(p => `
-        <div class="program-card">
-          <div class="program-card-header">
-            <h4>${QAF.sanitize(p.title)}</h4>
-            <span class="badge badge-${p.topicRequired?'warning':'success'}">${p.topicRequired?'Topic Req.':'Open'}</span>
-          </div>
-          <div class="program-meta">
-            <span>${p.category||'General'}</span>
-            <span>Max: ${p.participantLimit||'∞'}</span>
-            ${p.ageLimit?`<span>Age: ≤${p.ageLimit}</span>`:''}
-          </div>
-          <p style="font-size:0.8rem;color:var(--clr-ink-muted);line-height:1.6;margin:0">${QAF.sanitize(p.description||'')}</p>
-        </div>
-      `).join('');
+      grid.innerHTML = arr.map(p => {
+        // Students registered for this program by this team
+        const progStudents = teamStudents.filter(s => s.programId === p.id);
+        const limit = p.participantLimit ? parseInt(p.participantLimit) : Infinity;
+        const isFull = progStudents.length >= limit;
+        
+        // Build student chips
+        let studentsHTML = '';
+        if (progStudents.length) {
+          studentsHTML = `
+            <div class="participant-list">
+              <div style="font-family:'Inter',sans-serif;font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--clr-gold);margin-bottom:12px">
+                ${progStudents.length} Student${progStudents.length !== 1 ? 's' : ''} Registered
+              </div>
+              <div class="student-chips">
+                ${progStudents.map(s => {
+                  const photoHTML = s.photoUrl 
+                    ? `<img src="${s.photoUrl}" alt="${QAF.sanitize(s.name)}">` 
+                    : QAF.sanitize(s.name).charAt(0).toUpperCase();
+                  return `
+                    <div class="student-chip">
+                      <div class="student-chip-avatar">${photoHTML}</div>
+                      <span>${QAF.sanitize(s.name)}</span>
+                      <span style="font-size:0.65rem;color:var(--clr-ink-muted)">Age ${s.age || '—'}</span>
+                      <span class="student-chip-remove" onclick="deleteStudent('${s.id}')" title="Remove">✕</span>
+                    </div>`;
+                }).join('')}
+              </div>
+            </div>`;
+        }
+        
+        // Register button
+        const registerBtnHTML = isFull 
+          ? `<div style="margin-top:12px;text-align:center;font-family:'Inter',sans-serif;font-size:0.7rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--clr-ink-muted);padding:12px;border:1px solid #F0F0F0">Slots Full</div>`
+          : `<button class="program-register-btn" onclick="registerForProgram('${p.id}','${QAF.sanitize(p.title).replace(/'/g, "\\'")}')">＋ Register Student</button>`;
+
+        return `
+          <div class="program-card">
+            <div class="program-card-header">
+              <div>
+                <h4>${QAF.sanitize(p.title)}</h4>
+              </div>
+              <span class="badge badge-${p.topicRequired?'warning':'success'}">${p.topicRequired?'Topic Req.':'Open'}</span>
+            </div>
+            <div class="program-meta">
+              <span>${p.category||'General'}</span>
+              <span>${progStudents.length}/${p.participantLimit||'∞'} Registered</span>
+              ${p.ageLimit?`<span>Age: ≤${p.ageLimit}</span>`:''}
+            </div>
+            <p style="font-size:0.8rem;color:var(--clr-ink-muted);line-height:1.6;margin:0">${QAF.sanitize(p.description||'')}</p>
+            ${studentsHTML}
+            <div class="program-card-footer">
+              ${registerBtnHTML}
+            </div>
+          </div>`;
+      }).join('');
     }
 
     async function loadStudents() {
@@ -564,7 +755,7 @@
       const tbody = document.getElementById('studentsBody');
       
       if (!arr.length) { 
-        tbody.innerHTML = '<tr><td colspan="6" class="text-center" style="padding:48px 24px;color:var(--clr-ink-muted)">No students registered. <a href="#" onclick="QAF.modal.open(\'addStudentModal\')" style="color:var(--clr-gold);text-decoration:underline">Register one.</a></td></tr>'; 
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center" style="padding:48px 24px;color:var(--clr-ink-muted)">No students registered. <a href="#" onclick="showTab(\'programs\')" style="color:var(--clr-gold);text-decoration:underline">Go to Programs to register.</a></td></tr>'; 
         return; 
       }
       
@@ -580,31 +771,95 @@
       `).join('');
     }
 
+    async function deleteStudent(id) {
+      if (!confirm('Remove this student?')) return;
+      await DbService.students.remove(id);
+      QAF.toast.success('Removed', 'Student removed');
+      loadPrograms();
+      loadStudents();
+    }
+
+    // Open the registration modal pre-filled for a specific program
+    function registerForProgram(programId, programTitle) {
+      document.getElementById('stuProgramId').value = programId;
+      document.getElementById('stuProgramName').value = programTitle;
+      document.getElementById('stuProgramDisplay').value = programTitle;
+      document.getElementById('stuCollege').value = currentTeam?.collegeName || '';
+      document.getElementById('regModalTitle').textContent = 'Register Student — ' + programTitle;
+      document.getElementById('studentForm').reset();
+      document.getElementById('stuProgramId').value = programId;
+      document.getElementById('stuProgramName').value = programTitle;
+      document.getElementById('stuProgramDisplay').value = programTitle;
+      document.getElementById('stuCollege').value = currentTeam?.collegeName || '';
+      // Reset photo preview
+      const previewCircle = document.getElementById('photoPreviewCircle');
+      previewCircle.innerHTML = '<span class="placeholder-icon" id="photoPlaceholder">📷</span>';
+      QAF.modal.open('addStudentModal');
+    }
+
+    // Photo preview handler
+    function previewStudentPhoto(input) {
+      const previewCircle = document.getElementById('photoPreviewCircle');
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          previewCircle.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+        };
+        reader.readAsDataURL(input.files[0]);
+      } else {
+        previewCircle.innerHTML = '<span class="placeholder-icon" id="photoPlaceholder">📷</span>';
+      }
+    }
+
     async function addStudent() {
       const name = document.getElementById('stuName').value.trim();
       const age = document.getElementById('stuAge').value;
-      const gender = document.getElementById('stuGender').value;
-      const programId = document.getElementById('stuProgram').value;
+      const programId = document.getElementById('stuProgramId').value;
+      const programName = document.getElementById('stuProgramName').value;
+      const photoFile = document.getElementById('stuPhoto').files[0];
       
-      if (!name || !age || !gender || !programId) { 
-        QAF.toast.error('Error', 'Fill required fields'); 
+      if (!name || !age) { 
+        QAF.toast.error('Error', 'Please fill in the student name and age'); 
         return; 
+      }
+      if (!programId) {
+        QAF.toast.error('Error', 'No program selected'); 
+        return;
+      }
+      if (!photoFile) {
+        QAF.toast.error('Error', 'Please upload the student photo'); 
+        return;
       }
       
       const btn = document.getElementById('addStudentBtn');
-      btn.disabled = true; btn.textContent = 'Saving...';
+      btn.disabled = true; btn.textContent = 'Uploading...';
       
       try {
-        const program = await DbService.programs.get(programId);
+        // Upload photo to ImageKit
+        let photoUrl = '';
+        let photoFileId = '';
+        if (photoFile) {
+          btn.textContent = 'Uploading photo...';
+          const uploadResult = await uploadToImageKit(photoFile, 'students', `${teamId}_${Date.now()}`);
+          photoUrl = uploadResult.url;
+          photoFileId = uploadResult.fileId || '';
+        }
+
+        btn.textContent = 'Saving...';
         await DbService.students.create(teamId, {
-          name: QAF.sanitize(name), age: parseInt(age), gender,
-          programId, programName: program?.title || '',
-          school: document.getElementById('stuSchool').value.trim(),
-          guardianPhone: document.getElementById('stuGuardian').value.trim()
+          name: QAF.sanitize(name), 
+          age: parseInt(age),
+          programId, 
+          programName: programName,
+          college: currentTeam?.collegeName || '',
+          photoUrl,
+          photoFileId
         });
-        QAF.toast.success('Success', 'Student registered!');
+        QAF.toast.success('Success', name + ' has been registered!');
         QAF.modal.close('addStudentModal');
         document.getElementById('studentForm').reset();
+        // Refresh both programs (for student chips) and students table
+        loadPrograms();
         loadStudents();
         loadTopics();
       } catch (e) { 

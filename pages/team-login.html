@@ -257,6 +257,10 @@
         authChecked = true;
         hideSplash();
       }
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('pending') === '1') {
+        QAF.toast.warning('Pending Approval', 'Your team account is pending admin approval.');
+      }
     });
 
     // Redirect if already logged in
@@ -266,8 +270,15 @@
           const snap = await db.ref('users/' + user.uid).once('value');
           const data = snap.val();
           if (data && data.role === 'team') {
-            window.location.href = 'team-dashboard';
-            return;
+            const teamSnap = await db.ref('teams/' + data.teamId).once('value');
+            const team = teamSnap.val();
+            if (team && team.approved === true) {
+              window.location.href = 'team-dashboard';
+              return;
+            } else {
+              await auth.signOut();
+              QAF.toast.warning('Pending Approval', 'Your team account is pending admin approval.');
+            }
           }
         }
       } catch (e) {
@@ -297,8 +308,12 @@
         setTimeout(() => window.location.href = 'team-dashboard', 1000);
       } catch (error) {
         let msg = 'Login failed. Please check credentials.';
-        if (error.code === 'auth/user-not-found') msg = 'No account found with this email.';
-        if (error.code === 'auth/wrong-password') msg = 'Incorrect password.';
+        if (error.code === 'auth/pending-approval' || error.message === 'Your team account is pending admin approval.') {
+          msg = 'Your team account is pending admin approval.';
+        } else {
+          if (error.code === 'auth/user-not-found') msg = 'No account found with this email.';
+          if (error.code === 'auth/wrong-password') msg = 'Incorrect password.';
+        }
         QAF.toast.error('Login Failed', msg);
       } finally {
         btn.disabled = false;

@@ -51,6 +51,15 @@ function showTab(name,el){
 }
 
 async function initAdmin(){
+  // Auto-clean any malformed database entries
+  try {
+    await db.ref('results/undefined').remove();
+    await db.ref('leaderboard/undefined').remove();
+    await db.ref('teams/undefined').remove();
+  } catch (e) {
+    console.warn('Database cleanup error:', e);
+  }
+
   allTeams=await DbService.teams.getAll();
   allStudents=await DbService.students.getAll();
   allPrograms=await DbService.programs.getAll();
@@ -116,13 +125,39 @@ async function approveTeam(id){
 }
 
 async function deleteTeam(id){
-  if(!confirm('Delete this team? This cannot be undone.'))return;
+  const t = allTeams[id] || {};
+  if(!confirm('Delete team "'+(t.collegeName||id)+'"? This will delete all student profiles and results belonging to this team, and recalculate the scoreboard. This cannot be undone.'))return;
+
+  // Delete the team
   await DbService.teams.remove(id);
   delete allTeams[id];
+
+  // Delete students of this team
+  const studentsToDelete = Object.values(allStudents).filter(s => s.teamId === id);
+  for(const s of studentsToDelete){
+    await DbService.students.remove(s.id);
+    delete allStudents[s.id];
+  }
+
+  // Delete results of this team from Firebase and local memory
+  const resultsToDelete = Object.values(allResults).filter(r => r.teamId === id);
+  for(const r of resultsToDelete){
+    await db.ref('results/'+r.id).remove();
+    delete allResults[r.id];
+  }
+
+  // Delete leaderboard reference
+  await db.ref('leaderboard/'+id).remove();
+
+  // Recalculate leaderboard
+  await recalcLeaderboard();
+  await DbService.logs.add('team_deleted','Deleted team & all associated students/results: '+(t.collegeName||id),auth.currentUser.uid);
+
   loadTeams();loadRecentTeams();
+  if(document.getElementById('allStudentsBody')) loadAllStudents();
   document.getElementById('aStatTeams').textContent=Object.keys(allTeams).length;
-  await DbService.logs.add('team_deleted','Deleted team '+id,auth.currentUser.uid);
-  QAF.toast.success('Deleted','Team removed');
+  document.getElementById('aStatStudents').textContent=Object.keys(allStudents).length;
+  QAF.toast.success('Deleted','Team and all associated data removed');
 }
 
 // ── Students ──
@@ -143,12 +178,27 @@ function loadAllStudents(){
 }
 
 async function deleteStudent(id){
-  if(!confirm('Remove student?'))return;
+  const s = allStudents[id] || {};
+  if(!confirm('Remove student "'+(s.name||id)+'"? This will also delete any results they have placed in and recalculate the scoreboard.'))return;
+
+  // Delete student
   await DbService.students.remove(id);
   delete allStudents[id];
+
+  // Delete any results for this student from DB and local memory
+  const resultsToDelete = Object.values(allResults).filter(r => r.studentId === id);
+  for(const r of resultsToDelete){
+    await db.ref('results/'+r.id).remove();
+    delete allResults[r.id];
+  }
+
+  // Recalculate leaderboard
+  await recalcLeaderboard();
+  await DbService.logs.add('student_deleted','Deleted student & results: '+(s.name||id),auth.currentUser?.uid);
+
   loadAllStudents();
   document.getElementById('aStatStudents').textContent=Object.keys(allStudents).length;
-  QAF.toast.success('Removed','Student deleted');
+  QAF.toast.success('Removed','Student and their results removed');
 }
 
 function filterStudentsByTeam(teamId){
@@ -168,14 +218,43 @@ function loadAdminPrograms(){
     <td>${p.category||'—'}</td>
     <td>${p.participantLimit||'∞'}</td>
     <td>${p.topicRequired?'<span class="badge badge-warning">Yes</span>':'<span class="badge badge-success">No</span>'}</td>
-    <td><button class="btn btn-ghost btn-sm" onclick="deleteProgram('${p.id}')">🗑️</button></td>
+    <td>
+      <button class="btn btn-ghost btn-sm" onclick="editProgram('${p.id}')" title="Edit Program">✏️</button>
+      <button class="btn btn-ghost btn-sm" onclick="deleteProgram('${p.id}')" title="Delete Program">🗑️</button>
+    </td>
   </tr>`).join('')||'<tr><td colspan="5" class="text-center">No programs</td></tr>';
 
   // Result program selector
   loadResultPrograms();
 }
 
-async function addProgram(){
+let editingProgramId = null;
+
+function openAddProgramModal() {
+  editingProgramId = null;
+  document.getElementById('programForm').reset();
+  const modalTitle = document.getElementById('programModalTitle');
+  if(modalTitle) modalTitle.textContent = 'Add Program';
+  QAF.modal.open('programModal');
+}
+
+function editProgram(id) {
+  const p = allPrograms[id];
+  if(!p) return;
+  editingProgramId = id;
+  document.getElementById('progTitle').value = p.title || '';
+  document.getElementById('progCategory').value = p.category || '';
+  document.getElementById('progLimit').value = p.participantLimit || '';
+  document.getElementById('progAge').value = p.ageLimit || '';
+  document.getElementById('progDesc').value = p.description || '';
+  document.getElementById('progTopicReq').checked = !!p.topicRequired;
+
+  const modalTitle = document.getElementById('programModalTitle');
+  if(modalTitle) modalTitle.textContent = 'Edit Program';
+  QAF.modal.open('programModal');
+}
+
+async function saveProgram(){
   const title=document.getElementById('progTitle').value.trim();
   if(!title){QAF.toast.error('Error','Title required');return;}
   const data={
@@ -186,22 +265,53 @@ async function addProgram(){
     description:document.getElementById('progDesc').value.trim(),
     topicRequired:document.getElementById('progTopicReq').checked
   };
-  const id=await DbService.programs.create(data);
-  allPrograms[id]={...data,id};
+
+  if(editingProgramId){
+    // Update existing program
+    await DbService.programs.update(editingProgramId, data);
+    allPrograms[editingProgramId] = { ...allPrograms[editingProgramId], ...data };
+    await DbService.logs.add('program_updated','Updated program: '+title,auth.currentUser.uid);
+    QAF.toast.success('Updated','Program updated');
+  } else {
+    // Add new program
+    const id=await DbService.programs.create(data);
+    allPrograms[id]={...data,id};
+    await DbService.logs.add('program_created','Created program: '+title,auth.currentUser.uid);
+    QAF.toast.success('Created','Program added');
+  }
+
   QAF.modal.close('programModal');
   document.getElementById('programForm').reset();
   loadAdminPrograms();
   document.getElementById('aStatPrograms').textContent=Object.keys(allPrograms).length;
-  await DbService.logs.add('program_created','Created program: '+title,auth.currentUser.uid);
-  QAF.toast.success('Created','Program added');
+}
+
+// Fallback compatibility
+async function addProgram(){
+  await saveProgram();
 }
 
 async function deleteProgram(id){
-  if(!confirm('Delete program?'))return;
+  const p = allPrograms[id] || {};
+  if(!confirm('Delete program "'+(p.title||id)+'"? This will also delete all results associated with this program and recalculate the scoreboard.'))return;
+
+  // Delete the program
   await DbService.programs.remove(id);
   delete allPrograms[id];
+
+  // Delete all results for this program from DB and local memory
+  const resultsToDelete = Object.values(allResults).filter(r => r.programId === id);
+  for(const r of resultsToDelete){
+    await db.ref('results/'+r.id).remove();
+    delete allResults[r.id];
+  }
+
+  // Recalculate leaderboard
+  await recalcLeaderboard();
+  await DbService.logs.add('program_deleted','Deleted program & results: '+(p.title||id),auth.currentUser?.uid);
+
   loadAdminPrograms();
-  QAF.toast.success('Deleted','Program removed');
+  QAF.toast.success('Deleted','Program and its results removed');
 }
 
 // ── Topics ──
@@ -248,7 +358,12 @@ async function updateTopicStatus(id,status){
 function loadResultPrograms(){
   const sel=document.getElementById('resultProgram');
   if(!sel)return;
-  sel.innerHTML='<option value="">Select Program</option>'+Object.values(allPrograms).map(p=>`<option value="${p.id}">${QAF.sanitize(p.title)} ${p.resultsPublished?'✅':''}</option>`).join('');
+  sel.innerHTML='<option value="">Select Program</option>'+Object.values(allPrograms).map(p=>{
+    const hasResults=Object.values(allResults).some(r=>r.programId===p.id);
+    const isDraft=hasResults && !p.resultsPublished;
+    const statusLabel=p.resultsPublished?'✅ Published':isDraft?'📝 Draft':'';
+    return `<option value="${p.id}">${QAF.sanitize(p.title)} ${statusLabel}</option>`;
+  }).join('');
   loadPublishedList();
 }
 
@@ -256,6 +371,8 @@ async function loadResultEntries(programId){
   if(!programId){
     document.getElementById('resultPositions').style.display='none';
     document.getElementById('resultInfo').style.display='none';
+    const btnUnpublish = document.getElementById('btnUnpublish');
+    if(btnUnpublish) btnUnpublish.style.display = 'none';
     return;
   }
   const program=allPrograms[programId]||{};
@@ -266,7 +383,19 @@ async function loadResultEntries(programId){
 
   // Show info
   document.getElementById('resultInfo').style.display='block';
-  document.getElementById('resultInfoText').innerHTML=`<strong>${QAF.sanitize(program.title)}</strong> — ${students.length} participant(s) | ${program.resultsPublished?'<span style="color:var(--clr-success)">✅ Published</span>':'<span style="color:var(--clr-warning)">⏳ Not published</span>'}`;
+  const isDraft = results.length > 0 && !program.resultsPublished;
+  const statusHTML = program.resultsPublished
+    ? '<span style="color:var(--clr-success)">✅ Published — visible to public</span>'
+    : isDraft
+      ? '<span style="color:var(--clr-warning)">📝 Draft — saved privately, not visible to public</span>'
+      : '<span style="color:var(--clr-ink-muted)">⏳ No results assigned yet</span>';
+  document.getElementById('resultInfoText').innerHTML=`<strong>${QAF.sanitize(program.title)}</strong> — ${students.length} participant(s) | ${statusHTML}`;
+
+  // Toggle Unpublish button visibility
+  const btnUnpublish = document.getElementById('btnUnpublish');
+  if(btnUnpublish) {
+    btnUnpublish.style.display = program.resultsPublished ? 'inline-block' : 'none';
+  }
 
   // Show position selectors
   document.getElementById('resultPositions').style.display='block';
@@ -309,8 +438,32 @@ async function saveResults(){
 
   const program=allPrograms[programId]||{};
 
-  // Delete existing results for this program
+  // Validate that same student is not assigned multiple positions
+  const selectedStudents = [];
+  for(let pos=1;pos<=3;pos++){
+    const studentId=document.getElementById('pos'+pos+'Student').value;
+    if(studentId){
+      if(selectedStudents.includes(studentId)){
+        QAF.toast.error('Error','A student cannot be assigned to multiple positions');
+        return;
+      }
+      selectedStudents.push(studentId);
+    }
+  }
+
   const existing=Object.values(allResults).filter(r=>r.programId===programId);
+
+  // If no students are selected, ask for confirmation to clear results
+  if(selectedStudents.length === 0 && existing.length > 0){
+    if(!confirm('You have not selected any students. This will delete all results for '+program.title+' and unpublish it. Proceed?')){
+      return;
+    }
+    // Set program as unpublished
+    await db.ref('programs/'+programId+'/resultsPublished').set(false);
+    program.resultsPublished = false;
+  }
+
+  // Delete existing results for this program
   for(const r of existing){
     await db.ref('results/'+r.id).remove();
     delete allResults[r.id];
@@ -320,7 +473,7 @@ async function saveResults(){
   for(let pos=1;pos<=3;pos++){
     const studentId=document.getElementById('pos'+pos+'Student').value;
     if(!studentId)continue;
-    const points=parseInt(document.getElementById('pos'+pos+'Points').value)||0;
+    const points=Math.max(0, parseInt(document.getElementById('pos'+pos+'Points').value, 10) || 0);
     const student=allStudents[studentId]||{};
     const team=allTeams[student.teamId]||{};
     const data={
@@ -332,15 +485,29 @@ async function saveResults(){
       teamName:team.collegeName||'',
       position:pos,
       points,
+      published:!!program.resultsPublished,
       createdAt:Date.now()
     };
     const ref=await db.ref('results').push(data);
     allResults[ref.key]={...data,id:ref.key};
   }
 
-  await DbService.logs.add('results_saved','Saved results for '+program.title,auth.currentUser?.uid);
-  QAF.toast.success('Saved','Results saved — 1st, 2nd, 3rd assigned');
+  // If program was already published, recalculate leaderboard scores automatically
+  if(program.resultsPublished){
+    await recalcLeaderboard();
+    await DbService.logs.add('results_edited_published','Edited published results for '+program.title,auth.currentUser?.uid);
+    QAF.toast.success('Saved','Results updated and published successfully');
+  } else {
+    // If it was a draft program, we might still need to recalculate leaderboard in case previously published results were cleared
+    if(existing.some(r => r.published)) {
+      await recalcLeaderboard();
+    }
+    await DbService.logs.add('results_saved','Saved results (draft) for '+program.title,auth.currentUser?.uid);
+    QAF.toast.success('Saved','Results saved as draft — click Publish to make them public');
+  }
+
   loadResultEntries(programId);
+  loadResultPrograms();
 }
 
 async function publishProgramResult(){
@@ -350,30 +517,87 @@ async function publishProgramResult(){
   const results=Object.values(allResults).filter(r=>r.programId===programId);
   if(!results.length){QAF.toast.error('Error','Save results first before publishing');return;}
 
+  // Mark program as published
   await db.ref('programs/'+programId+'/resultsPublished').set(true);
   allPrograms[programId].resultsPublished=true;
 
+  // Mark each result as published
+  for(const r of results){
+    await db.ref('results/'+r.id+'/published').set(true);
+    r.published=true;
+    if(allResults[r.id])allResults[r.id].published=true;
+  }
+
   await recalcLeaderboard();
   await DbService.logs.add('results_published','Published results for '+allPrograms[programId].title,auth.currentUser?.uid);
-  QAF.toast.success('Published','Results for this program are now public');
+  QAF.toast.success('Published','Results for this program are now visible to the public');
+  loadResultPrograms();
+  loadResultEntries(programId);
+}
+
+async function unpublishProgramResult(){
+  const programId=document.getElementById('resultProgram').value;
+  if(!programId){QAF.toast.error('Error','Select a program first');return;}
+
+  const program=allPrograms[programId]||{};
+  const results=Object.values(allResults).filter(r=>r.programId===programId);
+  if(!results.length){QAF.toast.error('Error','No results to unpublish');return;}
+
+  if(!confirm('Are you sure you want to unpublish the results for '+program.title+'? This will hide them from the public.'))return;
+
+  // Mark program as unpublished
+  await db.ref('programs/'+programId+'/resultsPublished').set(false);
+  program.resultsPublished=false;
+
+  // Mark each result as unpublished
+  for(const r of results){
+    await db.ref('results/'+r.id+'/published').set(false);
+    r.published=false;
+    if(allResults[r.id])allResults[r.id].published=false;
+  }
+
+  await recalcLeaderboard();
+  await DbService.logs.add('results_unpublished','Unpublished results for '+program.title,auth.currentUser?.uid);
+  QAF.toast.success('Unpublished','Results for this program are now hidden from the public');
   loadResultPrograms();
   loadResultEntries(programId);
 }
 
 async function recalcLeaderboard(){
+  // Auto-clean any malformed database entries
+  try {
+    await db.ref('results/undefined').remove();
+    await db.ref('leaderboard/undefined').remove();
+    await db.ref('teams/undefined').remove();
+  } catch (e) {
+    console.warn('Database cleanup error:', e);
+  }
+
   const results=await DbService.results.getAll();
   allResults=results;
   const teamPoints={};
+
+  // Initialize all existing teams with 0 points
+  Object.keys(allTeams).forEach(tid => {
+    if (tid && tid !== 'undefined') {
+      teamPoints[tid] = { points: 0, teamId: tid };
+    }
+  });
+
+  // Sum up points for published results only
   Object.values(results).forEach(r=>{
-    if(!teamPoints[r.teamId])teamPoints[r.teamId]={points:0,teamId:r.teamId};
+    if(r.published!==true)return;
+    if(!r.teamId || r.teamId === 'undefined')return;
+    if(!teamPoints[r.teamId]) teamPoints[r.teamId] = { points: 0, teamId: r.teamId };
     teamPoints[r.teamId].points+=(r.points||0);
   });
   for(const[tid,data]of Object.entries(teamPoints)){
+    if(!tid || tid === 'undefined') continue;
     await db.ref('leaderboard/'+tid).set({teamId:tid,points:data.points});
     await DbService.teams.update(tid,{points:data.points});
     if(allTeams[tid])allTeams[tid].points=data.points;
   }
-  QAF.toast.success('Done','Scoreboard recalculated');
+  QAF.toast.success('Done','Scoreboard recalculated (published results only)');
 }
 
 function loadPublishedList(){

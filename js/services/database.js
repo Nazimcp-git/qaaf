@@ -149,11 +149,15 @@ const DbService = {
     },
     async getByProgram(programId) {
       const snap = await db.ref('results').orderByChild('programId').equalTo(programId).once('value');
-      return snap.val() || {};
+      const val = snap.val() || {};
+      Object.keys(val).forEach(k => { if (val[k]) val[k].id = k; });
+      return val;
     },
     async getAll() {
       const snap = await db.ref('results').once('value');
-      return snap.val() || {};
+      const val = snap.val() || {};
+      Object.keys(val).forEach(k => { if (val[k]) val[k].id = k; });
+      return val;
     },
     async update(id, data) {
       await db.ref('results/' + id).update(data);
@@ -162,7 +166,11 @@ const DbService = {
       await db.ref('results/' + id).remove();
     },
     onUpdate(cb) {
-      db.ref('results').on('value', snap => cb(snap.val() || {}));
+      db.ref('results').on('value', snap => {
+        const val = snap.val() || {};
+        Object.keys(val).forEach(k => { if (val[k]) val[k].id = k; });
+        cb(val);
+      });
     }
   },
 

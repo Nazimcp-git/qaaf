@@ -31,7 +31,14 @@ const AuthService = {
       const userSnap = await db.ref('users/' + uid).once('value');
       const userData = userSnap.val();
       if (!userData || userData.role !== 'team') throw new Error('Invalid team account');
-      this.currentTeam = await DbService.teams.get(userData.teamId);
+      const team = await DbService.teams.get(userData.teamId);
+      if (team && team.approved !== true) {
+        await auth.signOut();
+        const err = new Error('Your team account is pending admin approval.');
+        err.code = 'auth/pending-approval';
+        throw err;
+      }
+      this.currentTeam = team;
       this.currentUser = { uid, ...userData };
       this.isAdmin = false;
       return this.currentTeam;

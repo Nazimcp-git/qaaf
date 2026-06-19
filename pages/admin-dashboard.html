@@ -214,11 +214,6 @@
     </div>
   </div>
 
-  <button class="sidebar-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open');document.querySelector('.sidebar-overlay').classList.toggle('active')" aria-label="Toggle Sidebar">
-    <div style="width:18px;height:2px;background:#FFFFFF;border-radius:1px"></div>
-    <div style="width:18px;height:2px;background:#FFFFFF;border-radius:1px"></div>
-    <div style="width:18px;height:2px;background:#FFFFFF;border-radius:1px"></div>
-  </button>
   <div class="sidebar-overlay" onclick="document.querySelector('.sidebar').classList.remove('open');this.classList.remove('active')"></div>
 
   <aside class="sidebar">
@@ -252,7 +247,12 @@
 
   <div class="dashboard-content">
     <div class="dashboard-topbar">
-      <div class="dashboard-topbar-title" id="pageTitle">Admin Overview</div>
+      <div style="display:flex;align-items:center">
+        <button class="topbar-sidebar-toggle" onclick="document.querySelector('.sidebar').classList.add('open');document.querySelector('.sidebar-overlay').classList.add('active')" aria-label="Open Sidebar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </button>
+        <div class="dashboard-topbar-title" id="pageTitle">Admin Overview</div>
+      </div>
       <div style="display:flex;gap:16px;align-items:center">
         <button class="btn-icon btn-ghost btn-sm" onclick="if(typeof auth!=='undefined')auth.signOut().then(()=>location.href='admin-login');else location.href='admin-login'" style="border:none">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
@@ -313,7 +313,7 @@
         <div id="tab-programs">
           <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:24px;border-bottom:1px solid #E5E5E5;padding-bottom:16px">
             <div class="admin-section-title" style="margin:0;border:none;padding:0">Manage Programs</div>
-            <button class="btn btn-primary" onclick="QAF.modal.open('programModal')">Add Program</button>
+            <button class="btn btn-primary" onclick="openAddProgramModal()">Add Program</button>
           </div>
           <div class="table-wrapper"><table class="table"><thead><tr><th>Title</th><th>Category</th><th>Limit</th><th>Topic Req.</th><th>Actions</th></tr></thead><tbody id="programsBody"></tbody></table></div>
         </div>
@@ -335,15 +335,30 @@
         <!-- RESULTS -->
         <div id="tab-results">
           <div class="admin-section-title">Result Management</div>
+          
+          <!-- Draft/Publish workflow info -->
+          <div class="card" style="margin-bottom:24px;background:linear-gradient(90deg,rgba(166,138,86,0.04),transparent);border-color:rgba(166,138,86,0.15);padding:16px 24px">
+            <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+              <div style="font-size:1.2rem">💡</div>
+              <div style="flex:1;min-width:200px">
+                <div style="font-family:'Syne',sans-serif;font-size:0.9rem;font-weight:600;color:var(--clr-ink);margin-bottom:4px">How Results Work</div>
+                <div style="font-family:'Inter',sans-serif;font-size:0.75rem;color:var(--clr-ink-muted);line-height:1.6">
+                  <strong>Save Marks</strong> saves results privately as a draft. <strong>Publish Results</strong> makes them visible to the public on the results page.
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div class="action-bar">
-            <select class="form-select" id="resultProgram" style="width:auto;min-width:240px" onchange="loadResultEntries(this.value)"><option value="">Select Program</option></select>
-            <button class="btn btn-primary" onclick="saveResults()">Save Results</button>
-            <button class="btn btn-outline" onclick="publishProgramResult()">Publish Results</button>
+            <select class="form-select" id="resultProgram" style="width:auto;min-width:260px" onchange="loadResultEntries(this.value)"><option value="">Select Program</option></select>
+            <button class="btn btn-outline" onclick="saveResults()" title="Save marks privately — not visible to public">📝 Save Marks (Draft)</button>
+            <button class="btn btn-primary" onclick="publishProgramResult()" title="Make results visible to the public">🌐 Publish Results</button>
+            <button class="btn btn-danger" id="btnUnpublish" onclick="unpublishProgramResult()" style="display:none" title="Make results private again">🌐 Unpublish Results</button>
             <button class="btn btn-ghost" onclick="recalcLeaderboard()">Recalculate Leaderboard</button>
           </div>
           <div id="resultInfo" style="display:none;margin-bottom:24px">
-            <div class="card" style="background:rgba(91,140,90,0.05);border-color:rgba(91,140,90,0.2);padding:16px 24px">
-              <p style="font-family:'Inter',sans-serif;font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;margin:0;color:var(--clr-success)" id="resultInfoText">Select a program to assign positions</p>
+            <div class="card" style="padding:16px 24px;border-left:3px solid var(--clr-gold)">
+              <p style="font-family:'Inter',sans-serif;font-size:0.75rem;letter-spacing:0.05em;margin:0;color:var(--clr-ink-soft)" id="resultInfoText">Select a program to assign positions</p>
             </div>
           </div>
           <div id="resultPositions" style="display:none;margin-bottom:40px">
@@ -455,7 +470,7 @@
   <div class="modal-overlay" id="programModal">
     <div class="modal">
       <button class="modal-close" onclick="QAF.modal.close('programModal')">✕</button>
-      <h3 class="modal-title">Add Program</h3>
+      <h3 class="modal-title" id="programModalTitle">Add Program</h3>
       <div class="modal-body">
         <form id="programForm">
           <div class="form-group"><label class="form-label">Title <span class="required">*</span></label><input class="form-input" id="progTitle" required></div>
@@ -470,7 +485,7 @@
       </div>
       <div class="modal-footer">
         <button class="btn btn-ghost" onclick="QAF.modal.close('programModal')">Cancel</button>
-        <button class="btn btn-primary" onclick="addProgram()">Save Program</button>
+        <button class="btn btn-primary" onclick="saveProgram()">Save Program</button>
       </div>
     </div>
   </div>
