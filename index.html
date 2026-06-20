@@ -31,7 +31,7 @@
 <!-- Modern, high-impact fonts: Syne for artistic display, Inter for clean UI -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Amiri:wght@300;400;500;600&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <script>
 tailwind.config = {
@@ -354,9 +354,11 @@ tailwind.config = {
     <div class="hidden lg:flex items-center gap-10">
       <a href="#about" class="nav-link">About</a>
       <a href="#programs" class="nav-link">Programs</a>
+      <a href="#campaign" class="nav-link">Campaign</a>
       <a href="#prizes" class="nav-link">Prizes</a>
       <a href="#timeline" class="nav-link">Timeline</a>
       <a href="#leaderboard" class="nav-link">Leaderboard</a>
+      <a href="#results-portal" class="nav-link">Results</a>
       <a href="#announcements" class="nav-link">Announcements</a>
     </div>
 
@@ -380,9 +382,11 @@ tailwind.config = {
   <div class="flex flex-col gap-6 text-2xl font-display font-medium">
     <a href="#about" class="hover:text-accent transition-colors" onclick="toggleMenu()">About</a>
     <a href="#programs" class="hover:text-accent transition-colors" onclick="toggleMenu()">Programs</a>
+    <a href="#campaign" class="hover:text-accent transition-colors" onclick="toggleMenu()">Campaign</a>
     <a href="#prizes" class="hover:text-accent transition-colors" onclick="toggleMenu()">Prizes</a>
     <a href="#timeline" class="hover:text-accent transition-colors" onclick="toggleMenu()">Timeline</a>
     <a href="#leaderboard" class="hover:text-accent transition-colors" onclick="toggleMenu()">Leaderboard</a>
+    <a href="#results-portal" class="hover:text-accent transition-colors" onclick="toggleMenu()">Results</a>
     <a href="#announcements" class="hover:text-accent transition-colors" onclick="toggleMenu()">Announcements</a>
     <a href="#contact" class="hover:text-accent transition-colors" onclick="toggleMenu()">Contact</a>
   </div>
@@ -467,7 +471,7 @@ tailwind.config = {
         <div class="lg:sticky lg:top-40 reveal">
           <p class="text-xs font-semibold tracking-[0.2em] uppercase text-accent mb-4">The Vision</p>
           <h2 class="font-display text-h2 font-bold mb-8">Art Rooted in Revelation.</h2>
-          <p style="font-family:'Amiri',serif;font-size:2rem;color:#E5E5E5">﷽</p>
+          <p style="font-family:'Amiri',serif;font-size:2rem;color:#a68a56">﷽</p>
         </div>
       </div>
 
@@ -491,6 +495,27 @@ tailwind.config = {
         </div>
       </div>
 
+    </div>
+  </div>
+</section>
+
+<!-- Register Your Team Section -->
+<section id="register-team" class="py-20 bg-background border-t border-divider" style="margin-bottom: -150px;">
+  <div class="grid-container">
+    <div class="bg-surface border border-divider p-8 md:p-12 rounded-3xl flex flex-col md:flex-row items-center justify-between gap-8 hover:border-accent transition-colors duration-300 reveal">
+      <div class="max-w-xl">
+        <span class="text-xs font-bold tracking-[0.2em] uppercase text-accent mb-3 block">Join the Festival</span>
+        <h2 class="font-display text-3xl md:text-4xl font-bold text-ink mb-4">Register Your Team</h2>
+        <p class="text-ink-muted text-sm md:text-base leading-relaxed">
+          Represent your institution at QAF 2026. Register your participants and secure slots across our seven premier disciplines.
+        </p>
+      </div>
+      <div class="w-full md:w-auto shrink-0">
+        <a href="pages/register" class="btn-solid w-full md:w-auto text-center justify-center flex items-center gap-2 group">
+          Start Registration
+          <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+        </a>
+      </div>
     </div>
   </div>
 </section>
@@ -581,6 +606,56 @@ tailwind.config = {
     </div>
   </div>
 </section>
+
+<!-- Campaign / Poster Feature Section -->
+<!-- <section id="campaign" class="py-24 bg-surface border-t border-divider">
+  <div class="grid-container">
+    <div class="grid lg:grid-cols-12 gap-12 lg:gap-20 items-center">
+      
+      <div class="lg:col-span-6 reveal">
+        <span class="text-xs font-semibold tracking-[0.2em] uppercase text-accent mb-4 block">Official Showcase</span>
+        <h2 class="font-display text-h2 font-bold mb-6">Visualizing Sacred Word</h2>
+        <p class="text-lg text-ink-muted leading-relaxed mb-8">
+          The official campaign poster for QAF 2026. Designed to capture the harmony between revelation and artistic form. A visual representation of the festival's aesthetic core.
+        </p>
+        
+        <div class="space-y-4 border-t border-divider pt-8">
+          <div class="flex items-start gap-4">
+            <span class="w-8 h-8 rounded-full bg-background border border-divider flex items-center justify-center text-accent text-xs font-bold font-display">01</span>
+            <div>
+              <h4 class="font-bold text-ink text-sm uppercase tracking-wide">Calligraphic Elements</h4>
+              <p class="text-sm text-ink-muted mt-1">Merging classical Naskh and Thuluth styles with modern art-house layout concepts.</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-4">
+            <span class="w-8 h-8 rounded-full bg-background border border-divider flex items-center justify-center text-accent text-xs font-bold font-display">02</span>
+            <div>
+              <h4 class="font-bold text-ink text-sm uppercase tracking-wide">Muted Palette</h4>
+              <p class="text-sm text-ink-muted mt-1">Reflecting the timeless purity of parchment and the richness of traditional gold gilding.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="lg:col-span-6 reveal flex justify-center" style="transition-delay: 0.2s;">
+        <div class="relative group max-w-md w-full">
+
+          <div class="absolute inset-0 bg-accent/5 rounded-3xl translate-x-4 translate-y-4 transition-transform group-hover:translate-x-6 group-hover:translate-y-6 duration-500"></div>
+          
+          <div class="relative bg-surface border border-divider p-4 rounded-3xl shadow-xl overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl">
+            <img src="assets/poster.png" alt="QAF 2026 Official Poster" class="w-full h-auto rounded-2xl object-cover hover:scale-[1.01] transition-transform duration-500">
+            <div class="absolute top-8 left-8 bg-ink text-surface text-[0.65rem] font-bold tracking-widest uppercase px-3 py-1.5 rounded-full shadow-lg border border-divider/20">
+              Official Campaign
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section> -->
+
+
 
 <section id="prizes" class="py-32 bg-ink text-surface">
   <div class="grid-container">
@@ -745,6 +820,27 @@ tailwind.config = {
   </div>
 </section>
 
+<!-- Results Portal Section -->
+<section id="results-portal" class="py-20 bg-surface border-t border-b border-divider">
+  <div class="grid-container">
+    <div class="bg-ink text-surface p-8 md:p-12 rounded-3xl flex flex-col md:flex-row items-center justify-between gap-8 hover:bg-ink/95 transition-all duration-300 reveal">
+      <div class="max-w-xl">
+        <span class="text-xs font-bold tracking-[0.2em] uppercase text-accent mb-3 block">Official Results</span>
+        <h2 class="font-display text-3xl md:text-4xl font-bold mb-4 text-surface">View Event Results</h2>
+        <p class="text-ink-light text-sm md:text-base leading-relaxed">
+          Detailed scores, prize winners, and certificates are now live. Access the full results breakdown for all disciplines and individual participants.
+        </p>
+      </div>
+      <div class="w-full md:w-auto shrink-0">
+        <a href="pages/results" class="bg-surface text-ink hover:bg-accent hover:text-ink font-semibold text-sm px-8 py-4 rounded-full flex items-center justify-center gap-2 transition-all duration-300 group">
+          Access Results Portal
+          <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section id="announcements" class="py-32 bg-surface border-t border-divider">
   <div class="grid-container grid lg:grid-cols-2 gap-20">
     
@@ -823,8 +919,10 @@ tailwind.config = {
         <ul class="space-y-3 font-medium">
           <li><a href="#about" class="hover:text-accent transition-colors">About</a></li>
           <li><a href="#programs" class="hover:text-accent transition-colors">Programs</a></li>
+          <li><a href="#campaign" class="hover:text-accent transition-colors">Campaign</a></li>
           <li><a href="#timeline" class="hover:text-accent transition-colors">Timeline</a></li>
           <li><a href="#leaderboard" class="hover:text-accent transition-colors">Leaderboard</a></li>
+          <li><a href="#results-portal" class="hover:text-accent transition-colors">Results</a></li>
         </ul>
       </div>
       <div>
