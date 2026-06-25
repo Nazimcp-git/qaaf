@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Register – QAF Quranic Art Fest</title>
-  <meta name="description" content="Register your institution for the Quranic Art Fest 2026. Join the competition, submit topics, and participate in Edition III.">
-  <meta name="keywords" content="QAF registration, Quranic Art Fest registration, register college QAF, Islamic art contest register">
+  <meta name="description"
+    content="Register your institution for the Quranic Art Fest 2026. Join the competition, submit topics, and participate in Edition III.">
+  <meta name="keywords"
+    content="QAF registration, Quranic Art Fest registration, register college QAF, Islamic art contest register">
   <meta name="author" content="QAF Committee">
   <meta name="robots" content="index, follow">
   <link rel="shortcut icon" href="assets/og-image.jpg" type="image/x-icon">
@@ -25,22 +28,27 @@
       padding: clamp(40px, 8vw, 80px) 20px;
       position: relative;
     }
+
     .register-container {
       width: 100%;
       max-width: 600px;
       position: relative;
       z-index: 2;
     }
+
     .register-header {
       text-align: center;
       margin-bottom: 40px;
     }
+
     .register-header h1 {
       margin-bottom: 8px;
     }
+
     .register-header p {
       margin-bottom: 0;
     }
+
     .register-back {
       display: inline-flex;
       align-items: center;
@@ -53,9 +61,11 @@
       margin-bottom: 32px;
       transition: color 0.3s ease;
     }
+
     .register-back:hover {
       color: var(--clr-gold);
     }
+
     .register-divider {
       display: flex;
       align-items: center;
@@ -67,34 +77,56 @@
       text-transform: uppercase;
       color: var(--clr-gold);
     }
-    .register-divider::before, .register-divider::after {
+
+    .register-divider::before,
+    .register-divider::after {
       content: '';
       flex: 1;
       height: 1px;
       background: linear-gradient(to right, transparent, #E5E5E5, transparent);
     }
+
     .form-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 20px;
     }
+
     @media(max-width: 520px) {
-      .form-row { grid-template-columns: 1fr; gap: 0; }
+      .form-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
     }
+
     .password-strength {
       height: 2px;
-      background: rgba(166,138,86,0.1);
+      background: rgba(166, 138, 86, 0.1);
       margin-top: 8px;
       overflow: hidden;
     }
+
     .password-strength-bar {
       height: 100%;
       transition: all 0.3s ease;
       width: 0;
     }
-    .strength-weak { background: var(--clr-error); width: 33%; }
-    .strength-medium { background: var(--clr-gold); width: 66%; }
-    .strength-strong { background: var(--clr-success); width: 100%; }
+
+    .strength-weak {
+      background: var(--clr-error);
+      width: 33%;
+    }
+
+    .strength-medium {
+      background: var(--clr-gold);
+      width: 66%;
+    }
+
+    .strength-strong {
+      background: var(--clr-success);
+      width: 100%;
+    }
+
     .logo-preview {
       width: 80px;
       height: 80px;
@@ -108,6 +140,7 @@
       color: var(--clr-gold);
       background: #F9F9F9;
     }
+
     .logo-preview img {
       width: 100%;
       height: 100%;
@@ -128,10 +161,12 @@
       opacity: 1;
       visibility: visible;
     }
+
     #splash-screen.fade-out {
       opacity: 0;
       visibility: hidden;
     }
+
     .splash-logo {
       font-family: 'Syne', sans-serif;
       font-size: 4rem;
@@ -141,6 +176,7 @@
       margin: 0 0 12px 0;
       line-height: 1;
     }
+
     .splash-subtitle {
       font-family: 'Inter', sans-serif;
       font-size: 0.75rem;
@@ -149,6 +185,7 @@
       color: #666666;
       margin: 0;
     }
+
     .splash-loader-bar {
       margin-top: 48px;
       width: 80px;
@@ -159,6 +196,7 @@
       margin-left: auto;
       margin-right: auto;
     }
+
     .splash-loader-progress {
       position: absolute;
       top: 0;
@@ -167,12 +205,19 @@
       background: #111111;
       animation: splashProgress 1.2s infinite ease-in-out;
     }
+
     @keyframes splashProgress {
-      0% { left: -50%; }
-      100% { left: 100%; }
+      0% {
+        left: -50%;
+      }
+
+      100% {
+        left: 100%;
+      }
     }
   </style>
 </head>
+
 <body>
   <!-- Splash Screen -->
   <div id="splash-screen">
@@ -197,25 +242,29 @@
         <form id="registerForm" onsubmit="return false">
           <div class="form-group">
             <label class="form-label">Institution Name <span class="required">*</span></label>
-            <input class="form-input" type="text" id="collegeName" data-validate="required" placeholder="Enter full institution name" required>
+            <input class="form-input" type="text" id="collegeName" data-validate="required"
+              placeholder="Enter full institution name" required>
             <div class="form-error">Institution name is required</div>
           </div>
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">Place <span class="required">*</span></label>
-              <input class="form-input" type="text" id="place" data-validate="required" placeholder="City/Town" required>
+              <input class="form-input" type="text" id="place" data-validate="required" placeholder="City/Town"
+                required>
               <div class="form-error">Place is required</div>
             </div>
             <div class="form-group">
               <label class="form-label">District <span class="required">*</span></label>
-              <input class="form-input" type="text" id="district" data-validate="required" placeholder="District" required>
+              <input class="form-input" type="text" id="district" data-validate="required" placeholder="District"
+                required>
               <div class="form-error">District is required</div>
             </div>
           </div>
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">Phone Number <span class="required">*</span></label>
-              <input class="form-input" type="tel" id="phone" data-validate="required|phone" placeholder="+91 XXXXX XXXXX" required>
+              <input class="form-input" type="tel" id="phone" data-validate="required|phone"
+                placeholder="+91 XXXXX XXXXX" required>
               <div class="form-error">Valid phone number required</div>
             </div>
             <div class="form-group">
@@ -225,12 +274,14 @@
           </div>
           <div class="form-group">
             <label class="form-label">Email Address <span class="required">*</span></label>
-            <input class="form-input" type="email" id="email" data-validate="required|email" placeholder="institution@email.com" required>
+            <input class="form-input" type="email" id="email" data-validate="required|email"
+              placeholder="institution@email.com" required>
             <div class="form-error">Valid email is required</div>
           </div>
           <div class="form-group">
             <label class="form-label">Team Leader Name <span class="required">*</span></label>
-            <input class="form-input" type="text" id="leaderName" data-validate="required" placeholder="Team leader's full name" required>
+            <input class="form-input" type="text" id="leaderName" data-validate="required"
+              placeholder="Team leader's full name" required>
             <div class="form-error">Team leader name is required</div>
           </div>
           <div class="form-group">
@@ -247,22 +298,27 @@
 
           <div class="form-group">
             <label class="form-label">Password (never forget the password) <span class="required">*</span></label>
-            <input class="form-input" type="password" id="password" data-validate="required|min:6" placeholder="Minimum 6 characters" required oninput="checkStrength(this.value)">
-            <div class="password-strength"><div class="password-strength-bar" id="strengthBar"></div></div>
+            <input class="form-input" type="password" id="password" data-validate="required|min:6"
+              placeholder="Minimum 6 characters" required oninput="checkStrength(this.value)">
+            <div class="password-strength">
+              <div class="password-strength-bar" id="strengthBar"></div>
+            </div>
             <div class="form-error">Password must be at least 6 characters. (never forgot the password)</div>
           </div>
           <div class="form-group">
             <label class="form-label">Confirm Password <span class="required">*</span></label>
-            <input class="form-input" type="password" id="confirmPassword" data-validate="required" placeholder="Re-enter password" required>
+            <input class="form-input" type="password" id="confirmPassword" data-validate="required"
+              placeholder="Re-enter password" required>
             <div class="form-error">Passwords must match</div>
           </div>
 
           <button type="submit" class="btn btn-primary btn-block btn-lg mt-6" id="submitBtn" onclick="handleRegister()">
             Register Institution
           </button>
-          
+
           <p style="text-align:center;margin-top:32px;font-size:0.75rem;letter-spacing:0.05em">
-            Already registered? <a href="team-login" style="color:var(--clr-gold);border-bottom:1px solid var(--clr-gold);padding-bottom:1px">Login here</a>
+            Already registered? <a href="team-login"
+              style="color:var(--clr-gold);border-bottom:1px solid var(--clr-gold);padding-bottom:1px">Login here</a>
           </p>
         </form>
       </div>
@@ -277,12 +333,24 @@
       <div class="modal-body">
         <p style="margin-bottom:24px">Your institution has been registered successfully for the Quranic Art Fest.</p>
         <div style="text-align:left;padding:24px;background:rgba(166,138,86,0.05);border:1px solid #E5E5E5">
-          <p style="margin-bottom:12px;font-family:'Inter',sans-serif;font-size:0.75rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--clr-ink-muted)"><strong>Team ID:</strong> <span id="generatedTeamId" style="color:var(--clr-ink);font-family:'Syne',sans-serif;font-size:1.2rem;letter-spacing:0.02em;text-transform:none"></span></p>
-          <p style="margin-bottom:0;font-family:'Inter',sans-serif;font-size:0.75rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--clr-ink-muted)"><strong>Email:</strong> <span id="registeredEmail" style="color:var(--clr-ink);letter-spacing:0.05em;text-transform:none"></span></p>
-          
-          <a href="https://chat.whatsapp.com/GfsE0QHLoAFGmVwRgmcmuT?s=sw&p=a&ilr=0" style="margin-top: 30px; text-align: center;"><b>Join WhatsApp Group Now</b></a>
+          <p
+            style="margin-bottom:12px;font-family:'Inter',sans-serif;font-size:0.75rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--clr-ink-muted)">
+            <strong>Team ID:</strong> <span id="generatedTeamId"
+              style="color:var(--clr-ink);font-family:'Syne',sans-serif;font-size:1.2rem;letter-spacing:0.02em;text-transform:none"></span>
+          </p>
+          <p
+            style="margin-bottom:0;font-family:'Inter',sans-serif;font-size:0.75rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--clr-ink-muted)">
+            <strong>Email:</strong> <span id="registeredEmail"
+              style="color:var(--clr-ink);letter-spacing:0.05em;text-transform:none"></span>
+          </p>
+
+          <a href="https://chat.whatsapp.com/GfsE0QHLoAFGmVwRgmcmuT?s=sw&p=a&ilr=0"
+            style="margin-top: 30px; text-align: center;"><b>Join WhatsApp Group Now</b></a>
+          <a href="https://chat.whatsapp.com/GfsE0QHLoAFGmVwRgmcmuT?s=sw&p=a&ilr=0"
+            style=" text-align: center;"><b>https://chat.whatsapp.com/GfsE0QHLoAFGmVwRgmcmuT?s=sw&p=a&ilr=0</b></a>
         </div>
-        <p style="font-size:0.7rem;margin-top:20px;color:var(--clr-gold);letter-spacing:0.05em">Please save your Team ID for future reference. (never forget the email and password)</p>
+        <p style="font-size:0.7rem;margin-top:20px;color:var(--clr-gold);letter-spacing:0.05em">Please save your Team ID
+          for future reference. (never forget the email and password)</p>
       </div>
       <div class="modal-footer" style="justify-content:center;border:none">
         <a href="team-login" class="btn btn-primary">Go to Login</a>
@@ -418,4 +486,5 @@
     }
   </script>
 </body>
+
 </html>
